@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <title>{{ .title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+
+    <!-- Бутстрап -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script type="text/javascript" async src="/js/bootstrap.min.js"></script>
+
+    <!--Стили и JS приложения-->
+    <link rel="stylesheet" type="text/css" href="/css/apps.css">
+    <script type="text/javascript" src="/js/apps-scripts.js"></script>
+</head>
+
+<body class="container">
+
+<!-- Шаблон меню -->
+{{ template "menu.html" . }}
