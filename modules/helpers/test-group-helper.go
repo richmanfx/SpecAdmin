@@ -1,0 +1,40 @@
+package helpers
+
+import (
+	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
+	_ "fmt"
+)
+
+var db *sql.DB
+
+func GetTestGroupsList() []string {
+
+	testGroupList := make([]string, 0, 30)
+	var err error
+
+	// Соединение с БД
+	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
+	if err != nil {panic(err)}
+
+	// Проверка соединения с БД
+	err = db.Ping()
+	if err != nil {panic(err)}
+
+	// Запрос Групп из базы, получить записи
+	rows, err := db.Query("SELECT name FROM tests_groups")
+	if err != nil {panic(err)}
+
+	// Данные получить из результата запроса
+	for rows.Next() {
+		var group string
+		err = rows.Scan(&group)
+		if err != nil {panic(err)}
+		//fmt.Println("row.Next group: ", group)
+		testGroupList = append(testGroupList, group)
+	}
+
+	rows.Close()
+
+	return testGroupList
+}

@@ -2,7 +2,7 @@ package modules
 
 import (
 	"github.com/gin-gonic/gin"
-	"../handlers"
+	"./handlers"
 )
 
 func InitRoutes(router *gin.Engine) {
