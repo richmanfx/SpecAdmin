@@ -1,0 +1,45 @@
+<div id="editGroup" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                Редактировать имя группы тестов
+            </div>
+
+            <div class="modal-body">
+
+                <form name="add_group_form" method="post" action="/spec-admin/editGroup">>
+                    <input id="id_group" name="group"
+                           placeholder=" Введи имя группы для редактирования" required="required" type="text">
+
+                    <br>
+                    <button type="button"
+                            class="btn btn-success  btn-lg"
+                            data-dismiss="modal">
+                        Редактировать
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-success btn-lg"
+                            data-dismiss="modal">
+                        Отмена
+                    </button>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-success  btn-lg"
+                        data-dismiss="modal">
+                    Редактировать
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

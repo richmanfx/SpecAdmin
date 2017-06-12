@@ -2,12 +2,38 @@
 
 {{ template "about-modal.html" . }}
 {{ template "message-modal.html" . }}
+{{ template "add-group-modal.html" . }}
+{{ template "del-group-modal.html" . }}
+{{ template "edit-group-modal.html" . }}
 
 <nav class="navbar navbar-default">
     <div class="container">
         <div class="navbar-header">
             <a class="navbar-brand" href="/spec-admin"> В начало </a>
+
+            <a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Группы <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a class="navbar-brand" data-toggle="modal" data-target="#addGroup" href="#"> Добавить группу </a></li>
+                    <li><a class="navbar-brand" data-toggle="modal" data-target="#delGroup" href="#"> Удалить группу </a></li>
+                    <li><a class="navbar-brand" data-toggle="modal" data-target="#editGroup" href="#"> Редактировать группу </a></li>
+                </ul>
+
+            <!--<a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Сюиты <span class="caret"></span></a>-->
+            <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#"> Добавить сюиту </a></li>-->
+                <!--<li><a href="#"> Удалить сюиту </a></li>-->
+                <!--<li><a href="#"> Редактировать сюиту </a></li>-->
+            <!--</ul>-->
+
+            <!--<a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Сценарии <span class="caret"></span></a>-->
+            <!--<ul class="dropdown-menu">-->
+                <!--<li><a href="#"> Добавить сценарий </a></li>-->
+                <!--<li><a href="#"> Удалить сценарий </a></li>-->
+                <!--<li><a href="#"> Редактировать сценарий </a></li>-->
+            <!--</ul>-->
+
             <a class="navbar-brand" data-toggle="modal" data-target="#aboutModal" href="#"> О программе </a>
+
             <a class="navbar-brand" onclick="window.print();" href="#"> Распечатать </a>
         </div>
     </div>
