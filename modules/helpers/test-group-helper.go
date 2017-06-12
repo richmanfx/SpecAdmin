@@ -68,4 +68,31 @@ func AddTestGroup(groupName string) error {
 	return err
 }
 
+// Удаляет из базы заданную группу
+// Получает имя удаляемой группы
+func DelTestGroup(groupName string) error {
+
+	var err error
+
+	// Соединение с БД
+	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
+	if err != nil {panic(err)}
+
+	// Проверка соединения с БД
+	err = db.Ping()
+	if err != nil {panic(err)}
+
+	// Удаление Группы из базы
+	result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
+	if err != nil {panic(err)}
+
+	affected, err := result.RowsAffected()
+	if err != nil {panic(err)}
+	fmt.Println("Удалено строк: ", affected)
+
+	db.Close()
+
+	return err
+}
+
 

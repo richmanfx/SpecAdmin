@@ -8,8 +8,8 @@
             <div class="modal-body">
 
                 <form id="id_add_group_form" name="add_group_form" method="post" action="/spec-admin/add-group">
-                    <input id="id_group" name="group"
-                    placeholder=" Введи имя новой группы" required="required" type="text">
+                    <input id="id_group" name="group" placeholder=" Введи имя новой группы"
+                           required="required" type="text">
                     <br>
                 </form>
             </div>
@@ -18,6 +18,7 @@
                 <button type="submit"
                         class="btn btn-success btn-lg"
                         form="id_add_group_form">
+                        <!--data-dismiss="modal"-->
                     Добавить
                 </button>
 
@@ -28,7 +29,8 @@
                 </button>
 
                 <button type="button"
-                        class="btn btn-success btn-lg">
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
                     Отмена
                 </button>
             </div>
