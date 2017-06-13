@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	_ "fmt"
 	"fmt"
+	log "github.com/Sirupsen/logrus"
 )
 
 var db *sql.DB
@@ -31,7 +32,7 @@ func GetTestGroupsList() []string {
 		var group string
 		err = rows.Scan(&group)
 		if err != nil {panic(err)}
-		//fmt.Println("row.Next group: ", group)
+		log.Debugf("row.Next group: %s", group)
 		testGroupList = append(testGroupList, group)
 	}
 
@@ -61,7 +62,7 @@ func AddTestGroup(groupName string) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil {panic(err)}
-	fmt.Println("Вставлено строк: ", affected)
+	log.Infof("Вставлено строк: %v", affected)
 
 	db.Close()
 
@@ -88,7 +89,7 @@ func DelTestGroup(groupName string) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil {panic(err)}
-	fmt.Println("Удалено строк: ", affected)
+	log.Infof("Удалено строк: %v", affected)
 
 	db.Close()
 
@@ -115,9 +116,11 @@ func EditTestGroup(oldName string, newName string) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil {panic(err)}
-	fmt.Println("Изменено строк: ", affected)
+	log.Infof("Изменено строк: %v", affected)
+
 	if affected == 0 {
-		err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
+		err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+		log.Infof("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
 	}
 
 	db.Close()

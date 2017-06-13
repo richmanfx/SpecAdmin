@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"../helpers"
-	"fmt"
+	log "github.com/Sirupsen/logrus"
 )
 
-var Version string = "1.4"
+var Version string = "1.5"
 
 func ShowIndexPage(context *gin.Context)  {
 
@@ -15,7 +15,7 @@ func ShowIndexPage(context *gin.Context)  {
 	testGroupList := helpers.GetTestGroupsList()
 
 	for idx, group := range testGroupList {
-		fmt.Printf("%d. %s\n", idx, group)
+		log.Infof("%d.%s", idx, group)
 	}
 
 	// Обработка шаблона
