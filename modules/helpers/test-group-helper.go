@@ -2,10 +2,9 @@ package helpers
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	_ "fmt"
-	"fmt"
 	log "github.com/Sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql"
+	"fmt"
 )
 
 var db *sql.DB
