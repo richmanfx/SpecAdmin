@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-var Version string = "1.3"
+var Version string = "1.4"
 
 func ShowIndexPage(context *gin.Context)  {
 

@@ -6,31 +6,26 @@
             </div>
 
             <div class="modal-body">
-
-                <form name="add_group_form" method="post" action="/spec-admin/editGroup">>
-                    <input id="id_group" name="group"
-                           placeholder=" Введи имя группы для редактирования" required="required" type="text">
-
+                <form id="edit_group_form" name="edit_group_form" method="post" action="/spec-admin/edit-group">
+                    <input id="id_old_group" name="old_group"
+                           placeholder=" Введи имя существующей группы" required="required" type="text">
                     <br>
-                    <button type="button"
-                            class="btn btn-success  btn-lg"
-                            data-dismiss="modal">
-                        Редактировать
-                    </button>
-
-                    <button type="button"
-                            class="btn btn-success btn-lg"
-                            data-dismiss="modal">
-                        Отмена
-                    </button>
+                    <input id="id_new_group" name="new_group"
+                           placeholder=" Введи новое имя для группы" required="required" type="text">
                 </form>
             </div>
 
             <div class="modal-footer">
-                <button type="button"
-                        class="btn btn-success  btn-lg"
-                        data-dismiss="modal">
-                    Редактировать
+                <button type="submit"
+                        class="btn btn-success btn-lg"
+                        form="edit_group_form">
+                    Изменить имя группы
+                </button>
+
+                <button form="edit_group_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить
                 </button>
 
                 <button type="button"

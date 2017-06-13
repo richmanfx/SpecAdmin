@@ -95,4 +95,33 @@ func DelTestGroup(groupName string) error {
 	return err
 }
 
+// Изменяет имя группы тестов
+// Получает имя редактируемой группы
+func EditTestGroup(oldName string, newName string) error {
+
+	var err error
+
+	// Соединение с БД		// TODO: Вынести в отдельную функцию
+	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
+	if err != nil {panic(err)}
+
+	// Проверка соединения с БД
+	err = db.Ping()
+	if err != nil {panic(err)}
+
+	// Изменение имени Группы
+	result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
+	if err != nil {panic(err)}
+
+	affected, err := result.RowsAffected()
+	if err != nil {panic(err)}
+	fmt.Println("Изменено строк: ", affected)
+	if affected == 0 {
+		err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
+	}
+
+	db.Close()
+
+	return err
+}
 
