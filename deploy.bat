@@ -1,11 +1,11 @@
-п»ї@echo off
-rem РђСЂС…РёРІР°С†РёСЏ Рё РїРµСЂРµРјРµС‰РµРЅРёРµ РЅР° BestServer РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РµРіРѕ РґРµРїР»РѕСЏ
+@echo off
+rem Архивация и перемещение на BestServer для последующего деплоя
 
-rem РђСЂС…РёРІР°С†РёСЏ
+rem Архивация
 rar a -R specadmin.rar specadmin css js templates
 
-rem Р—Р°Р»РёРІРєР° РїРѕ SSH
+rem Заливка по SSH
 scp specadmin.rar zoer@bestserver:tmp/spec-admin/specadmin.rar
 
-rem РЈРґР°Р»РµРЅРёРµ Р°СЂС…РёРІР°
+rem Удаление архива
 del specadmin.rar
