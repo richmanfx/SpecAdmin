@@ -1,0 +1,39 @@
+<div id="addSuite" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                Добавить сюиту тестов
+            </div>
+
+            <div class="modal-body">
+
+                <form id="id_add_suite_form" name="add_suite_form" method="post" action="/spec-admin/add-suite">
+                    <input id="id_suite" name="suite" placeholder=" Введи имя новой сюиты"
+                           required="required" type="text">
+                    <br>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit"
+                        class="btn btn-success btn-lg"
+                        form="id_add_suite_form">
+                    Добавить
+                </button>
+
+                <button form="id_add_suite_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

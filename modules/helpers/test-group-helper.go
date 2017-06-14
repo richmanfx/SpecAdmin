@@ -6,8 +6,6 @@ import (
 	"fmt"
 )
 
-//var db *sql.DB
-
 func GetTestGroupsList() ([]string, error) {
 
 	testGroupList := make([]string, 0, 30)
