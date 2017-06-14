@@ -8,10 +8,21 @@
 <br>
 Группы тестов: &nbsp;&nbsp;&nbsp;&nbsp;
 {{ range .testGroupList }}
-
-    {{ . }} &nbsp;&nbsp;&nbsp;&nbsp;
-
+    <a href="#" onclick="anichange('#divId_{{ . }}'); return false">{{ . }}</a>
 {{end}}
+
+<script>
+    function anichange (objName) {
+        if ( $(objName).css('display') === 'none' ) {
+            $(objName).animate({height: 'show'}, 400);
+        } else {
+            $(objName).animate({height: 'hide'}, 200);
+        }
+    }
+    function anichange(a) {
+        $(a).slideToggle(400);
+    }
+</script>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

@@ -1,26 +1,23 @@
 package helpers
 
 import (
-	"database/sql"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 )
 
-var db *sql.DB
+//var db *sql.DB
 
-func GetTestGroupsList() []string {
+func GetTestGroupsList() ([]string, error) {
 
 	testGroupList := make([]string, 0, 30)
 	var err error
 
-	// Соединение с БД
-	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
-	if err != nil {panic(err)}
-
-	// Проверка соединения с БД
-	err = db.Ping()
-	if err != nil {panic(err)}
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {
+		return testGroupList, err
+	}
 
 	// Запрос Групп из базы, получить записи
 	rows, err := db.Query("SELECT (name) FROM tests_groups")
@@ -38,7 +35,7 @@ func GetTestGroupsList() []string {
 	rows.Close()
 	db.Close()
 
-	return testGroupList
+	return testGroupList, err
 }
 
 // Добавляет в базу новую группу тестов
@@ -47,21 +44,19 @@ func AddTestGroup(groupName string) error {
 
 	var err error
 
-	// Соединение с БД
-	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
-	if err != nil {panic(err)}
-
-	// Проверка соединения с БД
-	err = db.Ping()
-	if err != nil {panic(err)}
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {
+		return err
+	}
 
 	// Добавление Группы в базу, используем плейсхолдер
 	result, err := db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
-	if err != nil {panic(err)}
-
-	affected, err := result.RowsAffected()
-	if err != nil {panic(err)}
-	log.Infof("Вставлено строк: %v", affected)
+	if err == nil {
+		affected, err := result.RowsAffected()
+		if err != nil {panic(err)}
+		log.Infof("Вставлено строк: %v", affected)
+	}
 
 	db.Close()
 
@@ -74,13 +69,11 @@ func DelTestGroup(groupName string) error {
 
 	var err error
 
-	// Соединение с БД
-	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
-	if err != nil {panic(err)}
-
-	// Проверка соединения с БД
-	err = db.Ping()
-	if err != nil {panic(err)}
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {
+		return err
+	}
 
 	// Удаление Группы из базы
 	result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
@@ -101,13 +94,11 @@ func EditTestGroup(oldName string, newName string) error {
 
 	var err error
 
-	// Соединение с БД		// TODO: Вынести в отдельную функцию
-	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
-	if err != nil {panic(err)}
-
-	// Проверка соединения с БД
-	err = db.Ping()
-	if err != nil {panic(err)}
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {
+		return err
+	}
 
 	// Изменение имени Группы
 	result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
