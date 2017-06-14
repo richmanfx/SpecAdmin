@@ -7,7 +7,7 @@ import (
 
 // Добавляет в базу новую сюиту тестов
 // Получает имя новой сюиты
-func AddTestSuite(suiteName string) error {
+func AddTestSuite(suitesName string, suitesDescription string, suitesGroup string) error {
 
 	var err error
 
@@ -18,13 +18,14 @@ func AddTestSuite(suiteName string) error {
 	}
 
 	// Добавление Сюиты в базу, используем плейсхолдер
-	//result, err := db.Exec("INSERT INTO tests_groups (name) VALUE (?)", suiteName)
-	log.Infof("Сдесь будет добавление сюиты: %s", suiteName)
-	//if err == nil {
-	//	affected, err := result.RowsAffected()
-	//	if err != nil {panic(err)}
-	//	log.Infof("Вставлено строк: %v", affected)
-	//}
+	log.Infof("Добавление Сюиты: %s, Описание: %s, Группа: %s", suitesName, suitesDescription, suitesGroup)
+	result, err := db.Exec("INSERT INTO tests_suits (name, description, name_group) VALUES (?,?,?)", suitesName, suitesDescription, suitesGroup)
+
+	if err == nil {
+		affected, err := result.RowsAffected()
+		if err != nil {panic(err)}
+		log.Infof("Вставлено строк: %v", affected)
+	}
 
 	db.Close()
 
