@@ -15,7 +15,7 @@ func AddGroup(context *gin.Context)  {
 
 	if err != nil {
 		// Ошибка при добавлении группы
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
@@ -24,7 +24,7 @@ func AddGroup(context *gin.Context)  {
 			},
 		)
 	} else {
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
 				"message1": fmt.Sprintf("Группа тестов '%s' добавлена успешно.", newGroup),
@@ -42,7 +42,7 @@ func DelGroup(context *gin.Context)  {
 
 	if err != nil {
 		// Ошибка при удалении группы
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
@@ -51,7 +51,7 @@ func DelGroup(context *gin.Context)  {
 			},
 		)
 	} else {
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
 				"message1": fmt.Sprintf("Группа тестов '%s' удалена успешно.", deletedGroup),
@@ -71,7 +71,7 @@ func EditGroup(context *gin.Context)  {
 
 	if err != nil {
 		// Ошибка при редактировании группы
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
@@ -80,7 +80,7 @@ func EditGroup(context *gin.Context)  {
 			},
 		)
 	} else {
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
 				"message1": fmt.Sprintf(

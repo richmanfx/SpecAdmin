@@ -21,8 +21,7 @@ func ShowIndexPage(context *gin.Context)  {
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: %v", err)
 
-		// Ошибка при получении списка групп
-		context.HTML(http.StatusOK, "message-modal.html",
+		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
