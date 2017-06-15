@@ -15,5 +15,6 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("POST", "/spec-admin/edit-group", handlers.EditGroup)
 
 	router.Handle("POST", "/spec-admin/add-suite", handlers.AddSuite)
+	router.Handle("POST", "/spec-admin/del-suite", handlers.DelSuite)
 }
 

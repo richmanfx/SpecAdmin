@@ -69,20 +69,23 @@ func DelTestGroup(groupName string) error {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
-		return err
-	}
+	if err != nil {	return err }
 
 	// Удаление Группы из базы
+	log.Infof("Удаление Группы: %s", groupName)
 	result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
-	if err != nil {panic(err)}
-
-	affected, err := result.RowsAffected()
-	if err != nil {panic(err)}
-	log.Infof("Удалено строк: %v", affected)
-
+	if err == nil {
+		var affected int64
+		affected, err = result.RowsAffected()
+		if err == nil {
+			if affected == 0 {
+				err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
+				log.Infof("Ошибка удаления Группы '%s'", groupName)
+			}
+			log.Infof("Удалено строк в БД: %v", affected)
+		}
+	}
 	db.Close()
-
 	return err
 }
 
@@ -94,9 +97,7 @@ func EditTestGroup(oldName string, newName string) error {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
-		return err
-	}
+	if err != nil {	return err }
 
 	// Изменение имени Группы
 	result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
