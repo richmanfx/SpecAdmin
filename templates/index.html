@@ -6,10 +6,34 @@
 <br><br>
 Версия: {{ .Version }}<br>
 <br>
-Группы тестов: &nbsp;&nbsp;&nbsp;&nbsp;
-{{ range .testGroupList }}
-    <a href="#" onclick="anichange('#divId_{{ . }}'); return false">{{ . }}</a>
+Группы тестов:
+<p>
+{{ range .groupList }}
+    <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false">{{ .Name }}</a>
+{{ end }}
+
+{{ range .groupList }}
+    <div id="divId_{{ .Name }}" style="display: none" align="center">
+    {{ range .Suites}}
+    <table border="0" width="90%" cellpadding="5">
+        <tr>
+        <td width="20%">
+            <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false">
+                {{ .Name }}
+            </a>
+        </td>
+        <td>
+            {{ .Description }}
+        </td>
+        </tr>
+    </table>
+    {{ end }}
+
+    </div>
 {{end}}
+
+
+
 
 <script>
     function anichange (objName) {

@@ -11,14 +11,14 @@
 {{ template "del-suite-modal.html" . }}
 
 <nav class="navbar navbar-default">
-    <div class="container">
+    <div id="header" class="container">
         <ul class="nav navbar-nav">
             <li>
                 <a class="navbar-brand" href="/spec-admin"> В начало </a>
             </li>
 
             <li>
-            <a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Группы <span class="caret"></span></a>
+                <a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Группы <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                     <li><a class="navbar-brand" data-toggle="modal" data-target="#addGroup" href="#"> Добавить группу </a></li>
                     <li><a class="navbar-brand" data-toggle="modal" data-target="#delGroup" href="#"> Удалить группу </a></li>

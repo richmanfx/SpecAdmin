@@ -5,48 +5,40 @@ import (
 	"net/http"
 	"../helpers"
 	log "github.com/Sirupsen/logrus"
-	"sort"
 	"fmt"
+	"../../models"
 )
 
-var Version string = "1.9"
+var Version string = "2.0"
 
 func ShowIndexPage(context *gin.Context)  {
 
-	var testGroupList []string
+	groupList := make([]models.Group, 0, 0)	// Слайс из Групп
+
 	var err error
 
-	testGroupList, err = helpers.GetTestGroupsList()
+	// Сформировать список Групп на основе данных из БД
+	groupList, err = helpers.GetGroupsList(groupList)
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: %v", err)
 
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": "Ошибка при получении списка групп тестов из БД",
-				"message3": fmt.Sprintf("%s: ", err),
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка при получении списка групп тестов из БД",
+				"message3": 	fmt.Sprintf("%s: ", err),
 			},
 		)
-
 	} else {
-
-		// Отсортировать список Групп
-		sort.Strings(testGroupList)
-
-		for idx, group := range testGroupList {
-			log.Infof("%d.%s", idx, group)
-		}
-
-		// Обработка шаблона
 		context.HTML(
 			http.StatusOK,
 			"index.html",
 			gin.H{
-				"title":         "SpecAdmin",
-				"Version":       Version,
-				"testGroupList": testGroupList,
+				"title":        "SpecAdmin",
+				"Version":      Version,
+				"groupList": 	groupList,
 			},
 		)
 	}

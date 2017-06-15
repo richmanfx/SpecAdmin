@@ -3,13 +3,12 @@ package helpers
 import (
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
-	fmt "fmt"
+	"fmt"
 )
 
 // Добавляет в базу новую сюиту тестов
 // Получает имя новой сюиты, описание этой сюиты и группу тестов, в которую вносится сюита
 func AddTestSuite(suitesName string, suitesDescription string, suitesGroup string) error {
-
 	var err error
 
 	// Подключиться к БД
@@ -31,7 +30,6 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesGroup strin
 // Удаляет из базы сюиту
 // Получает имя удаляемой сюиты
 func DelTestSuite(suitesName string) error {
-
 	var err error
 
 	// Подключиться к БД

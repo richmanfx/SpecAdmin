@@ -4,42 +4,73 @@ import (
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
+	"../../models"
 )
 
-func GetTestGroupsList() ([]string, error) {
-
-	testGroupList := make([]string, 0, 30)
+func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 	var err error
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
-		return testGroupList, err
-	}
+	if err != nil {	return groupList, err }
 
-	// Запрос Групп из базы, получить записи
-	rows, err := db.Query("SELECT (name) FROM tests_groups")
+
+	// Считать Шаги из БД
+
+
+	// Считать Сценарии из БД
+
+
+	// Считать Сюиты из БД
+	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
+	// Запрос Сюит из базы, получить записи
+	rows, err := db.Query("SELECT name, description, name_group FROM tests_suits ORDER BY name")
 	if err != nil {panic(err)}
-
 	// Данные получить из результата запроса
 	for rows.Next() {
-		var group string
-		err = rows.Scan(&group)
+		var name string
+		var description string
+		var name_group string
+		err = rows.Scan(&name, &description, &name_group)
 		if err != nil {panic(err)}
-		log.Debugf("row.Next group: %s", group)
-		testGroupList = append(testGroupList, group)
+		log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", name, description, name_group)
+
+		// Заполнить Сюитами список Сюит
+		var suite models.Suite
+		suite.Name = name
+		suite.Description = description
+		suite.Group = name_group
+		suitesList = append(suitesList, suite)
 	}
 
-	rows.Close()
-	db.Close()
+	// Считать группы из БД
+	rows, err = db.Query("SELECT name FROM tests_groups ORDER BY name")
+	if err != nil {panic(err)}
+	// Данные получить из результата запроса
+	for rows.Next() {
+		var name string
+		err = rows.Scan(&name)
+		if err != nil {panic(err)}
+		log.Debugf("rows.Next из таблицы tests_groups: %s", name)
 
-	return testGroupList, err
+		// Заполнить Группами список Групп
+		var group models.Group
+		group.Name = name
+
+		// Закинуть Сюиты в соответствующие Группы
+		for _, suite := range suitesList {	// Бежать по всем Сюитам
+			if suite.Group == name {	// Если Сюита принадлежит Группе, то добавляем её
+				group.Suites = append(group.Suites, suite)
+			}
+		}
+		groupList = append(groupList, group)
+	}
+	return groupList, err
 }
 
 // Добавляет в базу новую группу тестов
 // Получает имя новой группы
 func AddTestGroup(groupName string) error {
-
 	var err error
 
 	// Подключиться к БД
@@ -55,16 +86,13 @@ func AddTestGroup(groupName string) error {
 		if err != nil {panic(err)}
 		log.Infof("Вставлено строк: %v", affected)
 	}
-
 	db.Close()
-
 	return err
 }
 
 // Удаляет из базы заданную группу
 // Получает имя удаляемой группы
 func DelTestGroup(groupName string) error {
-
 	var err error
 
 	// Подключиться к БД
@@ -92,7 +120,6 @@ func DelTestGroup(groupName string) error {
 // Изменяет имя группы тестов
 // Получает имя редактируемой группы
 func EditTestGroup(oldName string, newName string) error {
-
 	var err error
 
 	// Подключиться к БД
@@ -113,7 +140,6 @@ func EditTestGroup(oldName string, newName string) error {
 	}
 
 	db.Close()
-
 	return err
 }
 
