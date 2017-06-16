@@ -18,7 +18,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 	// Добавление Сюиты в базу, используем плейсхолдер
 	log.Infof("Добавление Сюиты: %s, Описание: %s, Порядковый номер '%s' Группа: %s",
 		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
-	result, err := db.Exec("INSERT INTO tests_suits (name, description, serial_number, name_group) VALUES (?,?,?)",
+	result, err := db.Exec("INSERT INTO tests_suits (name, description, serial_number, name_group) VALUES (?,?,?,?)",
 		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
 	if err == nil {
 		affected, err := result.RowsAffected()
