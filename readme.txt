@@ -10,10 +10,10 @@
 3.Создать нового пользователя:
     create user 'specuser'@'localhost';
 
-4.Дать права пользователю на работу с базой и задатьб пароль:
+4.Дать права пользователю на работу с базой и задать пароль:
     grant select,insert,update,delete,index,alter,create,drop on specadmin.* to specuser@localhost identified by 'Ghashiz7';
 
-5.Создать таблиц:
+5.Создать таблиц (не окончательные варианты):
 ==========
 create table tests_groups
 (

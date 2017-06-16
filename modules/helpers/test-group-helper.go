@@ -24,21 +24,23 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 	// Считать Сюиты из БД
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
 	// Запрос Сюит из базы, получить записи
-	rows, err := db.Query("SELECT name, description, name_group FROM tests_suits ORDER BY name")
+	rows, err := db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
 	if err != nil {panic(err)}
 	// Данные получить из результата запроса
 	for rows.Next() {
 		var name string
 		var description string
+		var serial_number string
 		var name_group string
-		err = rows.Scan(&name, &description, &name_group)
+		err = rows.Scan(&name, &description, &serial_number, &name_group)
 		if err != nil {panic(err)}
-		log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", name, description, name_group)
+		log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s, %s", name, description, serial_number, name_group)
 
 		// Заполнить Сюитами список Сюит
 		var suite models.Suite
 		suite.Name = name
 		suite.Description = description
+		suite.SerialNumber = serial_number
 		suite.Group = name_group
 		suitesList = append(suitesList, suite)
 	}

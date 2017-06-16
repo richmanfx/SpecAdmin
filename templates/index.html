@@ -17,14 +17,9 @@
     {{ range .Suites}}
     <table border="0" width="90%" cellpadding="5">
         <tr>
-        <td width="20%">
-            <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false">
-                {{ .Name }}
-            </a>
-        </td>
-        <td>
-            {{ .Description }}
-        </td>
+            <td> {{ .SerialNumber }}. </td>
+            <td width="20%"> <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false"> {{ .Name }} </a> </td>
+            <td> {{ .Description }} </td>
         </tr>
     </table>
     {{ end }}

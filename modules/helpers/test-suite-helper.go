@@ -8,7 +8,7 @@ import (
 
 // Добавляет в базу новую сюиту тестов
 // Получает имя новой сюиты, описание этой сюиты и группу тестов, в которую вносится сюита
-func AddTestSuite(suitesName string, suitesDescription string, suitesGroup string) error {
+func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumber string, suitesGroup string) error {
 	var err error
 
 	// Подключиться к БД
@@ -16,8 +16,10 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesGroup strin
 	if err != nil {	return err }
 
 	// Добавление Сюиты в базу, используем плейсхолдер
-	log.Infof("Добавление Сюиты: %s, Описание: %s, Группа: %s", suitesName, suitesDescription, suitesGroup)
-	result, err := db.Exec("INSERT INTO tests_suits (name, description, name_group) VALUES (?,?,?)", suitesName, suitesDescription, suitesGroup)
+	log.Infof("Добавление Сюиты: %s, Описание: %s, Порядковый номер '%s' Группа: %s",
+		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
+	result, err := db.Exec("INSERT INTO tests_suits (name, description, serial_number, name_group) VALUES (?,?,?)",
+		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}

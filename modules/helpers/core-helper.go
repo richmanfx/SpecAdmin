@@ -28,6 +28,5 @@ func dbConnect() error {
 		log.Errorf("Ошибка проверки соединения с БД", err)
 		return err
 	}
-
 	return nil
 }

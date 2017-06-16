@@ -19,6 +19,7 @@ type Script struct {
 type Suite struct {
 	Name			string
 	Description 	string		// Описание Сюиты
+	SerialNumber	string		// Порядковый номер
 	Group 			string		// Группа тестов, которой принадлежит Сюита
 	Scripts 		[]Script	// Сценарии
 }

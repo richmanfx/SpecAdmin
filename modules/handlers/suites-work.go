@@ -12,8 +12,9 @@ func AddSuite(context *gin.Context)  {
 
 	newSuite := context.PostForm("suite")							// Сюита из формы
 	suitesDescription := context.PostForm("suites_description")		// Описание Сюиты
+	suitesSerialNumber := context.PostForm("suites_serial_number")	// Порядковый номер
 	suitesGroup := context.PostForm("suites_group")					// Группа Сюиты
-	err := helpers.AddTestSuite(newSuite, suitesDescription, suitesGroup)
+	err := helpers.AddTestSuite(newSuite, suitesDescription, suitesSerialNumber, suitesGroup)
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
