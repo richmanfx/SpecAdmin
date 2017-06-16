@@ -14,6 +14,13 @@
                 </form>
             </div>
 
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#delGroup').on('shown.bs.modal', function (e) {
+                    $('#id_group', e.target).focus();
+                });
+            </script>
+
             <div class="modal-footer">
                 <button type="submit"
                         class="btn btn-success btn-lg"

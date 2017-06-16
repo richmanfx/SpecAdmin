@@ -9,11 +9,18 @@
                 <form id="edit_group_form" name="edit_group_form" method="post" action="/spec-admin/edit-group">
                     <input id="id_old_group" name="old_group"
                            placeholder=" Старое имя группы" required="required" type="text">
-                    <br>
+                    <br><br>
                     <input id="id_new_group" name="new_group"
                            placeholder=" Новое имя группы" required="required" type="text">
                 </form>
             </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#editGroup').on('shown.bs.modal', function (e) {
+                    $('#id_old_group', e.target).focus();
+                });
+            </script>
 
             <div class="modal-footer">
                 <button type="submit"

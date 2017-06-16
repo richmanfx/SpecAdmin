@@ -1,1 +1,45 @@
-﻿
+﻿body {
+    font-size: 1.5em;
+    font-family: Verdana;
+}
+
+div#menu {
+    background: #aaddff none repeat scroll 0 0;
+    font-family: Verdana;
+    color: black;
+    width: 100%;
+}
+
+span.title {
+    font-size: 2em;
+    padding: 0 1em;
+}
+
+td.suite-name {
+    width: 20%;
+    /*border: solid;*/
+    /*padding: 5px;*/
+    /*text-align: left;*/
+}
+
+td.numbers {
+    width: 3em;
+    /*border: solid;*/
+    text-align: right;
+}
+
+table.suite-table {
+    border: none;
+    width: 90%;
+
+}
+
+.error {
+    color: red;
+}
+
+input {
+    font-size: 1.5em;
+}
+
+

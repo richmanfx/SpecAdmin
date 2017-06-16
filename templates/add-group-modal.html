@@ -6,13 +6,19 @@
             </div>
 
             <div class="modal-body">
-
                 <form id="id_add_group_form" name="add_group_form" method="post" action="/spec-admin/add-group">
-                    <input id="id_group" name="group" placeholder=" Введи имя новой группы"
+                    <input id="id_group" name="group" placeholder=" Имя новой группы"
                            required="required" type="text">
                     <br>
                 </form>
             </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#addGroup').on('shown.bs.modal', function (e) {
+                    $('#id_group', e.target).focus();
+                });
+            </script>
 
             <div class="modal-footer">
                 <button type="submit"

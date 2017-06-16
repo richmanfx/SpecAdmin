@@ -1,11 +1,6 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
-<h1> SpecAdmin </h1>
-
-<br><br>
-Версия: {{ .Version }}<br>
-<br>
 Группы тестов:
 <p>
 {{ range .groupList }}
@@ -15,10 +10,10 @@
 {{ range .groupList }}
     <div id="divId_{{ .Name }}" style="display: none" align="center">
     {{ range .Suites}}
-    <table border="0" width="90%" cellpadding="5">
+    <table class="suite-table">
         <tr>
-            <td> {{ .SerialNumber }}. </td>
-            <td width="20%"> <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false"> {{ .Name }} </a> </td>
+            <td class="numbers"> {{ .SerialNumber }}. </td>
+            <td class="suite-name"> <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false"> {{ .Name }} </a> </td>
             <td> {{ .Description }} </td>
         </tr>
     </table>

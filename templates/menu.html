@@ -11,7 +11,7 @@
 {{ template "del-suite-modal.html" . }}
 
 <nav class="navbar navbar-default">
-    <div id="header" class="container">
+    <div id="menu" class="container">
         <ul class="nav navbar-nav">
             <li>
                 <a class="navbar-brand" href="/spec-admin"> В начало </a>
@@ -51,6 +51,10 @@
             <li>
                 <a class="navbar-brand" onclick="window.print();" href="#"> Распечатать </a>
             </li>
+        </ul>
+
+        <ul class="navbar-right">
+            Версия: {{ .Version }} <span class="title"> SpecAdmin </span>
         </ul>
     </div>
 </nav>
