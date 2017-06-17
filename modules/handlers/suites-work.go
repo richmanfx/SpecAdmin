@@ -3,8 +3,10 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"../helpers"
+	"../../models"
 	"fmt"
 	"net/http"
+	log "github.com/Sirupsen/logrus"
 )
 
 // Добавить сюиту в базу
@@ -60,4 +62,22 @@ func DelSuite(context *gin.Context)  {
 			},
 		)
 	}
+}
+
+// Редактировать сюиту, данные получить из базы
+func EditSuite(context *gin.Context)  {
+
+	editedSuite := context.PostForm("suite")							// Сюита из формы
+	log.Infof("Редактируется сюита: %v", editedSuite)
+
+	// Получить данные по сюите из БД
+	var suite models.Suite
+	var err error
+	suite, err = helpers.GetSuite(editedSuite)
+	if err != nil {panic(err)}
+
+	log.Infof("Сюита из БД: %v", suite)
+
+	// Вывести данные для редактирования
+
 }

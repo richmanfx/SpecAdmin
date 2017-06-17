@@ -4,6 +4,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
+	"../../models"
 )
 
 // Добавляет в базу новую сюиту тестов
@@ -54,4 +55,41 @@ func DelTestSuite(suitesName string) error {
 	}
 	db.Close()
 	return err
+}
+
+// Получает Сюиту из БД
+func GetSuite(suitesName string) (models.Suite, error)  {
+
+	// TODO: Добавятся позднее слайс со скриптами в данных Сюиты!!!
+
+	var err error
+	var suite models.Suite
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return suite, err }
+
+	// Получить данные о Сюите
+	log.Infof("Получение данных Сюиты '%s' из БД", suitesName)
+	rows, err := db.Query("SELECT description, serial_number ,name_group FROM tests_suits WHERE name=?", suitesName)
+	if err != nil {panic(err)}			// TODO: Обработку сделать и вывод в браузер
+
+	// Данные получить из результата запроса
+	var description string
+	var serial_number string
+	var name_group string
+	for rows.Next() {
+			err = rows.Scan(&description, &serial_number, &name_group)
+			if err != nil {panic(err)}
+			log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", description, serial_number, name_group)
+	}
+
+	// Заполнить данными Сюиту
+	suite.Name = suitesName
+	suite.Description = description
+	suite.SerialNumber = serial_number
+	suite.Group = name_group
+
+		db.Close()
+	return suite, err
 }
