@@ -1,17 +1,15 @@
-<div id="editGroup" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+<div id="editSuite" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
-                Переименовать группу тестов
+                Редактирование сюиты
             </div>
 
             <div class="modal-body">
-                <form id="id_edit_group_form" name="edit_group_form" method="post" action="/spec-admin/edit-group">
-                    <input id="id_old_group" name="old_group"
-                           placeholder=" Старое имя группы" required="required" type="text">
-                    <br><br>
-                    <input id="id_new_group" name="new_group"
-                           placeholder=" Новое имя группы" required="required" type="text">
+                <form id="id_edit_suite_form" name="edit_suite_form" method="post" action="/spec-admin/edit-suite">
+                        <input id="id_suite" name="suite" placeholder=" Имя редактируемой сюиты" required="required"
+                           type="text">
+                    <br>
                 </form>
             </div>
 
@@ -25,11 +23,11 @@
             <div class="modal-footer">
                 <button type="submit"
                         class="btn btn-success btn-lg"
-                        form="id_edit_group_form">
-                    Изменить имя группы
+                        form="id_edit_suite_form">
+                    Редактировать сюиту
                 </button>
 
-                <button form="id_edit_group_form"
+                <button form="id_edit_suite_form"
                         type="reset"
                         class="btn btn-success btn-lg">
                     Очистить
