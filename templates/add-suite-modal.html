@@ -1,4 +1,4 @@
-<div id="addSuite" class="modal fade" tabindex="-1" data-backdrop="static" data-keyboard="false">
+<div id="addSuite" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
@@ -14,8 +14,10 @@
                     <br>
                     <input id="id_suites_group" name="suites_group" placeholder=" Группа сюиты" required="required" type="text"><br>
                     <br>
-                    <textarea id="id_suites_description" name="suites_description" placeholder=" Описание сюиты" cols="45" rows="5">
+                    <div class="auto_width">
+                    <textarea id="id_suites_description" name="suites_description" placeholder=" Описание сюиты" rows="5">
                     </textarea>
+                    </div>
                 </form>
             </div>
 
