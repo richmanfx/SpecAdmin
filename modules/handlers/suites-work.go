@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	log "github.com/Sirupsen/logrus"
+	"strconv"
 )
 
 // Добавить сюиту в базу
@@ -72,8 +73,9 @@ func EditSuite(context *gin.Context)  {
 
 	// Получить данные о сюите из БД
 	var suite models.Suite
+	var suitesId int
 	var err error
-	suite, err = helpers.GetSuite(editedSuite)
+	suite, suitesId, err = helpers.GetSuite(editedSuite)
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -91,7 +93,45 @@ func EditSuite(context *gin.Context)  {
 				"title": 	"Редактирование сюиты",
 				"Version":	Version,
 				"suite": 	suite,
+				"suitesId":	suitesId,
 			},
 		)
 	}
+}
+
+// Обновить в базе сюиту после редактирования
+func UpdateAfterEditSuite(context *gin.Context)  {
+
+	//Данные из формы
+	suitesId, err := strconv.Atoi(context.PostForm("hidden_id"))
+	if err != nil {panic(err)}
+
+	suitesName := context.PostForm("suite")
+	suitesGroup := context.PostForm("suites_group")
+	suitesSerialNumber := context.PostForm("suites_serial_number")
+	suitesDescription := context.PostForm("suites_description")
+
+	// Обновление в базе
+	err = helpers.UpdateTestSuite(suitesId, suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
+				"message2": "",
+				"message3": "",
+			},
+		)
+	}
+
 }

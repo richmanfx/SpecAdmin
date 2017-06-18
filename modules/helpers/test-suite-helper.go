@@ -58,7 +58,7 @@ func DelTestSuite(suitesName string) error {
 }
 
 // Получает Сюиту из БД
-func GetSuite(suitesName string) (models.Suite, error)  {
+func GetSuite(suitesName string) (models.Suite, int, error)  {
 
 	// TODO: Добавятся позднее слайс со скриптами в данных Сюиты!!!
 
@@ -67,21 +67,22 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return suite, err }
+	if err != nil {	return suite, 0, err }
 
-	// Получить данные о Сюите
+	// Получить данные о Сюите и её ключ 'id'
 	log.Infof("Получение данных Сюиты '%s' из БД", suitesName)
-	rows, err := db.Query("SELECT description, serial_number ,name_group FROM tests_suits WHERE name=?", suitesName)
+	rows, err := db.Query("SELECT id,description, serial_number ,name_group FROM tests_suits WHERE name=?", suitesName)
 	if err != nil {panic(err)}			// TODO: Обработку сделать и вывод в браузер
 
 	// Данные получить из результата запроса
+	var id int
 	var description string
 	var serial_number string
 	var name_group string
 	for rows.Next() {
-			err = rows.Scan(&description, &serial_number, &name_group)
+			err = rows.Scan(&id, &description, &serial_number, &name_group)
 			if err != nil {panic(err)}
-			log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", description, serial_number, name_group)
+			log.Debugf("rows.Next из таблицы tests_suits: %d, %s, %s, %s", id, description, serial_number, name_group)
 	}
 
 	// Заполнить данными Сюиту
@@ -91,5 +92,27 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 	suite.Group = name_group
 
 		db.Close()
-	return suite, err
+	return suite, id, err
+}
+
+// Обновляет данные Сюиты в БД
+func UpdateTestSuite(suitesId int, suitesName string, suitesDescription string,
+					 suitesSerialNumber string, suitesGroup string) error {
+	var err error
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return err }
+
+	// Обновить данный о Сюите в БД
+	log.Infof("Обновление данных о Сюите '%s' в БД", suitesName)
+	_, err = db.Query("UPDATE tests_suits SET name=?, description=?, serial_number=?, name_group=? WHERE id=? LIMIT 1",
+		suitesName, suitesDescription, suitesSerialNumber, suitesGroup, suitesId)
+	if err == nil {
+		log.Infof("Успешно обновлены данные Сюиты '%s' в БД.", suitesName)
+	} else {
+		log.Infof("Ошибка обновления данныех Сюиты '%s' в БД.", suitesName)
+	}
+
+	return err
 }

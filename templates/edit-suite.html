@@ -1,7 +1,9 @@
 {{ template "header.html" .}}
 
 <div id="id_after_edit_suite">
-    <form id="id_edit_suite_form" name="edit_suite_form" method="post" action="/spec-admin/after-edit-suite">
+    <form id="id_after_edit_suite_form" name="after_edit_suite_form" method="post" action="/spec-admin/update-after-edit-suite">
+
+        <input type="hidden" name="hidden_id" value="{{ .suitesId }}"><br>
 
         <label for="id_suite"> Имя сюиты </label><br>
         <input id="id_suite" name="suite" value="{{ .suite.Name }}" required="required" type="text" autofocus><br><br>
@@ -20,7 +22,7 @@
     <br><br>
     <button type="submit"
             class="btn btn-success btn-lg"
-            form="id_edit_suite_form">
+            form="id_after_edit_suite_form">
         Сохранить
     </button>
     <button type="button"
