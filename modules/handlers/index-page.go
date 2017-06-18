@@ -13,6 +13,8 @@ var Version string = "2.1"
 
 func ShowIndexPage(context *gin.Context)  {
 
+	helpers.SetLogFormat()
+
 	groupList := make([]models.Group, 0, 0)	// Слайс из Групп
 
 	var err error

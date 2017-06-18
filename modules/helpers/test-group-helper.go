@@ -10,6 +10,8 @@ import (
 func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 	var err error
 
+	SetLogFormat()
+
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {	return groupList, err }
@@ -75,6 +77,8 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 func AddTestGroup(groupName string) error {
 	var err error
 
+	SetLogFormat()
+
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {
@@ -86,7 +90,7 @@ func AddTestGroup(groupName string) error {
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}
-		log.Infof("Вставлено строк: %v", affected)
+		log.Debugf("Вставлено строк: %v", affected)
 	}
 	db.Close()
 	return err
@@ -97,12 +101,14 @@ func AddTestGroup(groupName string) error {
 func DelTestGroup(groupName string) error {
 	var err error
 
+	SetLogFormat()
+
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {	return err }
 
 	// Удаление Группы из базы
-	log.Infof("Удаление Группы: %s", groupName)
+	log.Debugf("Удаление Группы: %s", groupName)
 	result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
 	if err == nil {
 		var affected int64
@@ -110,9 +116,9 @@ func DelTestGroup(groupName string) error {
 		if err == nil {
 			if affected == 0 {
 				err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
-				log.Infof("Ошибка удаления Группы '%s'", groupName)
+				log.Debugf("Ошибка удаления Группы '%s'", groupName)
 			}
-			log.Infof("Удалено строк в БД: %v", affected)
+			log.Debugf("Удалено строк в БД: %v", affected)
 		}
 	}
 	db.Close()
@@ -124,6 +130,8 @@ func DelTestGroup(groupName string) error {
 func EditTestGroup(oldName string, newName string) error {
 	var err error
 
+	SetLogFormat()
+
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {	return err }
@@ -134,11 +142,11 @@ func EditTestGroup(oldName string, newName string) error {
 
 	affected, err := result.RowsAffected()
 	if err != nil {panic(err)}
-	log.Infof("Изменено строк: %v", affected)
+	log.Debugf("Изменено строк: %v", affected)
 
 	if affected == 0 {
 		err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
-		log.Infof("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
+		log.Debugf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
 	}
 
 	db.Close()

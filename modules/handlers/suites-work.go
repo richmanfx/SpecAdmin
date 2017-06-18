@@ -13,6 +13,8 @@ import (
 // Добавить сюиту в базу
 func AddSuite(context *gin.Context)  {
 
+	helpers.SetLogFormat()
+
 	newSuite := context.PostForm("suite")							// Сюита из формы
 	suitesDescription := context.PostForm("suites_description")		// Описание Сюиты
 	suitesSerialNumber := context.PostForm("suites_serial_number")	// Порядковый номер
@@ -42,6 +44,8 @@ func AddSuite(context *gin.Context)  {
 // Удалить сюиту из базы
 func DelSuite(context *gin.Context)  {
 
+	helpers.SetLogFormat()
+
 	deletedSuite := context.PostForm("suite")							// Сюита из формы
 	err := helpers.DelTestSuite(deletedSuite)
 
@@ -68,8 +72,10 @@ func DelSuite(context *gin.Context)  {
 // Редактировать сюиту, данные получить из базы
 func EditSuite(context *gin.Context)  {
 
+	helpers.SetLogFormat()
+
 	editedSuite := context.PostForm("suite")							// Сюита из формы
-	log.Infof("Редактируется сюита: %v", editedSuite)
+	log.Debugf("Редактируется сюита: %v", editedSuite)
 
 	// Получить данные о сюите из БД
 	var suite models.Suite
@@ -87,7 +93,7 @@ func EditSuite(context *gin.Context)  {
 		)
 	} else {
 		// Вывести данные для редактирования
-		log.Infof("Сюита из БД: %v", suite)
+		log.Debugf("Сюита из БД: %v", suite)
 		context.HTML(http.StatusOK, "edit-suite.html",
 			gin.H{
 				"title": 	"Редактирование сюиты",
@@ -101,6 +107,8 @@ func EditSuite(context *gin.Context)  {
 
 // Обновить в базе сюиту после редактирования
 func UpdateAfterEditSuite(context *gin.Context)  {
+
+	helpers.SetLogFormat()
 
 	//Данные из формы
 	suitesId, err := strconv.Atoi(context.PostForm("hidden_id"))
