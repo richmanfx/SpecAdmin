@@ -39,5 +39,5 @@ func SetLogFormat() {
 	//customFormatter.Format()
 	log.SetFormatter(customFormatter)
 	customFormatter.FullTimestamp = true
-	log.SetLevel(log.InfoLevel)			// Уровень логирования
+	log.SetLevel(log.DebugLevel)			// Уровень логирования
 }

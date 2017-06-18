@@ -1,0 +1,52 @@
+<div id="addScript" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Добавить тестовый сценарий
+            </div>
+
+            <div class="modal-body">
+                <form id="id_add_script_form" name="add_script_form" method="post" action="/spec-admin/add-script">
+                    <div class="auto_width">
+                        <textarea id="id_script" name="script" placeholder=" Имя нового сценария" rows="2"></textarea>
+                    </div>
+                    <br>
+                    <input id="id_scripts_serial_number" name="scripts_serial_number" placeholder=" Порядковый номер" required="required" type="text"><br>
+                    <br>
+                    <input id="id_scripts_suite" name="script_suite" placeholder=" Сюита сценария" required="required" type="text"><br>
+                    <br>
+                </form>
+            </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#addScript').on('shown.bs.modal', function (e) {
+                    $('#id_add_script_form', e.target).focus();
+                });
+            </script>
+
+            <div class="modal-footer">
+                <button type="submit"
+                        class="btn btn-success btn-lg"
+                        form="id_add_script_form">
+                    Добавить
+                </button>
+
+                <button form="id_add_script_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
