@@ -70,14 +70,28 @@ func EditSuite(context *gin.Context)  {
 	editedSuite := context.PostForm("suite")							// Сюита из формы
 	log.Infof("Редактируется сюита: %v", editedSuite)
 
-	// Получить данные по сюите из БД
+	// Получить данные о сюите из БД
 	var suite models.Suite
 	var err error
 	suite, err = helpers.GetSuite(editedSuite)
-	if err != nil {panic(err)}
-
-	log.Infof("Сюита из БД: %v", suite)
-
-	// Вывести данные для редактирования
-
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка получения данных о сюите '%s'.", editedSuite),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		// Вывести данные для редактирования
+		log.Infof("Сюита из БД: %v", suite)
+		context.HTML(http.StatusOK, "edit-suite.html",
+			gin.H{
+				"title": 	"Редактирование сюиты",
+				"Version":	Version,
+				"suite": 	suite,
+			},
+		)
+	}
 }
