@@ -41,7 +41,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		script.Suite = name_suite
 		scriptList = append(scriptList, script)
 	}
-	log.Infof("Список сценариев: %v", scriptList)
+	log.Debugf("Список сценариев: %v", scriptList)
 
 	// Считать Сюиты из БД
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
@@ -69,9 +69,9 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		for _, script := range scriptList {		// Бежать по всем сценариям
 			if script.Suite == suite.Name {		// Если Сценарий принадлежит Сюите, то добавляем его
 				suite.Scripts = append(suite.Scripts, script)
-				log.Infof("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+				log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
 			} else {
-				log.Infof("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+				log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
 			}
 		}
 

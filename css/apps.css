@@ -14,6 +14,13 @@ div.auto_width {
     width: auto;
 }
 
+div.modal-header {
+    color: #0000ff;
+    font-size: 1.5em;
+    font-weight: bolder;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+
 span.title {
     font-size: 2em;
     padding: 0 1em;
@@ -50,7 +57,7 @@ td.script-numbers {
 }
 
 table.suite-table {
-    border: none;
+    background-color: #bfeeff;
     width: 90%;
 }
 
