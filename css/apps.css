@@ -19,6 +19,8 @@ span.title {
     padding: 0 1em;
 }
 
+
+
 td.suite-name {
     width: 20%;
     /*border: solid;*/
@@ -26,16 +28,36 @@ td.suite-name {
     /*text-align: left;*/
 }
 
-td.numbers {
+td.script-name {
+    width: 60%;
+    border: none;
+    /*padding: 5px;*/
+    /*text-align: left;*/
+}
+
+td.suite-numbers {
     width: 3em;
     /*border: solid;*/
     text-align: right;
+    color: red;
+}
+
+td.script-numbers {
+    width: 3em;
+    /*border: solid;*/
+    text-align: right;
+    color: #398439;
 }
 
 table.suite-table {
     border: none;
     width: 90%;
+}
 
+table.script-table {
+    border: none;
+    width: 90%;
+    padding: 1em;
 }
 
 .error {

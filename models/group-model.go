@@ -10,10 +10,10 @@ type Step struct {
 }
 
 type Script struct {
-	Name 			string
-	Number 			int			// Порядковый номер Сценария
-	Suite 			string		// Сюита, которой принадлежит Сценарий
-	Steps			[]Step		// Шаги
+	Name         	string
+	SerialNumber 	string    		// Порядковый номер Сценария
+	Suite        	string 		// Сюита, которой принадлежит Сценарий
+	Steps        	[]Step 		// Шаги
 }
 
 type Suite struct {

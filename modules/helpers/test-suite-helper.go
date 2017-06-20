@@ -69,8 +69,6 @@ func DelTestSuite(suitesName string) error {
 // Получает Сюиту из БД
 func GetSuite(suitesName string) (models.Suite, int, error)  {
 
-	// TODO: Добавятся позднее слайс со скриптами в данных Сюиты!!!
-
 	var err error
 	var suite models.Suite
 

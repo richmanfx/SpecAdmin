@@ -1,6 +1,8 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
+
+
 Группы тестов:
 <p>
 {{ range .groupList }}
@@ -12,15 +14,32 @@
     {{ range .Suites}}
     <table class="suite-table">
         <tr>
-            <td class="numbers"> {{ .SerialNumber }}. </td>
+            <td class="suite-numbers"> {{ .SerialNumber }}. </td>
             <td class="suite-name"> <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false"> {{ .Name }} </a> </td>
             <td> {{ .Description }} </td>
         </tr>
     </table>
+    <div id="divId_{{ .Name }}" style="display: none">
+
+        <table class="script-table">
+            {{ range .Scripts }}
+            <tr>
+                <td class="script-numbers"> </td>
+                <td class="script-numbers">{{ .SerialNumber }}.</td>
+                <td class="script-name"><a href="#">{{ .Name }}</a></td>
+                <td>ОР:</td>
+            </tr>
+            {{ end }}
+        </table>
+    </div>
+
+
     {{ end }}
+
 
     </div>
 {{end}}
+
 
 
 
