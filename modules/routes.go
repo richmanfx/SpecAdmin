@@ -20,5 +20,6 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("POST", "/spec-admin/update-after-edit-suite", handlers.UpdateAfterEditSuite)
 
 	router.Handle("POST", "/spec-admin/add-script", handlers.AddScript)
+	router.Handle("POST", "/spec-admin/del-script", handlers.DelScript)
 }
 

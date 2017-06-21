@@ -41,7 +41,7 @@ func AddSuite(context *gin.Context)  {
 	}
 }
 
-// Удалить сюиту из базы
+// Удалить сюиту из БД
 func DelSuite(context *gin.Context)  {
 
 	helpers.SetLogFormat()

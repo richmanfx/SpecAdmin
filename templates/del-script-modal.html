@@ -1,0 +1,48 @@
+<div id="delScript" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Удалить сценарий
+            </div>
+
+            <div class="modal-body">
+
+                <form id="id_del_script_form" name="del_script_form" method="post" action="/spec-admin/del-script">
+                    <input id="id_script" name="script" placeholder=" Введи имя скрипта"
+                           required="required" type="text">
+                    <br>
+                </form>
+            </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#delScript').on('shown.bs.modal', function (e) {
+                    $('#id_script', e.target).focus();
+                });
+            </script>
+
+            <div class="modal-footer">
+                <button type="submit"
+                        class="btn btn-success btn-lg"
+                        form="id_del_script_form">
+                    Удалить
+                </button>
+
+                <button form="id_del_script_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

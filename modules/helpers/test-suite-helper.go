@@ -8,13 +8,10 @@ import (
 	"runtime"
 )
 
-
-
 // Добавляет в базу новую сюиту тестов
 // Получает имя новой сюиты, описание этой сюиты и группу тестов, в которую вносится сюита
 func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumber string, suitesGroup string) error {
 	var err error
-
 	SetLogFormat()
 
 	// Подключиться к БД
@@ -38,9 +35,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 // Удаляет из базы сюиту
 // Получает имя удаляемой сюиты
 func DelTestSuite(suitesName string) error {
-
 	var err error
-
 	SetLogFormat()
 
 	// Подключиться к БД
@@ -48,16 +43,17 @@ func DelTestSuite(suitesName string) error {
 	if err != nil {	return err }
 
 	// Удаление Сюиты из базы данных
-	log.Debugf("Удаление Сюиты: %s", suitesName)
+	log.Debugf("Удаление Сюиты '%s'.", suitesName)
 	result, err := db.Exec("DELETE FROM tests_suits WHERE name=?", suitesName)
 	if err == nil {
 		var affected int64
 		affected, err = result.RowsAffected()
 		if err == nil {
 			if affected == 0 {
-				_, fn, line, _ := runtime.Caller(1)
+				_, goFunctionName, lineNumber, _ := runtime.Caller(1)
 				err = fmt.Errorf("Ошибка удаления Сюиты '%s'. Есть такая Сюита?", suitesName)
-				log.Debugf("Ошибка удаления Сюиты '%s'. file=%v, line=%v", suitesName, fn, line)
+				log.Debugf("Ошибка удаления Сюиты '%s'. goFunctionName=%v, lineNumber=%v",
+					suitesName, goFunctionName, lineNumber)
 			}
 			log.Debugf("Удалено строк в БД: %v", affected)
 		}
@@ -68,7 +64,6 @@ func DelTestSuite(suitesName string) error {
 
 // Получает Сюиту из БД
 func GetSuite(suitesName string) (models.Suite, int, error)  {
-
 	var err error
 	var suite models.Suite
 

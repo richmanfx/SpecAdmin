@@ -38,3 +38,29 @@ func AddScript(context *gin.Context)  {
 		)
 	}
 }
+
+// Удалить сценарий из БД
+func DelScript(context *gin.Context)  {
+	helpers.SetLogFormat()
+
+	deletedScript := context.PostForm("script")			// Скрипт из формы
+	err := helpers.DelTestScript(deletedScript)
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
+				"message2": "",	"message3": "",
+			},
+		)
+	}
+}
