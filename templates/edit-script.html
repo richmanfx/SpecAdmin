@@ -6,7 +6,9 @@
         <input type="hidden" name="hidden_id" value="{{ .scriptId }}"><br>
 
         <label for="id_script"> Имя сценария </label><br>
-        <input id="id_script" name="script" value="{{ .script.Name }}" required="required" type="text" autofocus><br><br>
+        <div class="auto_width">
+            <textarea id="id_script" name="script" rows="3" autofocus>{{ .script.Name }}</textarea>
+        </div>
 
         <label for="id_scripts_suite"> Сюита тестового сценария</label><br>
         <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}" required="required" type="text"><br><br>

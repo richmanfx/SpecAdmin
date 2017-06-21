@@ -72,28 +72,24 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 
 	// Получить данные о Сценарии и его ключ 'id'
 	log.Infof("Получение данных Сценария '%s' из БД.", scriptsName)
-	rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name=?", scriptsName)
-
-
-	log.Infof(" ДО IF - Получение данных Сценария из БД => ошибка:'%v', rows:'%v'.", err, rows)
+	rows := db.QueryRow("SELECT id,serial_number,name_suite FROM tests_scripts WHERE name=?", scriptsName)
 
 	var id int
 	var serialNumber string
 	var suiteName string
 	if err == nil {
 		// Получить данные из результата запроса
-		for rows.Next() {
-			err = rows.Scan(&id, &serialNumber, &suiteName)
-			if err != nil {
-				panic(err)
-			}
+		err = rows.Scan(&id, &serialNumber, &suiteName)
+		if err != nil {
+			log.Infof("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
+		} else {
 			log.Infof("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
-		}
 
-		// Заполнить данными Сценарий
-		script.Name = scriptsName
-		script.SerialNumber = serialNumber
-		script.Suite = suiteName
+			// Заполнить данными Сценарий
+			script.Name = scriptsName
+			script.SerialNumber = serialNumber
+			script.Suite = suiteName
+		}
 	}
 	db.Close()
 	log.Infof("Получение данных Сценария из БД => ошибка '%v'.", err)

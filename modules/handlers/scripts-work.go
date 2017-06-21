@@ -92,13 +92,12 @@ func EditScript(context *gin.Context)  {
 		)
 	} else {
 		// Вывести данные для редактирования
-		log.Infof("Сценарий из БД: %v", script)
 		context.HTML(http.StatusOK, "edit-script.html",
 			gin.H{
 				"title": 	"Редактирование сценария",
 				"Version":	Version,
-				"suite": 	script,
-				"suitesId":	scriptId,
+				"script": 	script,
+				"scriptId":	scriptId,
 			},
 		)
 	}
