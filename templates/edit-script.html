@@ -1,0 +1,32 @@
+{{ template "header.html" .}}
+
+<div id="id_after_edit_script">
+    <form id="id_after_edit_script_form" name="after_edit_script_form" method="post" action="/spec-admin/update-after-edit-script">
+
+        <input type="hidden" name="hidden_id" value="{{ .scriptId }}"><br>
+
+        <label for="id_script"> Имя сценария </label><br>
+        <input id="id_script" name="script" value="{{ .script.Name }}" required="required" type="text" autofocus><br><br>
+
+        <label for="id_scripts_suite"> Сюита тестового сценария</label><br>
+        <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}" required="required" type="text"><br><br>
+
+        <label for="id_scripts_serial_number">Порядковый номер сценария</label><br>
+        <input id="id_scripts_serial_number" name="scripts_serial_number" value="{{ .script.SerialNumber }}" required="required" type="text"><br><br>
+
+    </form>
+    <br><br>
+    <button type="submit"
+            class="btn btn-success btn-lg"
+            form="id_after_edit_script_form">
+        Сохранить
+    </button>
+    <a type="button"
+       class="btn btn-success btn-lg"
+       href="/spec-admin">
+        Отмена
+    </a>
+
+</div>
+
+{{ template "footer.html" .}}

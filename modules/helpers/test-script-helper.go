@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"runtime"
+	"../../models"
 )
 
 func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite string) error {
@@ -39,22 +40,84 @@ func DelTestScript(scriptName string) error {
 	if err != nil {	return err }
 
 	// Удаление скрипта из БД
-	log.Infof("Удаление Скрипта '%s'.", scriptName)
+	log.Debugf("Удаление Скрипта '%s'.", scriptName)
 	result, err := db.Exec("DELETE FROM tests_scripts WHERE name=?", scriptName)
 	if err == nil {
 		var affected int64
 		affected, err = result.RowsAffected()
 		if err == nil {
 			if affected == 0 {
-				_, goFunctionName, lineNumber, _ := runtime.Caller(1)
+				_, goModuleName, lineNumber, _ := runtime.Caller(1)
 				err = fmt.Errorf("Ошибка удаления Скрипта '%s'. Есть такой Скрипт?", scriptName)
-				log.Infof("Ошибка удаления Скрипта '%s'. goFunctionName=%v, lineNumber=%v",
-					scriptName, goFunctionName, lineNumber)
+				log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
+					scriptName, goModuleName, lineNumber)
 			}
-			log.Infof("Удалено строк в БД: %v.", affected)
+			log.Debugf("Удалено строк в БД: %v.", affected)
 		}
 	}
 	
 	db.Close()
+	return err
+}
+
+// Возвращает Сценарий из БД
+func GetScript(scriptsName string) (models.Script, int, error) {
+	var err error
+	var script models.Script
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return script, 0, err }
+
+	// Получить данные о Сценарии и его ключ 'id'
+	log.Infof("Получение данных Сценария '%s' из БД.", scriptsName)
+	rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name=?", scriptsName)
+
+
+	log.Infof(" ДО IF - Получение данных Сценария из БД => ошибка:'%v', rows:'%v'.", err, rows)
+
+	var id int
+	var serialNumber string
+	var suiteName string
+	if err == nil {
+		// Получить данные из результата запроса
+		for rows.Next() {
+			err = rows.Scan(&id, &serialNumber, &suiteName)
+			if err != nil {
+				panic(err)
+			}
+			log.Infof("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
+		}
+
+		// Заполнить данными Сценарий
+		script.Name = scriptsName
+		script.SerialNumber = serialNumber
+		script.Suite = suiteName
+	}
+	db.Close()
+	log.Infof("Получение данных Сценария из БД => ошибка '%v'.", err)
+	return script, id, err
+}
+
+// Обновить данные Сценария в БД
+func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string, scriptsSuite string) error {
+	var err error
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return err }
+
+	// Обновить данные о Сценарии в БД
+	log.Infof("Обновление данных о Сценарии '%s' в БД", scriptName)
+	_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
+		scriptName, scriptSerialNumber, scriptsSuite, scriptId)
+	if err == nil {
+		log.Infof("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
+	} else {
+		log.Infof("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+	}
+
 	return err
 }
