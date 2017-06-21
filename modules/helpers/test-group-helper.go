@@ -74,9 +74,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 				log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
 			}
 		}
-
 		suitesList = append(suitesList, suite)
-
 		log.Debugf("Список Сюит: %v", suitesList)
 	}
 
