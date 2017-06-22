@@ -2,7 +2,7 @@
 rem Архивация и перемещение на BestServer для последующего деплоя
 
 rem Архивация
-rar a -R specadmin.rar specadmin css js templates
+rar a -R specadmin.rar specadmin css js templates sql
 
 rem Заливка по SSH
 scp specadmin.rar zoer@bestserver:tmp/spec-admin/specadmin.rar
