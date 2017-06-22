@@ -74,7 +74,7 @@ func EditScript(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	editedScript := context.PostForm("script")					// Скрипт из формы
-	log.Infof("Редактируется Сценарий: '%v'.", editedScript)
+	log.Debugf("Редактируется Сценарий: '%v'.", editedScript)
 
 	// Получить данные о сценарии из БД
 	var script models.Script
@@ -109,9 +109,7 @@ func UpdateAfterEditScript(context *gin.Context) {
 
 	//Данные из формы
 	scriptId, err := strconv.Atoi(context.PostForm("hidden_id"))
-	if err != nil {
-		panic(err)
-	}
+	if err != nil { panic(err) }
 
 	scriptName := context.PostForm("script")
 	scriptSerialNumber := context.PostForm("scripts_serial_number")

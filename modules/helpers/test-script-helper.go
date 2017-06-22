@@ -71,7 +71,7 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 	if err != nil {	return script, 0, err }
 
 	// Получить данные о Сценарии и его ключ 'id'
-	log.Infof("Получение данных Сценария '%s' из БД.", scriptsName)
+	log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
 	rows := db.QueryRow("SELECT id,serial_number,name_suite FROM tests_scripts WHERE name=?", scriptsName)
 
 	var id int
@@ -81,9 +81,9 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 		// Получить данные из результата запроса
 		err = rows.Scan(&id, &serialNumber, &suiteName)
 		if err != nil {
-			log.Infof("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
+			log.Debugf("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
 		} else {
-			log.Infof("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
+			log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
 
 			// Заполнить данными Сценарий
 			script.Name = scriptsName
@@ -92,7 +92,7 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 		}
 	}
 	db.Close()
-	log.Infof("Получение данных Сценария из БД => ошибка '%v'.", err)
+	log.Debugf("Получение данных Сценария из БД => ошибка '%v'.", err)
 	return script, id, err
 }
 
@@ -106,13 +106,13 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 	if err != nil {	return err }
 
 	// Обновить данные о Сценарии в БД
-	log.Infof("Обновление данных о Сценарии '%s' в БД", scriptName)
+	log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
 	_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
 		scriptName, scriptSerialNumber, scriptsSuite, scriptId)
 	if err == nil {
-		log.Infof("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
+		log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
 	} else {
-		log.Infof("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+		log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
 	}
 
 	return err

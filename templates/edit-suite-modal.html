@@ -10,16 +10,16 @@
 
             <div class="modal-body">
                 <form id="id_edit_suite_form" name="edit_suite_form" method="post" action="/spec-admin/edit-suite">
-                        <input id="id_suite" name="suite" placeholder=" Имя редактируемой сюиты" required="required"
-                           type="text">
+                    <input id="id_suite" name="suite" placeholder=" Имя редактируемой сюиты"
+                           required="required" type="text">
                     <br>
                 </form>
             </div>
 
             <!-- Автофокус в поле ввода в модальном окне -->
             <script>
-                $('#editGroup').on('shown.bs.modal', function (e) {
-                    $('#id_old_group', e.target).focus();
+                $('#editSuite').on('shown.bs.modal', function (e) {
+                    $('#id_suite', e.target).focus();
                 });
             </script>
 

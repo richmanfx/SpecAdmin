@@ -71,7 +71,6 @@ func DelSuite(context *gin.Context)  {
 
 // Редактировать сюиту, данные получить из базы
 func EditSuite(context *gin.Context)  {
-
 	helpers.SetLogFormat()
 
 	editedSuite := context.PostForm("suite")							// Сюита из формы
@@ -105,23 +104,21 @@ func EditSuite(context *gin.Context)  {
 	}
 }
 
-// Обновить в базе сюиту после редактирования
+// Обновить в БД сюиту после редактирования
 func UpdateAfterEditSuite(context *gin.Context)  {
-
 	helpers.SetLogFormat()
 
 	//Данные из формы
 	suitesId, err := strconv.Atoi(context.PostForm("hidden_id"))
-	if err != nil {panic(err)}
+	if err != nil { panic(err) }
 
 	suitesName := context.PostForm("suite")
 	suitesGroup := context.PostForm("suites_group")
 	suitesSerialNumber := context.PostForm("suites_serial_number")
 	suitesDescription := context.PostForm("suites_description")
 
-	// Обновление в базе
+	// Обновить в БД
 	err = helpers.UpdateTestSuite(suitesId, suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

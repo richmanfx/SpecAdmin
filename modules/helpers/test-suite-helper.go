@@ -74,29 +74,29 @@ func GetSuite(suitesName string) (models.Suite, int, error)  {
 
 	// Получить данные о Сюите и её ключ 'id'
 	log.Debugf("Получение данных Сюиты '%s' из БД.", suitesName)
-	rows, err := db.Query("SELECT id, description, serial_number, name_group FROM tests_suits WHERE name=?", suitesName)
+	rows := db.QueryRow("SELECT id,description,serial_number,name_group FROM tests_suits WHERE name=?", suitesName)
 
 	var id int
 	var description string
 	var serialNumber string
 	var groupName string
-	if err != nil {
+	if err == nil {
 		// Данные получить из результата запроса
-		for rows.Next() {
-			err = rows.Scan(&id, &description, &serialNumber, &groupName)
-			if err != nil {
-				panic(err)
-			}
+		err = rows.Scan(&id, &description, &serialNumber, &groupName)
+		if err != nil {
+			log.Debugf("Ошибка при получении данных по сюите '%s' из БД.", suitesName)
+		} else {
 			log.Debugf("rows.Next из таблицы tests_suits: %d, %s, %s, %s", id, description, serialNumber, groupName)
-		}
 
-		// Заполнить данными Сюиту
-		suite.Name = suitesName
-		suite.Description = description
-		suite.SerialNumber = serialNumber
-		suite.Group = groupName
+			// Заполнить данными Сюиту
+			suite.Name = suitesName
+			suite.Description = description
+			suite.SerialNumber = serialNumber
+			suite.Group = groupName
+		}
 	}
 	db.Close()
+	log.Debugf("Получение данных Сюиты из БД => ошибка '%v'.", err)
 	return suite, id, err
 }
 
