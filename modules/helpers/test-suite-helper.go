@@ -26,7 +26,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}
-		log.Debugf("Вставлено строк: %v", affected)
+		log.Debugf("Вставлено %d строк в таблицу 'tests_suits'.", affected)
 	}
 	db.Close()
 	return err

@@ -17,7 +17,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	if err != nil {	return err }
 
 	// Добавление Скрипта в БД
-	log.Debugf("Добавление Скрипта: %s, Порядковый номер '%s' Сюита: %s",
+	log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",
 		newScriptName, scriptSerialNumber, scriptSuite)
 
 	result, err := db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)",
@@ -25,7 +25,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}
-		log.Debugf("Вставлено строк: %v.", affected)
+		log.Debugf("Вставлено %d строк в таблиц 'tests_scripts'.", affected)
 	}
 	db.Close()
 	return err

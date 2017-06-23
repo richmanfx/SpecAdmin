@@ -15,6 +15,8 @@
 {{ template "del-script-modal.html" . }}
 {{ template "edit-script-modal.html" . }}
 
+{{ template "add-step-modal.html" . }}
+
 <nav class="navbar navbar-default">
     <div id="menu" class="container">
         <ul class="nav navbar-nav">
@@ -47,6 +49,15 @@
                     <li><a class="navbar-brand" data-toggle="modal" data-target="#delScript" href="#"> Удалить сценарий </a></li>
                     <li><a class="navbar-brand" data-toggle="modal" data-target="#editScript" href="#"> Редактировать сценарий </a></li>
                 </ul>
+            </li>
+
+            <li>
+            <a class="navbar-brand dropdown-toggle" data-toggle="dropdown" href="#"> Шаги <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+                <li><a class="navbar-brand" data-toggle="modal" data-target="#addStep" href="#"> Добавить шаг </a></li>
+                <li><a class="navbar-brand" data-toggle="modal" data-target="#delStep" href="#"> Удалить шаг </a></li>
+                <li><a class="navbar-brand" data-toggle="modal" data-target="#editStep" href="#"> Редактировать шаг </a></li>
+            </ul>
             </li>
 
             <li>

@@ -21,6 +21,7 @@ func AddScript(context *gin.Context)  {
 	scriptSuite := context.PostForm("script_suite")
 
 	err := helpers.AddTestScript(newScript, scriptSerialNumber, scriptSuite)
+	
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
