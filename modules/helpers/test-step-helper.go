@@ -20,17 +20,33 @@ func AddTestStep(
 	log.Infof("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
 		newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
 
-	result, err := db.Exec("INSERT INTO tests_steps (name, serial_number, description, expected_result, name_script, name_suite) VALUES (?,?,?,?,?,?) 	",
-		newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScriptName, scriptsSuiteName)
+	// Получить ID из промежуточной таблицы, соответствующий связке Сюиты и Сценария
+	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+	log.Infof("requestResult: %v", requestResult)
 
-	// Подзапросы:
-	// SELECT * from tests_scripts WHERE name='Получение тестовых данных и подготовка окружения' and name_suite='FnsOtchetnostUL_Dual'
-	// SELECT * from tests_scripts WHERE name='Получение тестовых данных и подготовка окружения' and name_suite='FnsOtchetnostUL_Normal'
-
-	if err == nil {
-		affected, err := result.RowsAffected()
+	// Получить ID сввязки Сценария и Сюиты
+	var id int
+	err = requestResult.Scan(&id)
+	log.Infof("ID: %d", id)
+	if id == 0 {
+		log.Infof("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
+	} else {
+		// В основную таблицу с Шагами
+		result1, err := db.Exec("INSERT INTO tests_steps (name, serial_number, description, expected_result) VALUES (?,?,?,?)",
+								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult)
 		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблицу 'tests_steps'.", affected)
+
+		// Получить ID новой записи в таблице tests_steps
+		stepsId, err := result1.LastInsertId()
+		if err != nil {panic(err)}
+
+		// В промежуточную таблицу с ID-шниками
+		result2, err := db.Exec("INSERT INTO intermediate_scripts_steps (scripts_id, steps_id) VALUES (?,?)", id, stepsId)
+		if err == nil {
+			affected, err := result2.RowsAffected()
+			if err != nil {panic(err)}
+			log.Infof("Вставлено %d строк в таблицу 'intermediate_scripts_steps'.", affected)
+		}
 	}
 	db.Close()
 	return err
