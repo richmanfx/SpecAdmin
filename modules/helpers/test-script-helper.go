@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"runtime"
 	"../../models"
+	"github.com/stretchr/testify/suite"
 )
 
 func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite string) error {
@@ -116,4 +117,52 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 	}
 
 	return err
+}
+
+
+// Получить список сценариев
+func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
+
+	// Получить все Шаги
+	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
+	stepsList, err := GetStepsList(stepsList)
+
+	// Запрос всех Сценариев из БД
+	rows, err := db.Query("SELECT name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
+	if err != nil {panic(err)}
+
+	// Данные получить из результата запроса
+	for rows.Next() {
+		var name string
+		var serial_number string
+		var name_suite string
+		err = rows.Scan(&name, &serial_number, &name_suite)
+		if err != nil {
+			panic(err)
+		}
+		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s", name, serial_number, name_suite)
+
+		// Заполнить Сценариями список Сценариев
+		var script models.Script
+		script.Name = name
+		script.SerialNumber = serial_number
+		script.Suite = name_suite
+
+		// Закинуть Шаги в соответствующие Сценарии
+		for _, step := range stepsList { // Бежать по всем Шагам
+
+			// Если Шаг принадлежит Сценарию, то добавляем его // TODO: КАК ОПРЕДЕЛИТЬ - ЗАПРОСОМ?
+			if step.Id == steps_id-из промежуточной таблицы (запросом?) {
+				script Scripts = append(suite.Scripts, step) // TODO !!!!
+				log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+			} else {
+				log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+			}
+		}
+
+		scriptsList = append(scriptsList, script)
+		log.Debugf("Список сценариев: %v", scriptsList)
+	}
+
+	return scriptsList, err
 }

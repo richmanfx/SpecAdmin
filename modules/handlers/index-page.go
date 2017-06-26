@@ -9,10 +9,9 @@ import (
 	"../../models"
 )
 
-var Version string = "3.0"
+var Version string = "3.1"
 
 func ShowIndexPage(context *gin.Context)  {
-
 	helpers.SetLogFormat()
 
 	groupList := make([]models.Group, 0, 0)	// Слайс из Групп
@@ -44,4 +43,41 @@ func ShowIndexPage(context *gin.Context)  {
 			},
 		)
 	}
+}
+
+func ShowSuitesIndex(context *gin.Context)  {
+	var err error
+	helpers.SetLogFormat()
+
+	// Данные из формы
+	groupName := context.PostForm("group_name")
+
+	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
+
+	// Сформировать список Сюит Группы из БД
+	suitesList, err = helpers.GetSuitesList(groupName)
+
+	if err != nil {
+		log.Infof("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)
+
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка при получении из БД списка Сюит для Группы тестов",
+				"message3": 	fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(
+			http.StatusOK,
+			"suites-index.html",
+			gin.H{
+				"title":        "SpecAdmin",
+				"Version":      Version,
+				"suitesList": 	suitesList,
+			},
+		)
+	}
+
 }

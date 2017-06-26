@@ -9,6 +9,7 @@ func InitRoutes(router *gin.Engine) {
 
 	// Роутинг страницы: метод, путь -> обработчик
 	router.Handle("GET", "/spec-admin", handlers.ShowIndexPage)
+	router.Handle("GET", "/spec-admin/show-group", handlers.ShowSuitesIndex)
 
 	router.Handle("POST", "/spec-admin/add-group", handlers.AddGroup)
 	router.Handle("POST", "/spec-admin/del-group", handlers.DelGroup)
@@ -25,6 +26,5 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("POST", "/spec-admin/update-after-edit-script", handlers.UpdateAfterEditScript)
 
 	router.Handle("POST", "/spec-admin/add-step", handlers.AddStep)
-
+	router.Handle("POST", "/spec-admin/del-step", handlers.DelStep)
 }
-

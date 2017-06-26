@@ -10,7 +10,7 @@ import (
 	_ "strconv"
 )
 
-// Добавить в БД новый Шаг
+// Добавить новый Шаг
 func AddStep(context *gin.Context)  {
 
 	helpers.SetLogFormat()
@@ -47,3 +47,56 @@ func AddStep(context *gin.Context)  {
 		)
 	}
 }
+
+
+// Удалить Шаг
+func DelStep(context *gin.Context)  {
+	helpers.SetLogFormat()
+
+	// Данные из HTML-формы
+	deletedStep := context.PostForm("step")
+	stepsScript := context.PostForm("script")
+	scriptsSuite := context.PostForm("suite")
+
+	err := helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
+				"message2": "",	"message3": "",
+			},
+		)
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

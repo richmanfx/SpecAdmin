@@ -21,30 +21,13 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 
 
 	// Считать Сценарии из БД
-	scriptList := make([]models.Script, 0, 0)	// Слайс из Сценариев
-	// Запрос всех Сценариев из БД
-	rows, err := db.Query("SELECT name, serial_number, name_suite FROM tests_scripts  ORDER BY serial_number")
-	if err != nil {panic(err)}
-	// Данные получить из результата запроса
-	for rows.Next() {
-		var name string
-		var serial_number string
-		var name_suite string
-		err = rows.Scan(&name, &serial_number, &name_suite)
-		if err != nil {panic(err)}
-		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s", name, serial_number, name_suite)
-
-		// Заполнить Сценариями список Сценариев
-		var script models.Script
-		script.Name = name
-		script.SerialNumber = serial_number
-		script.Suite = name_suite
-		scriptList = append(scriptList, script)
-	}
-	log.Debugf("Список сценариев: %v", scriptList)
+	scriptsList := make([]models.Script, 0, 0) // Слайс из Сценариев
+	scriptsList, err = GetScriptList(scriptsList)
 
 	// Считать Сюиты из БД
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
+	suitesList, err = GetSuitesList(suitesList)
+
 	// Запрос Сюит из БД, получить записи
 	rows, err = db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
 	if err != nil {panic(err)}
@@ -66,7 +49,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		suite.Group = name_group
 
 		// Закинуть Сценарии в соответствующие Сюиты
-		for _, script := range scriptList {		// Бежать по всем сценариям
+		for _, script := range scriptsList { // Бежать по всем сценариям
 			if script.Suite == suite.Name {		// Если Сценарий принадлежит Сюите, то добавляем его
 				suite.Scripts = append(suite.Scripts, script)
 				log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)

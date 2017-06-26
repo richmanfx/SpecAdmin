@@ -1,37 +1,45 @@
-<div id="delScript" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+<div id="delStep" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                Удалить сценарий
+                Удалить шаг из сценария
             </div>
 
             <div class="modal-body">
 
-                <form id="id_del_script_form" name="del_script_form" method="post" action="/spec-admin/del-script">
-                    <input id="id_script" name="script" placeholder=" Введи имя сценария"
+                <form id="id_del_step_form" name="del_step_form" method="post" action="/spec-admin/del-step">
+                    <input id="id_step" name="step" placeholder=" Введи имя удаляемого шага"
                            required="required" type="text">
-                    <br>
+                    <br><br>
+
+                    <input id="id_script" name="script" placeholder=" Сценарий, содержащий шаг"
+                           required="required" type="text">
+                    <br><br>
+
+                    <input id="id_suite" name="suite" placeholder=" Сюита, содержащая сценарий"
+                           required="required" type="text">
+                    <br><br>
                 </form>
             </div>
 
             <!-- Автофокус в поле ввода в модальном окне -->
             <script>
-                $('#delScript').on('shown.bs.modal', function (e) {
-                    $('#id_script', e.target).focus();
+                $('#delStep').on('shown.bs.modal', function (e) {
+                    $('#id_step', e.target).focus();
                 });
             </script>
 
             <div class="modal-footer">
                 <button type="submit"
                         class="btn btn-success btn-lg"
-                        form="id_del_script_form">
+                        form="id_del_step_form">
                     Удалить
                 </button>
 
-                <button form="id_del_script_form"
+                <button form="id_del_step_form"
                         type="reset"
                         class="btn btn-success btn-lg">
                     Очистить форму

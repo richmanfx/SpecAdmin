@@ -3,59 +3,17 @@
 
 
 
-Группы тестов:
+<span class="title">Группы тестов:</span>
 <p>
 {{ range .groupList }}
-    <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false">{{ .Name }}</a>
+    <div class="group_list">
+        <form method="post" action="/spec-admin/view-group">
+            <input class="group_name" type="submit" value="{{ .Name }}" name="group_name">
+        </form>
+    </div>
 {{ end }}
 
-{{ range .groupList }}
-    <div id="divId_{{ .Name }}" style="display: none" align="center">
-    {{ range .Suites}}
-    <table class="suite-table">
-        <tr>
-            <td class="suite-numbers"> {{ .SerialNumber }}. </td>
-            <td class="suite-name"> <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false"> {{ .Name }} </a> </td>
-            <td> {{ .Description }} </td>
-        </tr>
-    </table>
-    <div id="divId_{{ .Name }}" style="display: none">
 
-        <table class="script-table">
-            {{ range .Scripts }}
-            <tr>
-                <td class="script-numbers"> </td>
-                <td class="script-numbers">{{ .SerialNumber }}.</td>
-                <td class="script-name"><a href="#">{{ .Name }}</a></td>
-                <td>ОР:</td>
-            </tr>
-            {{ end }}
-        </table>
-    </div>
-
-
-    {{ end }}
-
-
-    </div>
-{{end}}
-
-
-
-
-
-<script>
-    function anichange (objName) {
-        if ( $(objName).css('display') === 'none' ) {
-            $(objName).animate({height: 'show'}, 400);
-        } else {
-            $(objName).animate({height: 'hide'}, 200);
-        }
-    }
-    function anichange(a) {
-        $(a).slideToggle(400);
-    }
-</script>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

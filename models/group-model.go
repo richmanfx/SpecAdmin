@@ -1,15 +1,18 @@
 package models
 
+import "google.golang.org/api/identitytoolkit/v3"
+
 type Step struct {
+	Id 			   int
 	Name           string
 	SerialNumber   int			// Порядковый номер Шага
 	Description    string		// Что делать в Шаге
 	ExpectedResult string		// Ожидаемый результат
 	ScreenShotPath string		// Ссылка на скриншот
-	Script         string		// Сценарий, которому принадлежит Шаг
 }
 
 type Script struct {
+	Id 				int
 	Name         	string
 	SerialNumber 	string    	// Порядковый номер Сценария
 	Suite        	string 		// Сюита, которой принадлежит Сценарий
