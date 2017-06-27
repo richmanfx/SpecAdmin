@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"runtime"
 	"../../models"
-	"github.com/stretchr/testify/suite"
 )
 
 func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite string) error {
@@ -125,7 +124,7 @@ func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
 
 	// Получить все Шаги
 	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
-	stepsList, err := GetStepsList(stepsList)
+	//stepsList, err := GetStepsList(stepsList)
 
 	// Запрос всех Сценариев из БД
 	rows, err := db.Query("SELECT name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
@@ -151,13 +150,13 @@ func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
 		// Закинуть Шаги в соответствующие Сценарии
 		for _, step := range stepsList { // Бежать по всем Шагам
 
-			// Если Шаг принадлежит Сценарию, то добавляем его // TODO: КАК ОПРЕДЕЛИТЬ - ЗАПРОСОМ?
-			if step.Id == steps_id-из промежуточной таблицы (запросом?) {
-				script Scripts = append(suite.Scripts, step) // TODO !!!!
-				log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-			} else {
+			//// Если Шаг принадлежит Сценарию, то добавляем его // TODO: КАК ОПРЕДЕЛИТЬ - ЗАПРОСОМ?
+			//if step.Id == steps_id-из промежуточной таблицы (запросом?) {
+			//	script Scripts = append(suite.Scripts, step) // TODO !!!!
+			//	log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+			//} else {
 				log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-			}
+			//}
 		}
 
 		scriptsList = append(scriptsList, script)

@@ -51,14 +51,15 @@ func ShowSuitesIndex(context *gin.Context)  {
 
 	// Данные из формы
 	groupName := context.PostForm("group_name")
+	log.Debugf("Полученное из формы имя группы: '%s'", groupName)
 
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
 
 	// Сформировать список Сюит Группы из БД
-	suitesList, err = helpers.GetSuitesList(groupName)
+	suitesList, err = helpers.GetSuitesListInGroup(groupName)
 
 	if err != nil {
-		log.Infof("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)
+		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)
 
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -75,6 +76,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 			gin.H{
 				"title":        "SpecAdmin",
 				"Version":      Version,
+				"groupName":	groupName,
 				"suitesList": 	suitesList,
 			},
 		)

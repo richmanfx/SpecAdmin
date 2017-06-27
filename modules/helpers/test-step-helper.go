@@ -166,8 +166,8 @@ func GetStepsList(stepsList []models.Step) ([]models.Step, error)  {
 		step.Name = stepsName
 		step.SerialNumber = stepsSerialNumber
 		step.Description = stepsDescription
-		step.ExpectedResult =
-		stepsList = append(stepsList, step)
+		//step.ExpectedResult =
+		//stepsList = append(stepsList, step)
 	}
 	log.Debugf("Список Шагов: %v", stepsList)
 	return stepsList, err

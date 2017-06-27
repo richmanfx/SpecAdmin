@@ -29,7 +29,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 	suitesList, err = GetSuitesList(suitesList)
 
 	// Запрос Сюит из БД, получить записи
-	rows, err = db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
+	rows, err := db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
 	if err != nil {panic(err)}
 	// Данные получить из результата запроса
 	for rows.Next() {

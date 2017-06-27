@@ -1,7 +1,5 @@
 package models
 
-import "google.golang.org/api/identitytoolkit/v3"
-
 type Step struct {
 	Id 			   int
 	Name           string

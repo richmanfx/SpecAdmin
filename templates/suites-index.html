@@ -1,7 +1,56 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
+<span class="title">Сюиты группы </span><span id="name" class="title">{{ .groupName }}</span>
+<p>
+{{ range .suitesList }}
+<div class="group_list">
+    <table class="suite-table table table-bordered">
+        <tr>
+            <td class="suite-numbers">{{ .SerialNumber }}.</td>
+            <td class="suite-name">
+                <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false" class="group_name">{{ .Name }}</a>
+        <!--<input class="suite_name btn-primary" type="button" value="{{ .Name }}" onclick="anichange('#divId_{{ .Name }}'); return false">-->
+            </td>
+            <td>{{ .Description }}</td>
+        </tr>
+    </table>
 
+    <div id="divId_{{ .Name }}" style="display: none">
+        <table class="script-table">
+            {{ range .Scripts }}
+            <tr>
+                <td class="script-numbers"> </td>
+                <td class="script-numbers">{{ .SerialNumber }}.</td>
+                <td class="script-name"><a href="#">{{ .Name }}</a></td>
+                <td>ОР:</td>
+            </tr>
+            {{ end }}
+        </table>
+    </div>
+
+</div>
+{{ end }}
+
+
+
+
+
+
+
+<!-- Скрипт для выпадающих списков -->
+<script>
+    function anichange (objName) {
+        if ( $(objName).css('display') === 'none' ) {
+            $(objName).animate({height: 'show'}, 400);
+        } else {
+            $(objName).animate({height: 'hide'}, 200);
+        }
+    }
+    function anichange(a) {
+        $(a).slideToggle(400);
+    }
+</script>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}

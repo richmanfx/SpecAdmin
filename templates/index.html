@@ -1,19 +1,15 @@
 <!-- Шаблон хедера -->
 {{ template "header.html" .}}
 
-
-
-<span class="title">Группы тестов:</span>
+<span class="title">Группы тестов</span>
 <p>
 {{ range .groupList }}
     <div class="group_list">
-        <form method="post" action="/spec-admin/view-group">
-            <input class="group_name" type="submit" value="{{ .Name }}" name="group_name">
+        <form method="post" action="/spec-admin/show-suites">
+            <input class="group_name btn-primary" type="submit" value="{{ .Name }}" name="group_name">
         </form>
     </div>
 {{ end }}
-
-
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}
