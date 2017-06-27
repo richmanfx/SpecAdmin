@@ -20,11 +20,19 @@
         <table class="script-table">
             {{ range .Scripts }}
             <tr>
-                <td class="script-numbers"> </td>
                 <td class="script-numbers">{{ .SerialNumber }}.</td>
-                <td class="script-name"><a href="#">{{ .Name }}</a></td>
-                <td>ОР:</td>
+                <td class="script-name"><a href="#" onclick="anichange('#divId_{{ .Suite }}_{{ .SerialNumber }}'); return false">{{ .Name }}</a></td>
             </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="divId_{{ .Suite }}_{{ .SerialNumber }}" style="display: none" align="left">
+						<pre>
+                                Здесь бедут Шаги!
+                        </pre>
+                    </div>
+                </td>
+            </tr>
+
             {{ end }}
         </table>
     </div>
