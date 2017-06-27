@@ -12,11 +12,10 @@ import (
 var Version string = "3.1"
 
 func ShowIndexPage(context *gin.Context)  {
+	var err error
 	helpers.SetLogFormat()
 
 	groupList := make([]models.Group, 0, 0)	// Слайс из Групп
-
-	var err error
 
 	// Сформировать список Групп на основе данных из БД
 	groupList, err = helpers.GetGroupsList(groupList)

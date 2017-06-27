@@ -7,62 +7,17 @@ import (
 	"../../models"
 )
 
+// Возвращает список Групп из БД
 func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 	var err error
-
 	SetLogFormat()
 
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {	return groupList, err }
 
-
-	// Считать Шаги из БД
-
-
-	// Считать Сценарии из БД
-	scriptsList := make([]models.Script, 0, 0) // Слайс из Сценариев
-	scriptsList, err = GetScriptList(scriptsList)
-
-	// Считать Сюиты из БД
-	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
-	suitesList, err = GetSuitesList(suitesList)
-
-	// Запрос Сюит из БД, получить записи
-	rows, err := db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
-	if err != nil {panic(err)}
-	// Данные получить из результата запроса
-	for rows.Next() {
-		var name string
-		var description string
-		var serial_number string
-		var name_group string
-		err = rows.Scan(&name, &description, &serial_number, &name_group)
-		if err != nil {panic(err)}
-		log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s, %s", name, description, serial_number, name_group)
-
-		// Заполнить Сюитами список Сюит
-		var suite models.Suite
-		suite.Name = name
-		suite.Description = description
-		suite.SerialNumber = serial_number
-		suite.Group = name_group
-
-		// Закинуть Сценарии в соответствующие Сюиты
-		for _, script := range scriptsList { // Бежать по всем сценариям
-			if script.Suite == suite.Name {		// Если Сценарий принадлежит Сюите, то добавляем его
-				suite.Scripts = append(suite.Scripts, script)
-				log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-			} else {
-				log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-			}
-		}
-		suitesList = append(suitesList, suite)
-		log.Debugf("Список Сюит: %v", suitesList)
-	}
-
 	// Считать группы из БД
-	rows, err = db.Query("SELECT name FROM tests_groups ORDER BY name")
+	rows, err := db.Query("SELECT name FROM tests_groups ORDER BY name")
 	if err != nil {panic(err)}
 	// Данные получить из результата запроса
 	for rows.Next() {
@@ -74,13 +29,6 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		// Заполнить Группами список Групп
 		var group models.Group
 		group.Name = name
-
-		// Закинуть Сюиты в соответствующие Группы
-		for _, suite := range suitesList {	// Бежать по всем Сюитам
-			if suite.Group == group.Name {	// Если Сюита принадлежит Группе, то добавляем её
-				group.Suites = append(group.Suites, suite)
-			}
-		}
 		groupList = append(groupList, group)
 	}
 	return groupList, err

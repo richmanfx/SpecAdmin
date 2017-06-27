@@ -62,73 +62,6 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 }
 
 
-// Сформировать список Сюит
-func GetSuitesList(suitesList []models.Suite) ([]models.Suite, error) {
-	var err error
-
-	SetLogFormat()
-
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return suitesList, err }
-
-	// Считать Сценарии из БД
-	//scriptsList, err = GetScriptList(scriptsList)
-
-	// Запрос Сюит из БД, получить записи
-	rows, err := db.Query("SELECT name, description, serial_number ,name_group FROM tests_suits ORDER BY serial_number")
-	if err != nil {panic(err)}
-	// Данные получить из результата запроса
-	for rows.Next() {
-		var name string
-		var description string
-		var serial_number string
-		var name_group string
-		err = rows.Scan(&name, &description, &serial_number, &name_group)
-		if err != nil {
-			panic(err)
-		}
-		log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s, %s", name, description, serial_number, name_group)
-
-		// Заполнить Сюитами список Сюит
-		var suite models.Suite
-		suite.Name = name
-		suite.Description = description
-		suite.SerialNumber = serial_number
-		suite.Group = name_group
-
-		// Закинуть Сценарии в соответствующие Сюиты
-		//for _, script := range scriptsList { // Бежать по всем сценариям
-		//	if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-		//		suite.Scripts = append(suite.Scripts, script)
-		//		log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-		//	} else {
-		//		log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-		//	}
-		//}
-		suitesList = append(suitesList, suite)
-		log.Debugf("Список Сюит: %v", suitesList)
-	}
-	return suitesList, err
-}
-
-// Закинуть Сценарии в соответствующие Сюиты
-//func AddScriptsToSuites()  {
-//
-//	// Закинуть Сценарии в соответствующие Сюиты
-//	for _, script := range scriptList { // Бежать по всем сценариям
-//		if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-//			suite.Scripts = append(suite.Scripts, script)
-//			log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-//		} else {
-//			log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-//		}
-//	}
-//	suitesList = append(suitesList, suite)
-//	log.Debugf("Список Сюит: %v", suitesList)
-//}
-
-
 // Добавляет в базу новую сюиту тестов
 // Получает имя новой сюиты, описание этой сюиты и группу тестов, в которую вносится сюита
 func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumber string, suitesGroup string) error {
@@ -226,7 +159,6 @@ func UpdateTestSuite(suitesId int, suitesName string, suitesDescription string,
 					 suitesSerialNumber string, suitesGroup string) error {
 
 	var err error
-
 	SetLogFormat()
 
 	// Подключиться к БД
