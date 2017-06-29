@@ -175,3 +175,44 @@ func GetStepsList(stepsList []models.Step) ([]models.Step, error)  {
 	log.Debugf("Список Шагов: %v", stepsList)
 	return stepsList, err
 }
+
+
+// Получить Шаги из БД только для заданных по ID Сценариев
+func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error) {
+	var err error
+	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
+
+	for _, scriptsId := range scriptsIdList {
+		rows, err := db.Query(
+			"SELECT id,name,serial_number,description,expected_result,script_id FROM tests_steps WHERE script_id=? ORDER BY serial_number",
+			scriptsId)
+		if err != nil {	panic(err) }	// TODO: Выводить в браузер ошибку
+
+		// Получить данные из результата запроса
+		for rows.Next() {
+			var stepsId int
+			var stepsName string
+			var stepsSerialNumber int
+			var stepsDescription string
+			var stepsExpectedResult string
+			var stepsScriptId int
+			err = rows.Scan(&stepsId, &stepsName, &stepsSerialNumber, &stepsDescription, &stepsExpectedResult, &stepsScriptId)
+			if err != nil {panic(err)}
+			log.Debugf("rows.Next из таблицы tests_steps: %d, %s, %d, %s, %s, %d",
+				stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsScriptId)
+
+			// Заполнить Шагами список Шагов
+			var step models.Step
+			step.Id = stepsId
+			step.Name = stepsName
+			step.SerialNumber = stepsSerialNumber
+			step.Description = stepsDescription
+			step.ExpectedResult = stepsExpectedResult
+			step.ScriptsId = stepsScriptId
+			stepsList = append(stepsList, step)
+		}
+		log.Debugf("Список Шагов: %v", stepsList)
+	}
+
+	return stepsList, err
+}

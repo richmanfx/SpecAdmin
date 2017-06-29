@@ -28,10 +28,13 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 	if err != nil {	return suitesList, err }
 	log.Debugf("Сценарии %v из Сюит %v", scriptsList, suitsNameFromGroup)
 
+	// Формировать список Сюит
 	for _, suiteName := range suitsNameFromGroup {
 
 		// Сюиты из БД по списку имён Сюит
-		rows, err := db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
+		rows, err := db.Query(
+			"SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number",
+			suiteName)
 
 		// Получить данные из результата запроса
 		for rows.Next() {

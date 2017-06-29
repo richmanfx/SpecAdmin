@@ -6,6 +6,7 @@ type Step struct {
 	SerialNumber   int			// Порядковый номер Шага
 	Description    string		// Что делать в Шаге
 	ExpectedResult string		// Ожидаемый результат
+	ScriptsId	   int			// ID сценария, которому принадлежит Шаг
 	ScreenShotPath string		// Ссылка на скриншот
 }
 

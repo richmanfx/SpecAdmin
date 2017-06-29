@@ -143,14 +143,46 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	return suitsNameList, err
 }
 
+// Получить только ID Сценариев для заданных Сюит
+func GetScriptIdList(suitsNameFromGroup []string) ([]int) {
+	scriptsIdList := make([]int, 0, 0)
+
+	for _, suiteName := range suitsNameFromGroup {
+
+		rows, err := db.Query("SELECT id FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
+		if err != nil {	panic(err) } // TODO: Обработать и вывести в браузер
+
+		// Данные получить из результата запроса
+		for rows.Next() {
+			var id int
+			err = rows.Scan(&id)
+			if err != nil {	panic(err) }	// TODO: Обработать и вывести в браузер
+			log.Infof("rows.Next из таблицы tests_scripts: %d", id)
+
+			// Добавить в список имён
+			scriptsIdList = append(scriptsIdList, id)
+		}
+	}
+	return scriptsIdList
+}
+
+
 // Получить Сценарии только для заданных Сюит
 func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
 	var err error
 	scriptsList := make([]models.Script, 0, 0)
 
+	// Получить только ID Сценариев для заданных Сюит
+	scriptsIdList := GetScriptIdList(suitsNameFromGroup) // TODO: Возвращать ещё и err?
+
+	// Получить Шаги из БД только для заданных по ID Сценариев
+	stepsList, err := GetStepsListForSpecifiedScripts(scriptsIdList)
+
 	// Запрос Сценариев заданных Сюит из БД
 	for _, suiteName := range suitsNameFromGroup {
-		rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
+		rows, err := db.Query(
+			"SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number",
+			suiteName)
 		if err != nil {	panic(err) } // TODO: Обработать и вывести в браузер
 
 		// Данные получить из результата запроса
@@ -170,8 +202,18 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 			script.Name = name
 			script.SerialNumber = serial_number
 			script.Suite = name_suite
-			scriptsList = append(scriptsList, script)
 
+			// Закинуть Шаги в Сценарий
+				for _, step := range stepsList {
+					if step.ScriptsId == script.Id {	// Если Шаг принадлежит Сценарию, то добавляем его
+						script.Steps = append(script.Steps, step)
+						log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+					} else {
+						log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+					}
+				}
+
+			scriptsList = append(scriptsList, script)	// Добавить сценарий в список
 		}
 		log.Debugf("Список сценариев: %v", scriptsList)
 	}
