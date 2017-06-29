@@ -18,44 +18,55 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 	err = dbConnect()
 	if err != nil {	return suitesList, err }
 
-	// Считать Сценарии из БД
+	//// Считать Сценарии из БД
 	scriptsList := make([]models.Script, 0, 0)
 	scriptsList, err = GetScriptList(scriptsList)
 
-	// Сюиты из БД заданной Группы
-	rows, err := db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name_group=? ORDER BY serial_number", groupName)
-	if err != nil {panic(err)}
+	// Получить только список имён Сюит в данной Группе
+	suitsNameFromGroup, err := GetSuitsNameFromSpecifiedGroup(groupName)
+	log.Debugf("Сюиты из группы '%s': %v", groupName, suitsNameFromGroup)
 
-	// Получить данные из результата запроса
-	for rows.Next() {
-		var name string
-		var description string
-		var serial_number string
-		err = rows.Scan(&name, &description, &serial_number)
-		if err != nil {
-			panic(err)
-		}
-		log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", name, description, serial_number)
 
-		// Заполнить Сюитами список Сюит
-		var suite models.Suite
-		suite.Name = name
-		suite.Description = description
-		suite.SerialNumber = serial_number
-		suite.Group = groupName
+	// Считать Сенарии только для заданных Сюит
+	//scriptsList := make([]models.Script, 0, 0)
+	//scriptsList, err = GetScriptListForSpecifiedSuits(scriptsList, suitsNameFromGroup)
 
-		// Закинуть Сценарии в соответствующие Сюиты
-		for _, script := range scriptsList { // Бежать по всем сценариям
-			if script.Suite == suite.Name {  // Если Сценарий принадлежит Сюите, то добавляем его
-				suite.Scripts = append(suite.Scripts, script)
-				log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-			} else {
-				log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+	for _, suiteName := range suitsNameFromGroup {
+
+		// Сюиты из БД по списку имён Сюит
+		rows, err := db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
+
+		// Получить данные из результата запроса
+		for rows.Next() {
+			var name string
+			var description string
+			var serial_number string
+			err = rows.Scan(&name, &description, &serial_number)
+			if err != nil {
+				panic(err)
 			}
-		}
+			log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", name, description, serial_number)
 
-		// Добавить Сюиту в список
-		suitesList = append(suitesList, suite)
+			// Заполнить Сюитами список Сюит
+			var suite models.Suite
+			suite.Name = name
+			suite.Description = description
+			suite.SerialNumber = serial_number
+			suite.Group = groupName
+
+			// Закинуть Сценарии в соответствующие Сюиты
+			for _, script := range scriptsList { // Бежать по всем сценариям
+				if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
+					suite.Scripts = append(suite.Scripts, script)
+					log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+				} else {
+					log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+				}
+			}
+
+			// Добавить Сюиту в список
+			suitesList = append(suitesList, suite)
+		}
 	}
 	log.Debugf("Список Сюит: '%v'", suitesList)
 	return suitesList, err

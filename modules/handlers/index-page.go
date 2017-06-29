@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "3.1"
+var Version string = "3.2"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -54,7 +54,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
 
-	// Сформировать список Сюит Группы из БД
+	// Сформировать список Сюит заданной Группы из БД
 	suitesList, err = helpers.GetSuitesListInGroup(groupName)
 
 	if err != nil {

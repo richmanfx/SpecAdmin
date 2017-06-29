@@ -20,19 +20,20 @@ func AddTestStep(
 	if err != nil {	return err }
 
 	// Добавление Шага в БД
-	log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
+	log.Infof("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
 		newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
 
-	// Получить ID из промежуточной таблицы, соответствующий связке Сюиты и Сценария
+	// Получить ID для промежуточной таблицы, соответствующий связке Сюиты и Сценария
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Debugf("requestResult: %v", requestResult)
+	log.Infof("requestResult: %v", requestResult)
 
 	// Получить ID связки Сценария и Сюиты
 	var id int
 	err = requestResult.Scan(&id)
-	log.Debugf("ID (Сюита + Сценарий): %d", id)
+	log.Infof("ID (Сюита + Сценарий): %d", id)
 	if id == 0 {
-		log.Debugf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
+		log.Errorf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
+		err = fmt.Errorf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
 	} else {
 		// В основную таблицу с Шагами
 		result1, err := db.Exec("INSERT INTO tests_steps (name, serial_number, description, expected_result) VALUES (?,?,?,?)",
@@ -48,7 +49,7 @@ func AddTestStep(
 		if err == nil {
 			affected, err := result2.RowsAffected()
 			if err != nil {panic(err)}
-			log.Debugf("Вставлено %d строк в таблицу 'intermediate_scripts_steps'.", affected)
+			log.Infof("Вставлено %d строк в таблицу 'intermediate_scripts_steps'.", affected)
 		}
 	}
 	db.Close()
@@ -143,31 +144,33 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 }
 
 
-// Сформировать список Шагов
+// Сформировать список ВСЕХ Шагов из БД
 func GetStepsList(stepsList []models.Step) ([]models.Step, error)  {
 
 	// Запрос всех Шагов из БД
-	rows, err := db.Query("SELECT (name, serial_number, description, expected_result) FROM tests_steps ORDER BY serial_number")
+	rows, err := db.Query("SELECT id,name,serial_number,description,expected_result FROM tests_steps ORDER BY serial_number")
 	if err != nil {panic(err)}
 
 	// Получить данные из результата запроса
 	for rows.Next() {
+		var stepsId int
 		var stepsName string
 		var stepsSerialNumber int
 		var stepsDescription string
 		var stepsExpectedResult string
-		err = rows.Scan(&stepsName, &stepsSerialNumber, &stepsDescription, &stepsExpectedResult)
+		err = rows.Scan(&stepsId, &stepsName, &stepsSerialNumber, &stepsDescription, &stepsExpectedResult)
 		if err != nil {panic(err)}
-		log.Debugf("rows.Next из таблицы tests_steps: %s, %d, %s, %s",
-			stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
+		log.Debugf("rows.Next из таблицы tests_steps: %s, %s, %d, %s, %s",
+			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
 
 		// Заполнить Шагами список Шагов
 		var step models.Step
+		step.Id = stepsId
 		step.Name = stepsName
 		step.SerialNumber = stepsSerialNumber
 		step.Description = stepsDescription
-		//step.ExpectedResult =
-		//stepsList = append(stepsList, step)
+		step.ExpectedResult = stepsExpectedResult
+		stepsList = append(stepsList, step)
 	}
 	log.Debugf("Список Шагов: %v", stepsList)
 	return stepsList, err

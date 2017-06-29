@@ -114,49 +114,85 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 	} else {
 		log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
 	}
-
+	db.Close()
 	return err
 }
 
 
-// Получить список сценариев
+// Получить список имён Сюит в заданной Группе
+func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
+	var err error
+	suitsNameList := make([]string, 0, 0)
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return suitsNameList, err }
+
+	// Запрос имён Сюит
+	rows, err := db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY name", groupName)
+	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
+	for rows.Next() {
+		var name string
+		err = rows.Scan(&name)
+		if err != nil {	panic(err) }	// TODO: Обработать и вывести в браузер
+		log.Debugf("rows.Next из таблицы tests_suits: %s",name)
+		suitsNameList = append(suitsNameList, name)		// Добавить в список
+	}
+
+	return suitsNameList, err
+}
+
+
+// Получить список ВСЕХ сценариев
 func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
 
-	// Получить все Шаги
+	// Получить все Шаги из БД
 	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
-	//stepsList, err := GetStepsList(stepsList)
+	stepsList, err := GetStepsList(stepsList)
 
 	// Запрос всех Сценариев из БД
-	rows, err := db.Query("SELECT name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
-	if err != nil {panic(err)}
+	rows, err := db.Query("SELECT id,name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
+	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
 
 	// Данные получить из результата запроса
 	for rows.Next() {
+		var id int
 		var name string
 		var serial_number string
 		var name_suite string
-		err = rows.Scan(&name, &serial_number, &name_suite)
+		err = rows.Scan(&id, &name, &serial_number, &name_suite)
 		if err != nil {
-			panic(err)
+			panic(err)			// TODO: Обработать и вывести в браузер
 		}
-		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s", name, serial_number, name_suite)
+		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", id, name, serial_number, name_suite)
 
 		// Заполнить Сценариями список Сценариев
 		var script models.Script
+		script.Id = id
 		script.Name = name
 		script.SerialNumber = serial_number
 		script.Suite = name_suite
 
 		// Закинуть Шаги в соответствующие Сценарии
-		for _, step := range stepsList { // Бежать по всем Шагам
+		var stepsId int
+		for _, script := range scriptsList { // Бежать по всем Сценариям - их меньше
+			for _, step := range stepsList {	// Внутри бежим по Шагам
 
-			//// Если Шаг принадлежит Сценарию, то добавляем его // TODO: КАК ОПРЕДЕЛИТЬ - ЗАПРОСОМ?
-			//if step.Id == steps_id-из промежуточной таблицы (запросом?) {
-			//	script Scripts = append(suite.Scripts, step) // TODO !!!!
+				// Если Шаг принадлежит Сценарию, то добавляем его
+				// steps_id-из промежуточной таблицы
+				queryResult := db.QueryRow("SELECT steps_id FROM intermediate_scripts_steps WHERE scripts_id=?", script.Id)
+				err = queryResult.Scan(&stepsId)	// Получить данные из результата запроса
+				log.Debugf("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
+				if step.Id == stepsId {
+					log.Infof("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
+					script.Steps = append(script.Steps, step)
+				}
 			//	log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
 			//} else {
-				log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+			//log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
 			//}
+			}
 		}
 
 		scriptsList = append(scriptsList, script)
