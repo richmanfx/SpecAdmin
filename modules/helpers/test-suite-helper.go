@@ -65,6 +65,7 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 			suitesList = append(suitesList, suite)
 		}
 	}
+	db.Close()
 	log.Debugf("Список Сюит: '%v'", suitesList)
 	return suitesList, err
 }
@@ -182,6 +183,6 @@ func UpdateTestSuite(suitesId int, suitesName string, suitesDescription string,
 	} else {
 		log.Debugf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
 	}
-
+	//db.Close()	// TODO: Проверить - можно ли здесь закрыть соединение
 	return err
 }

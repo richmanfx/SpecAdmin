@@ -15,14 +15,14 @@ func ShowIndexPage(context *gin.Context)  {
 	var err error
 	helpers.SetLogFormat()
 
-	groupList := make([]models.Group, 0, 0)	// Слайс из Групп
+	// Слайс из Групп
+	groupList := make([]models.Group, 0, 0)
 
 	// Сформировать список Групп на основе данных из БД
 	groupList, err = helpers.GetGroupsList(groupList)
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: %v", err)
-
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": 		"Ошибка",
@@ -52,14 +52,14 @@ func ShowSuitesIndex(context *gin.Context)  {
 	groupName := context.PostForm("group_name")
 	log.Debugf("Полученное из формы имя группы: '%s'", groupName)
 
-	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
+	// Слайс из Сюит
+	suitesList := make([]models.Suite, 0, 0)
 
 	// Сформировать список Сюит заданной Группы из БД
 	suitesList, err = helpers.GetSuitesListInGroup(groupName)
 
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов.: %v", err)
-
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": 		"Ошибка",
@@ -80,5 +80,4 @@ func ShowSuitesIndex(context *gin.Context)  {
 			},
 		)
 	}
-
 }
