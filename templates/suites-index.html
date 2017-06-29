@@ -26,9 +26,28 @@
             <tr>
                 <td colspan="2">
                     <div id="divId_{{ .Suite }}_{{ .SerialNumber }}" style="display: none" align="left">
-						<pre>
-                                Здесь бедут Шаги!
-                        </pre>
+                        <table class="step-table table">
+                            <thead>
+                            <tr>
+                                <th class="steps-numbers">N&nbsp;</th>
+                                <th class="center-align">Название Шага</th>
+                                <th class="center-align">Описание Шага</th>
+                                <th class="center-align">Ожидаемый результат</th>
+                                <th class="center-align">Скриншот</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                {{ range .Steps }}
+                                <tr>
+                                    <td class="steps-numbers">{{ .SerialNumber }}.&nbsp;</td>
+                                    <td class="steps-name">{{ .Name }}</td>
+                                    <td class="steps-description">{{ .Description }}</td>
+                                    <td class="steps-exp-result">{{ .ExpectedResult }}</td>
+                                    <td class="steps-screen-shot">Здесь будет скриншот</td>
+                                </tr>
+                                {{ end }}
+                            </tbody>
+                        </table>
                     </div>
                 </td>
             </tr>

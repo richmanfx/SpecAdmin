@@ -49,6 +49,7 @@ td.script-name {
     /*text-align: left;*/
 }
 
+
 td.suite-numbers {
     width: 3em;
     /*border: solid;*/
@@ -57,10 +58,36 @@ td.suite-numbers {
 }
 
 td.script-numbers {
-    width: 5%;
+     width: 4%;
+     /*border: solid;*/
+     text-align: right;
+     color: #398439;
+ }
+
+th,td.steps-numbers {
+    width: 8%;
     /*border: solid;*/
     text-align: right;
-    color: #398439;
+}
+
+th,td.steps-name {
+    padding: 5px;
+    width: 30em;
+}
+
+th,td.steps-description {
+    padding: 5px;
+    width: 40em;
+}
+
+th,td.steps-exp-result {
+    padding: 5px;
+    width: 30em;
+}
+
+th,td.steps-screen-shot {
+    padding: 5px;
+    width: 10em;
 }
 
 table.suite-table {
@@ -74,6 +101,11 @@ table.script-table {
     width: 90%;
     padding: 1em;
     margin-bottom: 20px;
+}
+
+table.step-table {
+    /*border: solid;*/
+    font-size: medium;
 }
 
 .error {
@@ -109,4 +141,12 @@ textarea {
 footer {
     background-color: #cccccc;
     text-align: center;
+}
+
+.center-align {
+    text-align: center;
+}
+
+.right-align {
+    text-align: right;
 }

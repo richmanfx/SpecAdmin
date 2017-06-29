@@ -157,7 +157,7 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int) {
 			var id int
 			err = rows.Scan(&id)
 			if err != nil {	panic(err) }	// TODO: Обработать и вывести в браузер
-			log.Infof("rows.Next из таблицы tests_scripts: %d", id)
+			log.Debugf("rows.Next из таблицы tests_scripts: %d", id)
 
 			// Добавить в список имён
 			scriptsIdList = append(scriptsIdList, id)
