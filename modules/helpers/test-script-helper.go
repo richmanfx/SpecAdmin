@@ -130,7 +130,7 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	if err != nil {	return suitsNameList, err }
 
 	// Запрос имён Сюит
-	rows, err := db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY name", groupName)
+	rows, err := db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY serial_number", groupName)
 	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
 	for rows.Next() {
 		var name string
