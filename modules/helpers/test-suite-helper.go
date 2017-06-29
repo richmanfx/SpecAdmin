@@ -18,18 +18,15 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 	err = dbConnect()
 	if err != nil {	return suitesList, err }
 
-	//// Считать Сценарии из БД
-	scriptsList := make([]models.Script, 0, 0)
-	scriptsList, err = GetScriptList(scriptsList)
-
 	// Получить только список имён Сюит в данной Группе
 	suitsNameFromGroup, err := GetSuitsNameFromSpecifiedGroup(groupName)
+	if err != nil {	return suitesList, err }
 	log.Debugf("Сюиты из группы '%s': %v", groupName, suitsNameFromGroup)
 
-
-	// Считать Сенарии только для заданных Сюит
-	//scriptsList := make([]models.Script, 0, 0)
-	//scriptsList, err = GetScriptListForSpecifiedSuits(scriptsList, suitsNameFromGroup)
+	// Считать Сценарии только для заданных Сюит
+	scriptsList, err := GetScriptListForSpecifiedSuits(suitsNameFromGroup)
+	if err != nil {	return suitesList, err }
+	log.Debugf("Сценарии %v из Сюит %v", scriptsList, suitsNameFromGroup)
 
 	for _, suiteName := range suitsNameFromGroup {
 

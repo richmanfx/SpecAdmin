@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "3.2"
+var Version string = "3.3"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -58,7 +58,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 	suitesList, err = helpers.GetSuitesListInGroup(groupName)
 
 	if err != nil {
-		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)
+		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов.: %v", err)
 
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

@@ -143,16 +143,53 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	return suitsNameList, err
 }
 
+// Получить Сценарии только для заданных Сюит
+func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
+	var err error
+	scriptsList := make([]models.Script, 0, 0)
+
+	// Запрос Сценариев заданных Сюит из БД
+	for _, suiteName := range suitsNameFromGroup {
+		rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
+		if err != nil {	panic(err) } // TODO: Обработать и вывести в браузер
+
+		// Данные получить из результата запроса
+		for rows.Next() {
+			var id int
+			var name string
+			var serial_number string
+			var name_suite string
+			err = rows.Scan(&id, &name, &serial_number, &name_suite)
+			if err != nil {
+				panic(err)			// TODO: Обработать и вывести в браузер
+			}
+			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", id, name, serial_number, name_suite)
+
+			var script models.Script
+			script.Id = id
+			script.Name = name
+			script.SerialNumber = serial_number
+			script.Suite = name_suite
+			scriptsList = append(scriptsList, script)
+
+		}
+		log.Debugf("Список сценариев: %v", scriptsList)
+	}
+	return scriptsList, err
+}
+
 
 // Получить список ВСЕХ сценариев
-func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
+func GetScriptList() ([]models.Script, error)  {
+
+	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить все Шаги из БД
 	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
 	stepsList, err := GetStepsList(stepsList)
 
 	// Запрос всех Сценариев из БД
-	rows, err := db.Query("SELECT id,name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
+	rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
 	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
 
 	// Данные получить из результата запроса
@@ -175,25 +212,25 @@ func GetScriptList(scriptsList []models.Script) ([]models.Script, error)  {
 		script.Suite = name_suite
 
 		// Закинуть Шаги в соответствующие Сценарии
-		var stepsId int
-		for _, script := range scriptsList { // Бежать по всем Сценариям - их меньше
-			for _, step := range stepsList {	// Внутри бежим по Шагам
-
-				// Если Шаг принадлежит Сценарию, то добавляем его
-				// steps_id-из промежуточной таблицы
-				queryResult := db.QueryRow("SELECT steps_id FROM intermediate_scripts_steps WHERE scripts_id=?", script.Id)
-				err = queryResult.Scan(&stepsId)	// Получить данные из результата запроса
-				log.Debugf("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
-				if step.Id == stepsId {
-					log.Infof("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
-					script.Steps = append(script.Steps, step)
-				}
-			//	log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-			//} else {
-			//log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-			//}
-			}
-		}
+		//var stepsId int
+		//for _, script := range scriptsList { // Бежать по всем Сценариям - их меньше
+		//	for _, step := range stepsList {	// Внутри бежим по Шагам
+		//
+		//		// Если Шаг принадлежит Сценарию, то добавляем его
+		//		// steps_id-из промежуточной таблицы
+		//		queryResult := db.QueryRow("SELECT steps_id FROM intermediate_scripts_steps WHERE scripts_id=?", script.Id)
+		//		err = queryResult.Scan(&stepsId)	// Получить данные из результата запроса
+		//		log.Debugf("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
+		//		if step.Id == stepsId {
+		//			log.Infof("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
+		//			script.Steps = append(script.Steps, step)
+		//		}
+		//	//	log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+		//	//} else {
+		//	//log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+		//	//}
+		//	}
+		//}
 
 		scriptsList = append(scriptsList, script)
 		log.Debugf("Список сценариев: %v", scriptsList)
