@@ -30,7 +30,7 @@ func AddStep(context *gin.Context)  {
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
+				"message2": fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий N'%s' сюиты '%s'.",
 					newStepName, stepsScript, scriptsSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 			},
@@ -39,7 +39,7 @@ func AddStep(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
+				"message1": fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий N'%s' сюиты '%s'.",
 					newStepName, stepsScript, scriptsSuite),
 				"message2": "",
 				"message3": "",

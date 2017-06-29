@@ -23,34 +23,23 @@ func AddTestStep(
 	log.Infof("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
 		newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
 
-	// Получить ID для промежуточной таблицы, соответствующий связке Сюиты и Сценария
+	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
 	log.Infof("requestResult: %v", requestResult)
 
-	// Получить ID связки Сценария и Сюиты
+	// Получить значение ID Сценария
 	var id int
 	err = requestResult.Scan(&id)
-	log.Infof("ID (Сюита + Сценарий): %d", id)
+	log.Infof("ID Сценария: '%d'", id)
 	if id == 0 {
-		log.Errorf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
-		err = fmt.Errorf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
+		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
 		// В основную таблицу с Шагами
-		result1, err := db.Exec("INSERT INTO tests_steps (name, serial_number, description, expected_result) VALUES (?,?,?,?)",
-								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult)
-		if err != nil {panic(err)}
-
-		// Получить ID новой записи в таблице tests_steps
-		stepsId, err := result1.LastInsertId()
-		if err != nil {panic(err)}
-
-		// В промежуточную таблицу с ID-шниками
-		result2, err := db.Exec("INSERT INTO intermediate_scripts_steps (scripts_id, steps_id) VALUES (?,?)", id, stepsId)
-		if err == nil {
-			affected, err := result2.RowsAffected()
-			if err != nil {panic(err)}
-			log.Infof("Вставлено %d строк в таблицу 'intermediate_scripts_steps'.", affected)
-		}
+		_, err := db.Exec(
+			"INSERT INTO tests_steps (name, serial_number, description, expected_result, script_id) VALUES (?,?,?,?,?)",
+								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, id)
+		if err != nil {panic(err)}		// TODO: Сделать обработку и в Браузер
 	}
 	db.Close()
 	return err

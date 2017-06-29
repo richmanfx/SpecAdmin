@@ -10,11 +10,11 @@
             <textarea id="id_script" name="script" rows="3" autofocus>{{ .script.Name }}</textarea>
         </div>
 
-        <label for="id_scripts_suite"> Сюита тестового сценария</label><br>
-        <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}" required="required" type="text"><br><br>
-
         <label for="id_scripts_serial_number">Порядковый номер сценария</label><br>
         <input id="id_scripts_serial_number" name="scripts_serial_number" value="{{ .script.SerialNumber }}" required="required" type="text"><br><br>
+
+        <label for="id_scripts_suite"> Сюита тестового сценария</label><br>
+        <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}" required="required" type="text"><br><br>
 
     </form>
     <br><br>
