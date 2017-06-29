@@ -20,17 +20,17 @@ func AddTestStep(
 	if err != nil {	return err }
 
 	// Добавление Шага в БД
-	log.Infof("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
+	log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
 		newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
 
 	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Infof("requestResult: %v", requestResult)
+	log.Debugf("requestResult: %v", requestResult)
 
 	// Получить значение ID Сценария
 	var id int
 	err = requestResult.Scan(&id)
-	log.Infof("ID Сценария: '%d'", id)
+	log.Debugf("ID Сценария: '%d'", id)
 	if id == 0 {
 		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
@@ -55,77 +55,39 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 	err = dbConnect()
 	if err != nil {	return err }
 
-	// Получить ID из промежуточной таблицы, соответствующий связке Сюиты и Сценария
+	// Удаление Шага из БД
+	log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+
+	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+	log.Debugf("requestResult: %v", requestResult)
 
-	// Получить ID связки Сценария и Сюиты
-	var id int
-	err = requestResult.Scan(&id)
-	log.Infof("ID (Сюита + Сценарий): %d", id)
-	if id == 0 {
-		log.Infof("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
-		err = fmt.Errorf("Не найдено связки Сюиты '%s' и Сценария '%s' в таблице 'tests_scripts'.", scriptsSuiteName, stepsScriptName)
+	// Получить значение ID Сценария
+	var scriptId int
+	err = requestResult.Scan(&scriptId)
+	log.Debugf("ID Сценария: '%d'", scriptId)
+	if scriptId == 0 {
+		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
-		// Получить ID шага из промежуточной таблицы
-		requestResult = db.QueryRow("SELECT steps_id FROM intermediate_scripts_steps WHERE intermediate_scripts_steps.scripts_id=?", id)
-		var stepsId int
-		err = requestResult.Scan(&stepsId)
-		log.Infof("ID шага в промежуточной таблице: %d", stepsId)
-
-		log.Infof("Удаление Шага '%s' из сценария '%s' сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
-		// Удаление Шага из таблицы 'tests_steps'
-		result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND id=?", deletedStepName, stepsId)
+		log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+		result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
 		if err != nil {
-
-			var affected int64
-			affected, err = result.RowsAffected()
-
-			if err == nil {
-				if affected == 0 {
-					err = fmt.Errorf("Ошибка удаления Шага '%s'. Есть такой Шаг?", deletedStepName)
-					log.Infof("Ошибка удаления Шага '%s'", deletedStepName)
-				}
-				log.Infof("Удалено строк в БД: %d", affected)
-			} else {
-				return err
-			}
-
+			err = fmt.Errorf("Ошибка удаления Шага '%s'. Есть такой Шаг?", deletedStepName)
+			log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
+			return err
 		} else {
-
 			var affected int64
 			affected, err = result.RowsAffected()
 
 			if err == nil {
 				if affected == 0 {
 					err = fmt.Errorf("Ошибка удаления Шага '%s'. Есть такой Шаг?", deletedStepName)
-					log.Infof("Ошибка удаления Шага '%s'", deletedStepName)
+					log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
 					return err
 				}
-				log.Infof("Удалено строк в БД: %d", affected)
-
-				// Удаление ID сценария и ID шага из промежуточной таблицы
-				result, err := db.Exec("DELETE FROM intermediate_scripts_steps WHERE steps_id=?", stepsId)
-				if err != nil {
-
-					var affected int64
-					affected, err = result.RowsAffected()
-
-					if err == nil {
-						if affected == 0 {
-							err = fmt.Errorf("Ошибка удаления ID '%s' Шага '%s' из промежуточной таблицы.", stepsId, deletedStepName)
-							log.Infof("Ошибка удаления ID '%s' Шага '%s' из промежуточной таблицы.", stepsId, deletedStepName)
-						}
-						log.Infof("Удалено строк в БД: %d", affected)
-					} else {
-						return err
-					}
-
-				}
-
-			} else {
-				return err
+				log.Debugf("Удалено строк в БД: %d", affected)
 			}
-
 		}
 	}
 	db.Close()
