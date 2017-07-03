@@ -27,4 +27,6 @@ func InitRoutes(router *gin.Engine) {
 
 	router.Handle("POST", "/spec-admin/add-step", handlers.AddStep)
 	router.Handle("POST", "/spec-admin/del-step", handlers.DelStep)
+	router.Handle("POST", "/spec-admin/edit-step", handlers.EditStep)
+	//router.Handle("POST", "/spec-admin/update-after-edit-step", handlers.UpdateAfterEditStep)
 }

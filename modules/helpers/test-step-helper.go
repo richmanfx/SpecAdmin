@@ -167,3 +167,56 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 
 	return stepsList, err
 }
+
+// Возвращает Шаг из БД
+func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.Step, error) {
+	var err error
+	var step models.Step
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return step, err }
+
+	// Получить данные о Шаге
+	log.Infof("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", editedStepName, stepsScriptName, scriptsSuiteName)
+
+	// Получить ID Сценария в Сюите
+	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+	log.Infof("requestResult: %v", requestResult)
+
+	var scriptId int
+	err = requestResult.Scan(&scriptId)		// Получить значение ID Сценария
+	log.Infof("ID Сценария: '%d'", scriptId)
+	if scriptId == 0 {
+		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+	} else {
+		// Получить Шаг из БД
+		log.Infof("Получение Шага '%s' в сценарии с ID '%d'.", editedStepName, scriptId)
+		requestResult := db.QueryRow("SELECT id,serial_number,description,expected_result FROM tests_steps WHERE name=? AND script_id=?", editedStepName, scriptId)
+
+		// Получить результаты запроса
+		var stepId int
+		var serialNumber int
+		var description string
+		var expectedResult string
+
+		err = requestResult.Scan(&stepId, &serialNumber, &description, &expectedResult)
+		if err != nil {
+			log.Debugf("Ошибка при получении данных шага '%s' из БД.", editedStepName)
+		} else {
+			log.Debugf("rows.Next из таблицы tests_steps: %d, %d, %s, %s", stepId, serialNumber, description, expectedResult)
+
+			// Заполнить данными Шаг
+			step.Id = stepId
+			step.Name = editedStepName
+			step.SerialNumber = serialNumber
+			step.Description = description
+			step.ExpectedResult = expectedResult
+		}
+
+	}
+	db.Close()
+	return step, err
+}

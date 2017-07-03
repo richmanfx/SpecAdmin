@@ -5,8 +5,8 @@ import (
 	"../helpers"
 	"fmt"
 	"net/http"
-	_ "github.com/Sirupsen/logrus"
-	_ "../../models"
+	log "github.com/Sirupsen/logrus"
+	"../../models"
 	_ "strconv"
 )
 
@@ -81,7 +81,41 @@ func DelStep(context *gin.Context)  {
 }
 
 
+// Редактировать Шаг
+func EditStep(context *gin.Context)  {
+	helpers.SetLogFormat()
 
+	// Данные из формы
+	editedStepName := context.PostForm("step")
+	stepsScript := context.PostForm("steps_script")
+	scriptsSuite := context.PostForm("scripts_suite")
+
+	log.Debugf("Редактируется Шаг '%s' сценария '%s' в сюите '%s'.", editedStepName, stepsScript, scriptsSuite)
+
+	// Получить данные о шаге из БД
+	var err error
+	var step models.Step
+	step, err = helpers.GetStep(editedStepName, stepsScript, scriptsSuite)
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		// Вывести данные для редактирования
+		context.HTML(http.StatusOK, "edit-step.html",
+			gin.H{
+				"title": 	"Редактирование шага",
+				"Version":	Version,
+				"step": 	step,
+			},
+		)
+	}
+}
 
 
 

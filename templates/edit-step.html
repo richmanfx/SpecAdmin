@@ -1,0 +1,39 @@
+{{ template "header.html" .}}
+
+<div id="id_after_edit_step">
+    <form id="id_after_edit_step_form" name="after_edit_step_form" method="post" action="/spec-admin/update-after-edit-step">
+
+        <input type="hidden" name="hidden_id" value="{{ .stepsId }}"><br>
+
+        <label for="id_step"> Имя шага </label><br>
+        <textarea id="id_step" name="step" rows="2">{{ .step.Name }}</textarea>
+
+        <label for="id_steps_serial_number">Порядковый номер шага</label><br>
+        <input id="id_steps_serial_number" name="steps_serial_number" value="{{ .step.SerialNumber }}" required="required" type="text"><br><br>
+
+        <div class="auto_width">
+            <label for="id_steps_description">Описание действий в шаге</label>
+            <textarea id="id_steps_description" name="steps_description" rows="5">{{ .step.Description }}</textarea>
+        </div>
+
+        <div class="auto_width">
+            <label for="id_steps_expected_result">Ожидаемый результат от действий в шаге</label>
+            <textarea id="id_steps_expected_result" name="steps_expected_result" rows="2">{{ .step.ExpectedResult }}</textarea>
+        </div>
+
+    </form>
+    <br><br>
+    <button type="submit"
+            class="btn btn-success btn-lg"
+            form="id_after_edit_step_form">
+        Сохранить
+    </button>
+    <a type="button"
+       class="btn btn-success btn-lg"
+       href="/spec-admin">
+        Отмена
+    </a>
+
+</div>
+
+{{ template "footer.html" .}}

@@ -74,23 +74,23 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 	log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
 	rows := db.QueryRow("SELECT id,serial_number,name_suite FROM tests_scripts WHERE name=?", scriptsName)
 
+	// Получить данные из результата запроса
 	var id int
 	var serialNumber string
 	var suiteName string
-	if err == nil {
-		// Получить данные из результата запроса
-		err = rows.Scan(&id, &serialNumber, &suiteName)
-		if err != nil {
-			log.Debugf("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
-		} else {
-			log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
 
-			// Заполнить данными Сценарий
-			script.Name = scriptsName
-			script.SerialNumber = serialNumber
-			script.Suite = suiteName
-		}
+	err = rows.Scan(&id, &serialNumber, &suiteName)
+	if err != nil {
+		log.Debugf("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
+	} else {
+		log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
+
+		// Заполнить данными Сценарий
+		script.Name = scriptsName
+		script.SerialNumber = serialNumber
+		script.Suite = suiteName
 	}
+
 	db.Close()
 	log.Debugf("Получение данных Сценария из БД => ошибка '%v'.", err)
 	return script, id, err
