@@ -179,34 +179,36 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 	if err != nil {	return step, err }
 
 	// Получить данные о Шаге
-	log.Infof("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", editedStepName, stepsScriptName, scriptsSuiteName)
+	log.Debugf("Получение данных о Шаге '%s' из Сценария '%s' Сюиты '%s'.", editedStepName, stepsScriptName, scriptsSuiteName)
 
 	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Infof("requestResult: %v", requestResult)
+	log.Debugf("requestResult: %v", requestResult)
 
 	var scriptId int
 	err = requestResult.Scan(&scriptId)		// Получить значение ID Сценария
-	log.Infof("ID Сценария: '%d'", scriptId)
+	log.Debugf("ID Сценария: '%d'", scriptId)
 	if scriptId == 0 {
 		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
 		// Получить Шаг из БД
-		log.Infof("Получение Шага '%s' в сценарии с ID '%d'.", editedStepName, scriptId)
-		requestResult := db.QueryRow("SELECT id,serial_number,description,expected_result FROM tests_steps WHERE name=? AND script_id=?", editedStepName, scriptId)
+		log.Debugf("Получение Шага '%s' в сценарии с ID '%d'.", editedStepName, scriptId)
+		requestResult := db.QueryRow("SELECT id,serial_number,description,expected_result,script_id FROM tests_steps WHERE name=? AND script_id=?", editedStepName, scriptId)
 
 		// Получить результаты запроса
 		var stepId int
 		var serialNumber int
 		var description string
 		var expectedResult string
+		var scriptsId int
 
-		err = requestResult.Scan(&stepId, &serialNumber, &description, &expectedResult)
+		err = requestResult.Scan(&stepId, &serialNumber, &description, &expectedResult, &scriptsId)
 		if err != nil {
 			log.Debugf("Ошибка при получении данных шага '%s' из БД.", editedStepName)
 		} else {
-			log.Debugf("rows.Next из таблицы tests_steps: %d, %d, %s, %s", stepId, serialNumber, description, expectedResult)
+			log.Debugf("rows.Next из таблицы tests_steps: %d, %d, %s, %s, %d",
+				stepId, serialNumber, description, expectedResult, scriptsId)
 
 			// Заполнить данными Шаг
 			step.Id = stepId
@@ -214,9 +216,34 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 			step.SerialNumber = serialNumber
 			step.Description = description
 			step.ExpectedResult = expectedResult
+			step.ScriptsId = scriptsId
 		}
-
 	}
 	db.Close()
 	return step, err
+}
+
+
+// Обновить данные Шага в БД
+func UpdateTestStep(
+	stepsId int, stepsName string, stepsSerialNumber int, stepsDescription string, stepsExpectedResult string) error {
+
+	var err error
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return err }
+
+	// Обновить данные о Шаге в БД
+	log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
+	_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=? LIMIT 1",
+		stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsId)
+	if err == nil {
+		log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
+	} else {
+		log.Debugf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
+	}
+	db.Close()
+	return err
 }

@@ -3,7 +3,7 @@
 <div id="id_after_edit_step">
     <form id="id_after_edit_step_form" name="after_edit_step_form" method="post" action="/spec-admin/update-after-edit-step">
 
-        <input type="hidden" name="hidden_id" value="{{ .stepsId }}"><br>
+        <input type="hidden" name="hidden_id" value="{{ .step.Id }}"><br>
 
         <label for="id_step"> Имя шага </label><br>
         <textarea id="id_step" name="step" rows="2">{{ .step.Name }}</textarea>

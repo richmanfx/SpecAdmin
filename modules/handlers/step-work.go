@@ -7,7 +7,7 @@ import (
 	"net/http"
 	log "github.com/Sirupsen/logrus"
 	"../../models"
-	_ "strconv"
+	"strconv"
 )
 
 // Добавить новый Шаг
@@ -118,19 +118,40 @@ func EditStep(context *gin.Context)  {
 }
 
 
+// Обновить в БД Шаг после редактирования
+func UpdateAfterEditStep(context *gin.Context)  {
+	helpers.SetLogFormat()
 
+	//Данные из формы
+	stepsId, err := strconv.Atoi(context.PostForm("hidden_id"))
+	if err != nil { panic(err) }
+	stepsName := context.PostForm("step")
+	stepsSerialNumber, err := strconv.Atoi(context.PostForm("steps_serial_number"))
+	if err != nil { panic(err) }
+	stepsDescription := context.PostForm("steps_description")
+	stepsExpectedResult := context.PostForm("steps_expected_result")
+	log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
+		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	// Обновить в БД
+	err = helpers.UpdateTestStep(stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
+				"message2": "",
+				"message3": "",
+			},
+		)
+	}
+}
