@@ -9,16 +9,19 @@
         <textarea id="id_step" name="step" rows="2">{{ .step.Name }}</textarea>
 
         <label for="id_steps_serial_number">Порядковый номер шага</label><br>
-        <input id="id_steps_serial_number" name="steps_serial_number" value="{{ .step.SerialNumber }}" required="required" type="text"><br><br>
+        <input id="id_steps_serial_number" name="steps_serial_number" value="{{ .step.SerialNumber }}"
+               required="required" type="text"><br><br>
 
         <div class="auto_width">
             <label for="id_steps_description">Описание действий в шаге</label>
-            <textarea id="id_steps_description" name="steps_description" rows="5">{{ .step.Description }}</textarea>
+            <textarea id="id_steps_description" name="steps_description" required="required"
+                      rows="5">{{ .step.Description }}</textarea>
         </div>
 
         <div class="auto_width">
             <label for="id_steps_expected_result">Ожидаемый результат от действий в шаге</label>
-            <textarea id="id_steps_expected_result" name="steps_expected_result" rows="2">{{ .step.ExpectedResult }}</textarea>
+            <textarea id="id_steps_expected_result" name="steps_expected_result" required="required"
+                      rows="2">{{ .step.ExpectedResult }}</textarea>
         </div>
 
     </form>

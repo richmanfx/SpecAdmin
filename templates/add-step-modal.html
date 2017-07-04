@@ -12,7 +12,8 @@
                 <form id="id_add_step_form" name="add_step_form" method="post" action="/spec-admin/add-step">
 
                     <div class="auto_width">
-                        <textarea id="id_step" name="step" placeholder=" Имя нового шага" rows="2"></textarea>
+                        <textarea id="id_step" name="step" placeholder=" Имя нового шага"
+                                  required="required" rows="2"></textarea>
                     </div>
                     <br>
 
@@ -21,19 +22,19 @@
                     <br>
 
                     <div class="auto_width">
-                        <textarea id="id_steps_description" name="steps_description"
+                        <textarea id="id_steps_description" name="steps_description" required="required"
                                   placeholder=" Описание действий в шаге" rows="5"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
-                        <textarea id="id_steps_expected_result" name="steps_expected_result"
+                        <textarea id="id_steps_expected_result" name="steps_expected_result" required="required"
                                   placeholder=" Ожидаемый результат от действий в шаге" rows="2"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
-                        <textarea id="id_steps_script" name="steps_script"
+                        <textarea id="id_steps_script" name="steps_script" required="required"
                                   placeholder=" Сценарий шага" rows="2"></textarea>
                     </div>
                     <br>
