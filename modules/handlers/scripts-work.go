@@ -47,8 +47,11 @@ func AddScript(context *gin.Context)  {
 func DelScript(context *gin.Context)  {
 	helpers.SetLogFormat()
 
-	deletedScript := context.PostForm("script")			// Скрипт из формы
-	err := helpers.DelTestScript(deletedScript)
+	// Данные из формы
+	deletedScript := context.PostForm("script")
+	scriptsSuite := context.PostForm("scripts_suite")
+
+	err := helpers.DelTestScript(deletedScript, scriptsSuite)
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

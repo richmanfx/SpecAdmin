@@ -3,7 +3,6 @@ package helpers
 import (
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
-	"fmt"
 	"runtime"
 	"../../models"
 )
@@ -31,7 +30,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	return err
 }
 
-func DelTestScript(scriptName string) error {
+func DelTestScript(scriptName, scriptsSuiteName string) error {
 	var err error
 	SetLogFormat()
 
@@ -41,21 +40,19 @@ func DelTestScript(scriptName string) error {
 
 	// Удаление скрипта из БД
 	log.Debugf("Удаление Скрипта '%s'.", scriptName)
-	result, err := db.Exec("DELETE FROM tests_scripts WHERE name=?", scriptName)
+	result, err := db.Exec("DELETE FROM tests_scripts WHERE name=? AND name_suite=?", scriptName, scriptsSuiteName)
 	if err == nil {
 		var affected int64
 		affected, err = result.RowsAffected()
 		if err == nil {
 			if affected == 0 {
 				_, goModuleName, lineNumber, _ := runtime.Caller(1)
-				err = fmt.Errorf("Ошибка удаления Скрипта '%s'. Есть такой Скрипт?", scriptName)
 				log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
 					scriptName, goModuleName, lineNumber)
 			}
 			log.Debugf("Удалено строк в БД: %v.", affected)
 		}
 	}
-	
 	db.Close()
 	return err
 }
