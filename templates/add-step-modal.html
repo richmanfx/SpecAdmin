@@ -12,33 +12,39 @@
                 <form id="id_add_step_form" name="add_step_form" method="post" action="/spec-admin/add-step">
 
                     <div class="auto_width">
+                        <label for="id_step"> Имя нового шага </label><br>
                         <textarea id="id_step" name="step" placeholder=" Имя нового шага"
                                   required="required" rows="2"></textarea>
                     </div>
                     <br>
 
+                    <label for="id_step_serial_number"> Порядковый номер шага </label><br>
                     <input id="id_step_serial_number" name="step_serial_number"
                            placeholder=" Порядковый номер шага" required="required" type="text"><br>
                     <br>
 
                     <div class="auto_width">
+                        <label for="id_steps_description"> Описание действий в шаге </label><br>
                         <textarea id="id_steps_description" name="steps_description" required="required"
                                   placeholder=" Описание действий в шаге" rows="5"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
+                        <label for="id_steps_expected_result"> Ожидаемый результат от действий в шаге </label><br>
                         <textarea id="id_steps_expected_result" name="steps_expected_result" required="required"
                                   placeholder=" Ожидаемый результат от действий в шаге" rows="2"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
+                        <label for="id_steps_script"> Сценарий шага </label><br>
                         <textarea id="id_steps_script" name="steps_script" required="required"
                                   placeholder=" Сценарий шага" rows="2"></textarea>
                     </div>
                     <br>
 
+                    <label for="id_scripts_suite"> Сюита сценария </label><br>
                     <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария"
                            required="required" type="text"><br>
                     <br>

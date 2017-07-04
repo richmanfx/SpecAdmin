@@ -10,18 +10,22 @@
 
             <div class="modal-body">
                 <form id="id_edit_step_form" name="edit_step_form" method="post" action="/spec-admin/edit-step">
+
                     <div class="auto_width">
+                        <label for="id_step"> Имя редактируемого шага </label><br>
                         <textarea id="id_step" name="step" required="required"
                                   placeholder=" Имя редактируемого шага" rows="2"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
+                        <label for="id_steps_script"> Сценарий шага </label><br>
                         <textarea id="id_steps_script" name="steps_script" required="required"
                                   placeholder=" Сценарий шага" rows="2"></textarea>
                     </div>
                     <br>
 
+                    <label for="id_scripts_suite"> Сюита сценария </label><br>
                     <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария"
                            required="required" type="text"><br>
                     <br>

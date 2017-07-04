@@ -10,14 +10,18 @@
 
             <div class="modal-body">
                 <form id="id_del_step_form" name="del_step_form" method="post" action="/spec-admin/del-step">
-                    <input id="id_step" name="step" placeholder=" Введи имя удаляемого шага"
+
+                    <label for="id_step"> Имя шага </label><br>
+                    <input id="id_step" name="step" placeholder=" Имя удаляемого шага"
                            required="required" type="text">
                     <br><br>
 
+                    <label for="id_script"> Сценарий шага </label><br>
                     <input id="id_script" name="script" placeholder=" Сценарий, содержащий шаг"
                            required="required" type="text">
                     <br><br>
 
+                    <label for="id_suite"> Сюита шага </label><br>
                     <input id="id_suite" name="suite" placeholder=" Сюита, содержащая сценарий"
                            required="required" type="text">
                     <br><br>

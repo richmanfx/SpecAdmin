@@ -10,15 +10,23 @@
 
             <div class="modal-body">
                 <form id="id_add_suite_form" name="add_suite_form" method="post" action="/spec-admin/add-suite">
-                    <input id="id_suite" name="suite" placeholder=" Имя новой сюиты" required="required" type="text"><br>
-                    <br>
+
+                    <label for="id_suite"> Имя новой сюиты </label><br>
+                    <input id="id_suite" name="suite" placeholder=" Имя новой сюиты" required="required" type="text">
+                    <br><br>
+
+                    <label for="id_suites_serial_number"> Порядковый номер </label><br>
                     <input id="id_suites_serial_number" name="suites_serial_number" placeholder=" Порядковый номер"
-                           required="required" type="text"><br>
-                    <br>
+                           required="required" type="text">
+                    <br><br>
+
+                    <label for="id_suites_group"> Группа сюиты </label><br>
                     <input id="id_suites_group" name="suites_group" placeholder=" Группа сюиты" required="required"
-                           type="text"><br>
-                    <br>
+                           type="text">
+                    <br><br>
+
                     <div class="auto_width">
+                    <label for="id_suites_description"> Описание сюиты </label><br>
                     <textarea id="id_suites_description" name="suites_description" required="required"
                               placeholder=" Описание сюиты" rows="5"></textarea>
                     </div>
