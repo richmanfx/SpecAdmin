@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "3.6"
+var Version string = "3.7"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -20,6 +20,9 @@ func ShowIndexPage(context *gin.Context)  {
 
 	// Сформировать список Групп на основе данных из БД
 	groupList, err = helpers.GetGroupsList(groupList)
+
+	// Сбор статистики
+	statistic, err := helpers.GetStatistic()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: %v", err)
@@ -39,6 +42,7 @@ func ShowIndexPage(context *gin.Context)  {
 				"title":        "SpecAdmin",
 				"Version":      Version,
 				"groupList": 	groupList,
+				"statistic":	statistic,
 			},
 		)
 	}
@@ -57,6 +61,9 @@ func ShowSuitesIndex(context *gin.Context)  {
 
 	// Сформировать список Сюит заданной Группы из БД
 	suitesList, err = helpers.GetSuitesListInGroup(groupName)
+
+	// Сбор статистики
+	statistic, err := helpers.GetStatistic()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов.: %v", err)
@@ -77,6 +84,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 				"Version":      Version,
 				"groupName":	groupName,
 				"suitesList": 	suitesList,
+				"statistic":	statistic,
 			},
 		)
 	}

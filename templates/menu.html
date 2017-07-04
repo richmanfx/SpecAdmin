@@ -2,6 +2,7 @@
 
 {{ template "about-modal.html" . }}
 {{ template "message-modal.html" . }}
+{{ template "statistic-modal.html" . }}
 
 {{ template "add-group-modal.html" . }}
 {{ template "del-group-modal.html" . }}
@@ -63,6 +64,10 @@
             </li>
 
             <li>
+                <a class="navbar-brand" data-toggle="modal" data-target="#statisticModal" href="#"> Статистика </a>
+            </li>
+
+            <li>
                 <a class="navbar-brand" data-toggle="modal" data-target="#aboutModal" href="#"> О программе </a>
             </li>
 
@@ -72,7 +77,7 @@
         </ul>
 
         <ul class="navbar-right">
-            Версия: {{ .Version }} <span class="title"> SpecAdmin </span>
+            Версия: <span class="version">{{ .Version }}</span> <span class="title"> SpecAdmin </span>
         </ul>
     </div>
 </nav>

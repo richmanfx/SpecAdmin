@@ -90,6 +90,18 @@ th,td.steps-screen-shot {
     width: 10em;
 }
 
+td.statistic-header {
+    font-weight: bold;
+}
+
+td.statistic-value {
+    font-weight: bold;
+    color: #398439;
+    width: 10em;
+    text-align: right;
+}
+
+
 table.suite-table {
     background-color: #bfeeff;
     width: 90%;
@@ -149,4 +161,9 @@ footer {
 
 .right-align {
     text-align: right;
+}
+
+.version {
+    color: #ff0000;
+    font-weight: bold;
 }

@@ -31,6 +31,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		group.Name = name
 		groupList = append(groupList, group)
 	}
+	db.Close()
 	return groupList, err
 }
 
