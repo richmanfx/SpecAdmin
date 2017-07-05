@@ -25,6 +25,14 @@
         </div>
     </form>
     <br><br>
+
+    <!-- Автофокус в поле ввода в модальном окне -->
+    <script>
+        $('#id_after_edit_suite').on('shown.bs.modal', function (e) {
+            $('#id_suite', e.target).focus();
+        });
+    </script>
+
     <button type="submit"
             class="btn btn-success btn-lg"
             form="id_after_edit_suite_form">
