@@ -26,6 +26,14 @@
 
     </form>
     <br><br>
+
+    <!-- Автофокус в поле ввода в модальном окне -->
+    <script>
+        $('#id_after_edit_step').on('shown.bs.modal', function (e) {
+            $('#id_step', e.target).focus();
+        });
+    </script>
+
     <button type="submit"
             class="btn btn-success btn-lg"
             form="id_after_edit_step_form">
