@@ -11,9 +11,16 @@
             <div class="modal-body">
                 <form id="id_edit_script_form" name="edit_script_form" method="post" action="/spec-admin/edit-script">
                     <div class="auto_width">
+
                         <label for="id_script"> Имя редактируемого сценария </label><br>
                         <textarea id="id_script" name="script" placeholder=" Имя редактируемого сценария"
                                   required="required" rows="3"></textarea>
+                        <br><br>
+
+                        <label for="id_scripts_suite"> Сюита сценария </label><br>
+                        <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария" required="required" type="text"><br>
+                        <br>
+
                     </div>
                     <br>
                 </form>

@@ -58,7 +58,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 }
 
 // Возвращает Сценарий из БД
-func GetScript(scriptsName string) (models.Script, int, error) {
+func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error) {
 	var err error
 	var script models.Script
 	SetLogFormat()
@@ -69,23 +69,23 @@ func GetScript(scriptsName string) (models.Script, int, error) {
 
 	// Получить данные о Сценарии и его ключ 'id'
 	log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
-	rows := db.QueryRow("SELECT id,serial_number,name_suite FROM tests_scripts WHERE name=?", scriptsName)
+	rows := db.QueryRow("SELECT id,serial_number FROM tests_scripts WHERE name=? AND name_suite=?",
+		scriptsName, scriptsSuiteName)
 
 	// Получить данные из результата запроса
 	var id int
 	var serialNumber string
-	var suiteName string
 
-	err = rows.Scan(&id, &serialNumber, &suiteName)
+	err = rows.Scan(&id, &serialNumber)
 	if err != nil {
-		log.Debugf("Ошибка при получении данных по сценарию '%s' из БД.", scriptsName)
+		log.Debugf("Ошибка при получении данных по Сценарию '%s' Сюиты '%s' из БД.", scriptsName, scriptsSuiteName)
 	} else {
-		log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, suiteName)
+		log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, scriptsSuiteName)
 
 		// Заполнить данными Сценарий
 		script.Name = scriptsName
 		script.SerialNumber = serialNumber
-		script.Suite = suiteName
+		script.Suite = scriptsSuiteName
 	}
 
 	db.Close()

@@ -77,14 +77,17 @@ func DelScript(context *gin.Context)  {
 func EditScript(context *gin.Context)  {
 	helpers.SetLogFormat()
 
-	editedScript := context.PostForm("script")					// Скрипт из формы
-	log.Debugf("Редактируется Сценарий: '%v'.", editedScript)
+	// Данные из формы
+	editedScript := context.PostForm("script")
+	scriptsSuite := context.PostForm("scripts_suite")
+
+	log.Debugf("Редактируется Сценарий '%v' в Сюите '%v'", editedScript, scriptsSuite)
 
 	// Получить данные о сценарии из БД
 	var script models.Script
 	var scriptId int
 	var err error
-	script, scriptId, err = helpers.GetScript(editedScript)
+	script, scriptId, err = helpers.GetScript(editedScript, scriptsSuite)
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
