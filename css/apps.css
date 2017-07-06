@@ -26,6 +26,11 @@ div.modal-header {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
 }
 
+div.config-button {
+    padding-top: 5em;
+    text-align: center;
+}
+
 span.title {
     font-size: 2em;
     padding: 0 1em;
