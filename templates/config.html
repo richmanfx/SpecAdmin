@@ -1,0 +1,30 @@
+{{ template "header.html" .}}
+
+<span class="title">Конфигурация</span>
+
+<p>
+<div class="group_list">
+    <form id="id_config_form" method="post" action="/spec-admin/save-config">
+        {{ range .config }}
+
+        <label for="id_option_{{ .Name }}"> {{ .Name }} </label>:&nbsp;
+        <input class="config" id="id_option_{{ .Name }}" name="option_{{ .Name }}"
+               value="{{ .Value }}" required="required" type="text" autofocus>
+        <br><br>
+
+        {{ end }}
+    </form>
+
+    <div class="config-button">
+        <button type="submit" class="btn btn-success btn-lg" form="id_config_form">
+            Сохранить
+        </button>
+        <a type="button" class="btn btn-success btn-lg" href="/spec-admin">
+            Отмена
+        </a>
+    </div>
+
+</div>
+
+
+{{ template "footer.html" .}}
