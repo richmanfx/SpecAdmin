@@ -7,6 +7,11 @@
     <div class="group_list">
         <form method="post" action="/spec-admin/show-suites">
             <input class="group_name btn-primary" type="submit" value="{{ .Name }}" name="group_name">
+            <span class="group_rename">
+                <a href="#">
+                    <img src="../images/icons/rename.png" alt="Переименовать группу" width="30" height="30">
+                </a>
+            </span>
         </form>
     </div>
 {{ end }}
