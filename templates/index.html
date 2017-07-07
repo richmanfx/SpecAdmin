@@ -8,16 +8,35 @@
         <form method="post" action="/spec-admin/show-suites">
             <input class="group_name btn-primary" type="submit" value="{{ .Name }}" name="group_name">
             <span class="group_rename">
-                <a data-toggle="modal" data-target="#editGroup" href="#" title="Переименовать Группу">
+                <a data-toggle="modal" data-target="#editGroup" href="#" title="Переименовать Группу" data-whatever="{{ .Name }}">
                     <img src="/images/icons/rename.png" alt="Rename" width="40" height="40">
                 </a>
-                <a data-toggle="modal" data-target="#delGroup" href="#" title="Удалить Группу">
+                <a data-toggle="modal" data-target="#delGroup" href="#" title="Удалить Группу" data-whatever="{{ .Name }}">
                     <img src="/images/icons/delete.png" alt="Delete" width="40" height="40">
                 </a>
             </span>
         </form>
     </div>
 {{ end }}
+
+<!-- Подстановка имени группы в поле в модальном окне -->
+<script>
+    // Для кнопки "Переименовать"
+    $('#editGroup').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var modal = $(this)         // Обновить модальное окно
+        modal.find('#id_old_group').val(recipient)      // Только в input со старым значением
+    })
+
+    // Для кнопки "Удалить"
+    $('#delGroup').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var modal = $(this)             // Обновить модальное окно
+        modal.find('.modal-body input').val(recipient)      // Заполнить input
+    })
+</script>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}
