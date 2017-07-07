@@ -1,5 +1,5 @@
 <div id="delScript" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -12,8 +12,9 @@
                 <form id="id_del_script_form" name="del_script_form" method="post" action="/spec-admin/del-script">
 
                     <label for="id_script"> Имя сценария </label><br>
-                    <input id="id_script" name="script" placeholder=" Имя сценария"
-                           required="required" type="text">
+                    <textarea id="id_script" name="script" placeholder=" Имя сценария"
+                              required="required" rows="3"></textarea>
+
                     <br><br>
 
                     <label for="id_scripts_suite"> Сюита сценария </label><br>

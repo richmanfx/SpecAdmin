@@ -13,11 +13,11 @@
             </td>
             <td>{{ .Description }}</td>
             <td>
-                <a data-toggle="modal" data-target="#editSuite" href="#" title="Редактировать Сюиту" data-whatever="{{ .Name }}">
+                <a data-toggle="modal" data-target="#editSuite" href="#" title="Редактировать Сюиту" data-name="{{ .Name }}">
                     <img src="/images/icons/edit.png" alt="Rename" width="40" height="40">
                 </a>
                 <br>
-                <a data-toggle="modal" data-target="#delSuite" href="#" title="Удалить Сюиту" data-whatever="{{ .Name }}">
+                <a data-toggle="modal" data-target="#delSuite" href="#" title="Удалить Сюиту" data-name="{{ .Name }}">
                     <img src="/images/icons/delete.png" alt="Delete" width="40" height="40">
                 </a>
             </td>
@@ -30,6 +30,16 @@
             <tr>
                 <td class="script-numbers">{{ .SerialNumber }}.</td>
                 <td class="script-name"><a href="#" onclick="anichange('#divId_{{ .Suite }}_{{ .SerialNumber }}'); return false">{{ .Name }}</a></td>
+                <td>
+                    <a data-toggle="modal" data-target="#editScript" href="#" title="Редактировать Сценарий"
+                       data-name="{{ .Name }}" data-suite="{{ .Suite }}">
+                        <img src="/images/icons/edit.png" alt="Rename" width="40" height="40">
+                    </a>
+                    <a data-toggle="modal" data-target="#delScript" href="#" title="Удалить Сценарий"
+                       data-name="{{ .Name }}" data-suite="{{ .Suite }}">
+                        <img src="/images/icons/delete.png" alt="Delete" width="40" height="40">
+                    </a>
+                </td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -86,7 +96,7 @@
     // Для кнопки "Редактировать"
     $('#editSuite').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var recipient = button.data('name')     // Извлечь информацию из "data-name" у кнопки
         var modal = $(this)         // Обновить модальное окно
         modal.find('#id_suite').val(recipient)      // Только в input со старым значением
     })
@@ -94,9 +104,32 @@
     // Для кнопки "Удалить"
     $('#delSuite').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var recipient = button.data('name')     // Извлечь информацию из "data-name" у кнопки
         var modal = $(this)         // Обновить модальное окно
-        modal.find('#id_suite').val(recipient)      // Только в input со старым значением
+        modal.find('#id_suite').val(recipient)
+    })
+</script>
+
+<!-- Подстановка имени Сценария и Сюиты в поля в модальном окне -->
+<script>
+    // Для кнопки "Редактировать"
+    $('#editScript').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('name')     // Извлечь информацию из "data-name" у кнопки
+        var recipient_suite = button.data('suite')     // Извлечь информацию из "data-suite" у кнопки
+        var modal = $(this)         // Обновить модальное окно
+        modal.find('#id_script').val(recipient)      // В input с именем сценария
+        modal.find('#id_scripts_suite').val(recipient_suite)      // В input с именем сюиты
+    })
+
+    // Для кнопки "Удалить"
+    $('#delScript').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('name')     // Извлечь информацию из "data-name" у кнопки
+        var recipient_suite = button.data('suite')     // Извлечь информацию из "data-suite" у кнопки
+        var modal = $(this)         // Обновить модальное окно
+        modal.find('#id_script').val(recipient)
+        modal.find('#id_scripts_suite').val(recipient_suite)      // В input с именем сюиты
     })
 </script>
 
