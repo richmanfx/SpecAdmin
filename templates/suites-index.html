@@ -12,6 +12,15 @@
                 <a href="#" onclick="anichange('#divId_{{ .Name }}'); return false" class="group_name">{{ .Name }}</a>
             </td>
             <td>{{ .Description }}</td>
+            <td>
+                <a data-toggle="modal" data-target="#editSuite" href="#" title="Редактировать Сюиту" data-whatever="{{ .Name }}">
+                    <img src="/images/icons/edit.png" alt="Rename" width="40" height="40">
+                </a>
+                <br>
+                <a data-toggle="modal" data-target="#delSuite" href="#" title="Удалить Сюиту" data-whatever="{{ .Name }}">
+                    <img src="/images/icons/delete.png" alt="Delete" width="40" height="40">
+                </a>
+            </td>
         </tr>
     </table>
 
@@ -70,6 +79,25 @@
     function anichange(a) {
         $(a).slideToggle(400);
     }
+</script>
+
+<!-- Подстановка имени сюиты в поле в модальном окне -->
+<script>
+    // Для кнопки "Редактировать"
+    $('#editSuite').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var modal = $(this)         // Обновить модальное окно
+        modal.find('#id_suite').val(recipient)      // Только в input со старым значением
+    })
+
+    // Для кнопки "Удалить"
+    $('#delSuite').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)         // Кнопка, вызвавшая модальное окно
+        var recipient = button.data('whatever')     // Извлечь информацию из "data-whatever" у кнопки
+        var modal = $(this)         // Обновить модальное окно
+        modal.find('#id_suite').val(recipient)      // Только в input со старым значением
+    })
 </script>
 
 <!-- Шаблон футера -->
