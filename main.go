@@ -24,6 +24,7 @@ func main() {
 	// Загрузить статику
 	Router.Static("/css", "css")
 	Router.Static("/js", "js")
+	Router.Static("/images", "images")
 
 	// Проинитить роуты
 	modules.InitRoutes(Router)
