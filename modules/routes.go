@@ -29,6 +29,8 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("POST", "/spec-admin/del-step", handlers.DelStep)
 	router.Handle("POST", "/spec-admin/edit-step", handlers.EditStep)
 	router.Handle("POST", "/spec-admin/update-after-edit-step", handlers.UpdateAfterEditStep)
+	router.Handle("POST", "/spec-admin/get-steps-options", handlers.GetStepsOptions)			// for AJAX
+
 
 	router.Handle("GET", "/spec-admin/edit-config", handlers.EditConfig)
 	router.Handle("POST", "/spec-admin/save-config", handlers.SaveConfig)

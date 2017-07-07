@@ -249,31 +249,34 @@ func GetScriptList() ([]models.Script, error)  {
 		script.Name = name
 		script.SerialNumber = serial_number
 		script.Suite = name_suite
-
-		// Закинуть Шаги в соответствующие Сценарии
-		//var stepsId int
-		//for _, script := range scriptsList { // Бежать по всем Сценариям - их меньше
-		//	for _, step := range stepsList {	// Внутри бежим по Шагам
-		//
-		//		// Если Шаг принадлежит Сценарию, то добавляем его
-		//		// steps_id-из промежуточной таблицы
-		//		queryResult := db.QueryRow("SELECT steps_id FROM intermediate_scripts_steps WHERE scripts_id=?", script.Id)
-		//		err = queryResult.Scan(&stepsId)	// Получить данные из результата запроса
-		//		log.Debugf("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
-		//		if step.Id == stepsId {
-		//			log.Infof("step.Id='%d' - stepsId='%d' <- script.Id='%d'", step.Id, stepsId, script.Id)
-		//			script.Steps = append(script.Steps, step)
-		//		}
-		//	//	log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-		//	//} else {
-		//	//log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-		//	//}
-		//	}
-		//}
-
 		scriptsList = append(scriptsList, script)
 		log.Debugf("Список сценариев: %v", scriptsList)
 	}
-
 	return scriptsList, err
+}
+
+
+// Вернуть Сценарий и Сюиту Шага по его ID
+func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
+	var err error
+	var stepsScriptName string
+	var scripsSuiteName string
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return stepsScriptName, scripsSuiteName, err }
+
+	// Данные по Сценарию из БД
+	log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
+	rows := db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId)
+
+	// Получить данные из результата запроса
+	err = rows.Scan(&stepsScriptName, &scripsSuiteName)
+	if err != nil {
+		log.Debugf("Ошибка при получении данных из БД по Сценарию с Id='%s'.", ScriptId)
+	} else {
+		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
+	}
+	return stepsScriptName, scripsSuiteName, err
 }

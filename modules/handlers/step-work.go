@@ -155,3 +155,35 @@ func UpdateAfterEditStep(context *gin.Context)  {
 		)
 	}
 }
+
+// Вернуть параметры Шага (AJAX)
+func GetStepsOptions(context *gin.Context)  {
+	helpers.SetLogFormat()
+	log.Infoln("Пришёл запрос в GetStepsOptions")
+
+	// Данные из формы
+	stepsScriptsId, err := strconv.Atoi(context.PostForm("ScriptsId"))
+	log.Infof("Данные из POST запроса AJAX: '%d'", stepsScriptsId)
+	if err != nil { panic(err) }
+
+	// Данные о Шаге из БД
+	stepsScriptName, scripsSuiteName, err := helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
+
+	if err == nil {
+		//context.JSON(http.StatusOK, gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName})
+		//message := fmt.Sprintf("stepsScriptName=%s, scripsSuiteName=%s", stepsScriptName, scripsSuiteName)
+		message := fmt.Sprintf("{stepsScriptName: %s, scripsSuiteName: %s}", stepsScriptName, scripsSuiteName)
+		context.String(http.StatusOK, message)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	}
+
+
+}

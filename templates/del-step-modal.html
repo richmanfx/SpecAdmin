@@ -1,5 +1,5 @@
 <div id="delStep" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -11,14 +11,18 @@
             <div class="modal-body">
                 <form id="id_del_step_form" name="del_step_form" method="post" action="/spec-admin/del-step">
 
-                    <label for="id_step"> Имя шага </label><br>
-                    <input id="id_step" name="step" placeholder=" Имя удаляемого шага"
-                           required="required" type="text">
+                    <div class="auto_width">
+                        <label for="id_step"> Имя шага</label><br>
+                        <textarea id="id_step" name="step" required="required"
+                                  placeholder=" Имя удаляемого шага" rows="2"></textarea>
+                    </div>
                     <br><br>
 
-                    <label for="id_script"> Сценарий шага </label><br>
-                    <input id="id_script" name="script" placeholder=" Сценарий, содержащий шаг"
-                           required="required" type="text">
+                    <div class="auto_width">
+                        <label for="id_script"> Сценарий шага </label><br>
+                        <textarea id="id_script" name="script" required="required"
+                                  placeholder=" Сценарий, содержащий шаг" rows="2"></textarea>
+                    </div>
                     <br><br>
 
                     <label for="id_suite"> Сюита шага </label><br>
