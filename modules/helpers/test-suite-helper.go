@@ -129,30 +129,29 @@ func DelTestSuite(suitesName string) error {
 }
 
 // Возвращает Сюиту из БД
-func GetSuite(suitesName string) (models.Suite, int, error)  {
+func GetSuite(suitesName string) (models.Suite, error)  {
 	var err error
 	var suite models.Suite
 	SetLogFormat()
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return suite, 0, err }
+	if err != nil {	return suite, err }
 
 	// Получить данные о Сюите и её ключ 'id'
 	log.Debugf("Получение данных Сюиты '%s' из БД.", suitesName)
-	rows := db.QueryRow("SELECT id,description,serial_number,name_group FROM tests_suits WHERE name=?", suitesName)
+	rows := db.QueryRow("SELECT serial_number, description, name_group FROM tests_suits WHERE name=?", suitesName)
 
-	var id int
 	var description string
 	var serialNumber string
 	var groupName string
 	if err == nil {
 		// Данные получить из результата запроса
-		err = rows.Scan(&id, &description, &serialNumber, &groupName)
+		err = rows.Scan(&serialNumber, &description, &groupName)
 		if err != nil {
 			log.Debugf("Ошибка при получении данных по сюите '%s' из БД.", suitesName)
 		} else {
-			log.Debugf("rows.Next из таблицы tests_suits: %d, %s, %s, %s", id, description, serialNumber, groupName)
+			log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", description, serialNumber, groupName)
 
 			// Заполнить данными Сюиту
 			suite.Name = suitesName
@@ -163,11 +162,11 @@ func GetSuite(suitesName string) (models.Suite, int, error)  {
 	}
 	db.Close()
 	log.Debugf("Получение данных Сюиты из БД => ошибка '%v'.", err)
-	return suite, id, err
+	return suite, err
 }
 
 // Обновляет данные Сюиты в БД
-func UpdateTestSuite(suitesId int, suitesName string, suitesDescription string,
+func UpdateTestSuite(suitesName string, suitesDescription string,
 					 suitesSerialNumber string, suitesGroup string) error {
 
 	var err error
@@ -179,13 +178,13 @@ func UpdateTestSuite(suitesId int, suitesName string, suitesDescription string,
 
 	// Обновить данные о Сюите в БД
 	log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
-	_, err = db.Query("UPDATE tests_suits SET name=?, description=?, serial_number=?, name_group=? WHERE id=? LIMIT 1",
-		suitesName, suitesDescription, suitesSerialNumber, suitesGroup, suitesId)
+	_, err = db.Query("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
+		suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
 	if err == nil {
 		log.Debugf("Успешно обновлены данные Сюиты '%s' в БД.", suitesName)
 	} else {
 		log.Debugf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
 	}
-	//db.Close()	// TODO: Проверить - можно ли здесь закрыть соединение
+	db.Close()
 	return err
 }
