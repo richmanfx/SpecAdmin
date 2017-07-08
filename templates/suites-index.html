@@ -107,17 +107,17 @@
     // Для кнопки "Редактировать"
     $('#editSuite').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
         var modal = $(this);         // Обновить модальное окно
-        modal.find('#id_suite').val(recipient)      // Только в input со старым значением
+        modal.find('#id_suite').val(recipientName)      // Только в input со старым значением
     });
 
     // Для кнопки "Удалить"
     $('#delSuite').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
         var modal = $(this)         // Обновить модальное окно
-        modal.find('#id_suite').val(recipient)
+        modal.find('#id_suite').val(recipientName)
     });
 </script>
 
@@ -126,21 +126,21 @@
     // Для кнопки "Редактировать"
     $('#editScript').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-        var recipient_suite = button.data('suite');     // Извлечь информацию из "data-suite" у кнопки
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientSuite = button.data('suite');     // Извлечь информацию из "data-suite" у кнопки
         var modal = $(this);         // Обновить модальное окно
-        modal.find('#id_script').val(recipient);      // В input с именем сценария
-        modal.find('#id_scripts_suite').val(recipient_suite)      // В input с именем сюиты
+        modal.find('#id_script').val(recipientName);      // В input с именем сценария
+        modal.find('#id_scripts_suite').val(recipientSuite)      // В input с именем сюиты
     });
 
     // Для кнопки "Удалить"
     $('#delScript').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-        var recipient_suite = button.data('suite');     // Извлечь информацию из "data-suite" у кнопки
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientSuite = button.data('suite');     // Извлечь информацию из "data-suite" у кнопки
         var modal = $(this);         // Обновить модальное окно
-        modal.find('#id_script').val(recipient);
-        modal.find('#id_scripts_suite').val(recipient_suite)      // В input с именем сюиты
+        modal.find('#id_script').val(recipientName);
+        modal.find('#id_scripts_suite').val(recipientSuite)      // В input с именем сюиты
     });
 </script>
 
@@ -149,8 +149,8 @@
     // Для кнопки "Редактировать"
     $('#editStep').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient_name = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-        var recipient_scripts_id = button.data('script');     // Извлечь "ScriptsId"
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientScriptsId = button.data('script');     // Извлечь "ScriptsId"
 
         var stepsScriptName = "kuku1";
         var scripsSuiteName = "hehe2";
@@ -159,12 +159,12 @@
         $.ajax({
             type: 'POST',
             url: '/spec-admin/get-steps-options',
-            data: 'ScriptsId=' + recipient_scripts_id,
-            success: function(answer_from_server){
+            data: 'ScriptsId=' + recipientScriptsId,
+            success: function(answerFromServer){
 //                alert( "Прибыли данные: " + answer_from_server );
 //                (stepsScriptName = $(answer_from_server).find("stepsScriptName").text);
-                var parsed_data = JSON.parse(answer_from_server);
-                alert( parsed_data );
+                var parsedData = JSON.parse(answerFromServer);
+                alert( parsedData );
 //                alert( "stepsScriptName=" + stepsScriptName );
 
             },
@@ -174,7 +174,7 @@
         });
 
         var modal = $(this);         // Обновить модальное окно
-        modal.find('#id_step').val(recipient_name);                      // В input с именем Шага
+        modal.find('#id_step').val(recipientName);                      // В input с именем Шага
         modal.find('#id_steps_script').val(stepsScriptName);        // В input с именем Сценария
         modal.find('#id_scripts_suite').val(scripsSuiteName);       // В input с именем Сюиты
     });
@@ -182,11 +182,11 @@
     // Для кнопки "Удалить"
     $('#delStep').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-        var recipient_name = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-        var recipient_scripts_id = button.data('script');     // Извлечь "ScriptsId"
+        var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+        var recipientScriptsId = button.data('script');     // Извлечь "ScriptsId"
         var modal = $(this);         // Обновить модальное окно
-        modal.find('#id_step').val(recipient_name);
-        modal.find('#id_steps_script').val(recipient_scripts_id)      // В input с именем Сценария
+        modal.find('#id_step').val(recipientName);
+        modal.find('#id_steps_script').val(recipientScriptsId)      // В input с именем Сценария
     })
 </script>
 
