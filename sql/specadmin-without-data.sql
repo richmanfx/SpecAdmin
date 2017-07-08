@@ -22,7 +22,7 @@ CREATE TABLE `configuration` (
   `property_value` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `configuration_property_name_uindex` (`property_name`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -34,7 +34,7 @@ CREATE TABLE `configuration` (
 CREATE TABLE `tests_groups` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`name`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Группы тестов';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -51,7 +51,7 @@ CREATE TABLE `tests_scripts` (
   PRIMARY KEY (`id`),
   KEY `tests_scripts_tests_suits__fk` (`name_suite`),
   CONSTRAINT `tests_scripts_tests_suits__fk` FOREIGN KEY (`name_suite`) REFERENCES `tests_suits` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `tests_steps` (
   PRIMARY KEY (`id`),
   KEY `tests_steps_tests_scripts__fk` (`script_id`),
   CONSTRAINT `tests_steps_tests_scripts__fk` FOREIGN KEY (`script_id`) REFERENCES `tests_scripts` (`id`)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Шаги тестов';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -87,7 +87,7 @@ CREATE TABLE `tests_suits` (
   PRIMARY KEY (`name`),
   KEY `tests_suits_tests_groups__fk` (`name_group`),
   CONSTRAINT `tests_suits_tests_groups__fk` FOREIGN KEY (`name_group`) REFERENCES `tests_groups` (`name`) ON DELETE CASCADE ON UPDATE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Сюиты тестов';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
