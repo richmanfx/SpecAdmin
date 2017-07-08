@@ -43,6 +43,10 @@
                        data-name="{{ .Name }}" data-suite="{{ .Suite }}">
                         <img src="/images/icons/delete.png" alt="Delete" width="30" height="30">
                     </a>
+                    <a data-toggle="modal" data-target="#addStep" href="#" title="Добавить Шаг"
+                       data-name="{{ .Name }}" data-suite="{{ .Suite }}">
+                        <img src="/images/icons/add.png" alt="Add Step" width="30" height="30">
+                    </a>
                 </td>
             </tr>
             <tr>
@@ -153,6 +157,16 @@
         var modal = $(this);         // Обновить модальное окно
         modal.find('#id_script').val(recipientName);
         modal.find('#id_scripts_suite').val(recipientSuite)      // В input с именем сюиты
+    });
+
+    // Для кнопки "Добавить Шаг"
+    $('#addStep').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var recipientName = button.data('name');
+        var recipientSuite = button.data('suite');
+        var modal = $(this);
+        modal.find('#id_steps_script').val(recipientName);
+        modal.find('#id_scripts_suite').val(recipientSuite)
     });
 </script>
 
