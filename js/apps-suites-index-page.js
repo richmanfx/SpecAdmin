@@ -77,31 +77,31 @@ $('#editStep').on('show.bs.modal', function (event) {
     var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
     var recipientScriptsId = button.data('script');     // Извлечь "ScriptsId"
 
-    var stepsScriptName = "kuku1";
-    var scripsSuiteName = "hehe2";
+    var stepsScriptName = "";
+    var scripsSuiteName = "";
 
     // Получить имя Сценария по его ScriptsId и имя Сюиты, которой принадлежит Сценарий
     $.ajax({
+        async: false,
         type: 'POST',
         url: '/spec-admin/get-steps-options',
         data: 'ScriptsId=' + recipientScriptsId,
         success: function(answerFromServer){
-//                alert( "Прибыли данные: " + answer_from_server );
-//                (stepsScriptName = $(answer_from_server).find("stepsScriptName").text);
-            var parsedData = JSON.parse(answerFromServer);
-            alert( parsedData );
-//                alert( "stepsScriptName=" + stepsScriptName );
-
+            // alert(answerFromServer.stepsScriptName + " и " + answerFromServer.scripsSuiteName);
+            stepsScriptName = answerFromServer.stepsScriptName;
+            scripsSuiteName = answerFromServer.scripsSuiteName;
         },
         error: function(){
             alert("Ошибка при ответе на AJAX POST запрос");
         }
+
     });
 
     var modal = $(this);         // Обновить модальное окно
     modal.find('#id_step').val(recipientName);                      // В input с именем Шага
     modal.find('#id_steps_script').val(stepsScriptName);        // В input с именем Сценария
     modal.find('#id_scripts_suite').val(scripsSuiteName);       // В input с именем Сюиты
+
 });
 
 // Для кнопки "Удалить"

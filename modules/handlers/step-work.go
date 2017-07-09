@@ -170,10 +170,8 @@ func GetStepsOptions(context *gin.Context)  {
 	stepsScriptName, scripsSuiteName, err := helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
 
 	if err == nil {
-		//context.JSON(http.StatusOK, gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName})
-		//message := fmt.Sprintf("stepsScriptName=%s, scripsSuiteName=%s", stepsScriptName, scripsSuiteName)
-		message := fmt.Sprintf("{stepsScriptName: %s, scripsSuiteName: %s}", stepsScriptName, scripsSuiteName)
-		context.String(http.StatusOK, message)
+		result := gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName}
+		context.JSON(http.StatusOK, result)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
