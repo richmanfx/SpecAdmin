@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "5.1"
+var Version string = "5.2"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -65,6 +65,9 @@ func ShowSuitesIndex(context *gin.Context)  {
 	// Сбор статистики
 	statistic, err := helpers.GetStatistic()
 
+	// Путь к сриншотам
+	screenShotsPath := helpers.GetScreenShotsPath()
+
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов.: %v", err)
 		context.HTML(http.StatusOK, "message.html",
@@ -85,6 +88,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 				"groupName":	groupName,
 				"suitesList": 	suitesList,
 				"statistic":	statistic,
+				"screenShotsPath":	screenShotsPath,
 			},
 		)
 	}

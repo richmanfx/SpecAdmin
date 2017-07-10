@@ -1,13 +1,13 @@
 package models
 
 type Step struct {
-	Id 			   int
-	Name           string
-	SerialNumber   int			// Порядковый номер Шага
-	Description    string		// Что делать в Шаге
-	ExpectedResult string		// Ожидаемый результат
-	ScriptsId	   int			// ID сценария, которому принадлежит Шаг
-	ScreenShotPath string		// Ссылка на скриншот
+	Id                 int
+	Name               string
+	SerialNumber       int    // Порядковый номер Шага
+	Description        string // Что делать в Шаге
+	ExpectedResult     string // Ожидаемый результат
+	ScriptsId          int    // ID сценария, которому принадлежит Шаг
+	ScreenShotFileName string // Имя скриншот-файла
 }
 
 type Script struct {

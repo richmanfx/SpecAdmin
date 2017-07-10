@@ -135,7 +135,10 @@ func UpdateAfterEditStep(context *gin.Context)  {
 
 	// Скриншот
 	screenShotFile, header, err := context.Request.FormFile("screen_shot")
-	if err != nil { panic(err) }
+	if err != nil {		// Если в форме не указан файл скриншота
+		panic(err)		// TODO: обработать ситуацию без указанного скриншота - не изменять информацию
+	}
+
 	screenShotFileName := header.Filename
 	log.Infof("Загружается файл '%s'.", screenShotFileName)
 
@@ -158,16 +161,12 @@ func UpdateAfterEditStep(context *gin.Context)  {
 
 		// Получить путь до хранилища скриншотов
 		var screenShotsPath string
-		config, err := helpers.GetConfig()		// Получить из базы все конфигурационные данные
-		if err != nil { panic(err) }
-		for _, configItem := range config {		// Выбрать про путь к скриншотам
-			if configItem.Name == "Путь к скриншотам" {
-				screenShotsPath = configItem.Value
-			}
-		}
+		screenShotsPath = helpers.GetScreenShotsPath()
 
+		// TODO: Разделитель определять в конце пути и при необходимости вставлять Unix/Windows
 		fullScreenShotsPath := screenShotsPath + "\\" + screenShotFileName
-		log.Infof("Полный путь к фйлу скриншота: '%s'", fullScreenShotsPath)
+
+		log.Infof("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
 		out, err := os.Create(fullScreenShotsPath)
 		if err != nil { panic(err) }
 		defer out.Close()		// Файл закроется после работы с ним, даже при панике
@@ -176,7 +175,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 
 		// Обновить в БД
 		err = helpers.UpdateTestStep(
-			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, fullScreenShotsPath)
+			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
 	}
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

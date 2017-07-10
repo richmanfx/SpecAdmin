@@ -3,6 +3,11 @@
 
 <span class="title">Сюиты группы </span><span id="name" class="title">{{ .groupName }}</span>
 <p>
+
+<!--Путь в переменную темплейта поместить-->
+{{ $path_screen_shots := .screenShotsPath }}
+{{ $page := . }}
+
 {{ range .suitesList }}
 <div class="group_list">
     <table class="suite-table table table-bordered">
@@ -70,7 +75,14 @@
                                     <td class="steps-name">{{ .Name }}</td>
                                     <td class="steps-description">{{ .Description }}</td>
                                     <td class="steps-exp-result">{{ .ExpectedResult }}</td>
-                                    <td class="steps-screen-shot">Здесь будет скриншот</td>
+                                    <td class="steps-screen-shot">
+
+                              {{/*          <!--<a href="{{ $page.screenShotsPath/.ScreenShotFileName }}">-->  */}}
+                                            <img src="{{ printf "href=%q" $page.screenShotsPath | safeHTMLAttr }} alt="Скриншот" width="30" height="30">
+                                        {{/*          <!--</a>-->      */}}
+                                        {{/*           {{ $path_screen_shots }}      */}}
+
+                                    </td>
                                     <td class="steps-screen-shot">
                                         <a data-toggle="modal" data-target="#editStep" href="#" title="Редактировать Шаг"
                                            data-name="{{ .Name }}" data-script="{{ .ScriptsId }}">

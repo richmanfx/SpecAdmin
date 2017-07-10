@@ -68,3 +68,21 @@ func SaveConfig(screenShotPath string) error {
 	db.Close()
 	return err
 }
+
+
+// Получить Путь к скриншотам
+func GetScreenShotsPath() string {
+
+	var screenShotsPath string
+
+	config, err := GetConfig() // Получить из базы все конфигурационные данные
+	if err != nil {
+		panic(err)
+	}
+	for _, configItem := range config { // Выбрать про путь к скриншотам
+		if configItem.Name == "Путь к скриншотам" {
+			screenShotsPath = configItem.Value
+		}
+	}
+	return screenShotsPath
+}
