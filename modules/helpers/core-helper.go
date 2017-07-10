@@ -5,6 +5,10 @@ import (
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"../../models"
+	"fmt"
+	"crypto/md5"
+	"io"
+	"time"
 )
 
 var db *sql.DB
@@ -93,5 +97,13 @@ func GetStatistic() (models.Statistic, error) {
 
 	db.Close()
 	return statistic, err
+}
+
+
+// Получить уникальное имя файла - 32 hex-символа
+func GetUniqueFileName() string {
+	h := md5.New()
+	io.WriteString(h, time.Now().String())
+	return fmt.Sprintf("%x", h.Sum(nil))
 }
 

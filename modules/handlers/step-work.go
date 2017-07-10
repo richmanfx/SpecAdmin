@@ -8,6 +8,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"../../models"
 	"strconv"
+	"os"
+	"io"
 )
 
 // Добавить новый Шаг
@@ -130,11 +132,52 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	if err != nil { panic(err) }
 	stepsDescription := context.PostForm("steps_description")
 	stepsExpectedResult := context.PostForm("steps_expected_result")
-	log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
-		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
 
-	// Обновить в БД
-	err = helpers.UpdateTestStep(stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
+	// Скриншот
+	screenShotFile, header, err := context.Request.FormFile("screen_shot")
+	if err != nil { panic(err) }
+	screenShotFileName := header.Filename
+	log.Infof("Загружается файл '%s'.", screenShotFileName)
+
+	// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
+	screenShotFileName = helpers.GetUniqueFileName() + ".png"
+
+
+	// Проверяем размер файла и если он превышает заданный размер
+	// завершаем выполнение скрипта и выводим ошибку
+	// TODO: Размер файла обработать!
+	maxScreenShotsSize := 20
+	ScreenShotsSize := 10
+	if ScreenShotsSize > maxScreenShotsSize {
+		err = fmt.Errorf("Размер скриншота слишком большой - %d. Максимальный размер - %d.",
+			maxScreenShotsSize, ScreenShotsSize)
+	} else {
+
+		log.Infof("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
+			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
+
+		// Получить путь до хранилища скриншотов
+		var screenShotsPath string
+		config, err := helpers.GetConfig()		// Получить из базы все конфигурационные данные
+		if err != nil { panic(err) }
+		for _, configItem := range config {		// Выбрать про путь к скриншотам
+			if configItem.Name == "Путь к скриншотам" {
+				screenShotsPath = configItem.Value
+			}
+		}
+
+		fullScreenShotsPath := screenShotsPath + "\\" + screenShotFileName
+		log.Infof("Полный путь к фйлу скриншота: '%s'", fullScreenShotsPath)
+		out, err := os.Create(fullScreenShotsPath)
+		if err != nil { panic(err) }
+		defer out.Close()		// Файл закроется после работы с ним, даже при панике
+		_, err = io.Copy(out, screenShotFile)
+		if err != nil { panic(err) }
+
+		// Обновить в БД
+		err = helpers.UpdateTestStep(
+			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, fullScreenShotsPath)
+	}
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
