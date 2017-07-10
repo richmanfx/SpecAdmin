@@ -34,7 +34,7 @@
             <tr>
                 <td class="script-numbers">{{ .SerialNumber }}.</td>
                 <td class="script-name"><a href="#" onclick="anichange('#divId_{{ .Suite }}_{{ .SerialNumber }}'); return false">{{ .Name }}</a></td>
-                <td>
+                <td class="script-icons">
                     <a data-toggle="modal" data-target="#editScript" href="#" title="Редактировать Сценарий"
                        data-name="{{ .Name }}" data-suite="{{ .Suite }}">
                         <img src="/images/icons/edit.png" alt="Rename" width="30" height="30">

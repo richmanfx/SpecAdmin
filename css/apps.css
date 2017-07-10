@@ -55,16 +55,19 @@ td.suite-name {
 }
 
 td.suite-icons {
+     width: 7vw;
+ }
+
+td.script-icons {
     width: 7vw;
 }
 
 td.script-name {
-    width: 60%;
+    width: 16vm;
     border: none;
     /*padding: 5px;*/
     /*text-align: left;*/
 }
-
 
 td.script-numbers {
      width: 4%;
@@ -119,7 +122,7 @@ table.suite-table {
 
 table.script-table {
     /*border: solid;*/
-    width: 95%;
+    width: 93%;
     padding: 1em;
     margin-bottom: 20px;
 }

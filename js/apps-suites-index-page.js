@@ -23,9 +23,9 @@ $('#editSuite').on('show.bs.modal', function (event) {
 
 // Для кнопки "Удалить"
 $('#delSuite').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-    var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-    var modal = $(this);         // Обновить модальное окно
+    var button = $(event.relatedTarget);
+    var recipientName = button.data('name');
+    var modal = $(this);
     modal.find('#id_suite').val(recipientName)
 });
 
@@ -73,8 +73,8 @@ $('#addStep').on('show.bs.modal', function (event) {
 // Подстановка имени Шага, его Сценария и Сюиты в поля в модальном окне
 // Для кнопки "Редактировать"
 $('#editStep').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
-    var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
+    var button = $(event.relatedTarget);            // Кнопка, вызвавшая модальное окно
+    var recipientName = button.data('name');        // Извлечь информацию из "data-name" у кнопки
     var recipientScriptsId = button.data('script');     // Извлечь "ScriptsId"
 
     var stepsScriptName = "";
@@ -109,7 +109,29 @@ $('#delStep').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
     var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
     var recipientScriptsId = button.data('script');     // Извлечь "ScriptsId"
+
+    var stepsScriptName = "";
+    var scripsSuiteName = "";
+
+    // Получить имя Сценария по его ScriptsId и имя Сюиты, которой принадлежит Сценарий
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/get-steps-options',
+        data: 'ScriptsId=' + recipientScriptsId,
+        success: function(answerFromServer){
+            // alert(answerFromServer.stepsScriptName + " и " + answerFromServer.scripsSuiteName);
+            stepsScriptName = answerFromServer.stepsScriptName;
+            scripsSuiteName = answerFromServer.scripsSuiteName;
+        },
+        error: function(){
+            alert("Ошибка при ответе на AJAX POST запрос");
+        }
+
+    });
+
     var modal = $(this);         // Обновить модальное окно
     modal.find('#id_step').val(recipientName);
-    modal.find('#id_steps_script').val(recipientScriptsId)      // В input с именем Сценария
+    modal.find('#id_script').val(stepsScriptName);        // В input с именем Сценария
+    modal.find('#id_suite').val(scripsSuiteName);       // В input с именем Сюиты
 });
