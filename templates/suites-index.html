@@ -77,10 +77,10 @@
                                     <td class="steps-exp-result">{{ .ExpectedResult }}</td>
                                     <td class="steps-screen-shot">
 
-                              {{/*          <!--<a href="{{ $page.screenShotsPath/.ScreenShotFileName }}">-->  */}}
-                                            <img src="{{ printf "href=%q" $page.screenShotsPath | safeHTMLAttr }} alt="Скриншот" width="30" height="30">
-                                        {{/*          <!--</a>-->      */}}
-                                        {{/*           {{ $path_screen_shots }}      */}}
+                              {{/*          <!--<a href="{{ $page.screenShotsPath/.ScreenShotFileName }}">-->
+                                                      <!--<img {{ printf "href=%q" $page.screenShotsPath }} alt="Скриншот" width="30" height="30">-->
+                                                 <!--</a>-->      */}}
+                                             <a {{ $path_screen_shots | saveHTML }}>скрин</a>
 
                                     </td>
                                     <td class="steps-screen-shot">

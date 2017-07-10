@@ -134,7 +134,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	stepsExpectedResult := context.PostForm("steps_expected_result")
 
 	// Скриншот
-	screenShotFile, header, err := context.Request.FormFile("screen_shot")
+	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
 	if err != nil {		// Если в форме не указан файл скриншота
 		panic(err)		// TODO: обработать ситуацию без указанного скриншота - не изменять информацию
 	}

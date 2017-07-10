@@ -49,6 +49,7 @@ func ShowIndexPage(context *gin.Context)  {
 }
 
 func ShowSuitesIndex(context *gin.Context)  {
+
 	var err error
 	helpers.SetLogFormat()
 
