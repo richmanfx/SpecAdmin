@@ -145,17 +145,17 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
 	screenShotFileName = helpers.GetUniqueFileName() + ".png"
 
-
 	// Проверяем размер файла и если он превышает заданный размер
 	// завершаем выполнение скрипта и выводим ошибку
-	// TODO: Размер файла обработать!
-	maxScreenShotsSize := 20
-	ScreenShotsSize := 10
-	if ScreenShotsSize > maxScreenShotsSize {
-		err = fmt.Errorf("Размер скриншота слишком большой - %d. Максимальный размер - %d.",
-			maxScreenShotsSize, ScreenShotsSize)
-	} else {
+	ScreenShotsSize, _ := strconv.Atoi(context.Request.Header.Get("Content-Length"))
+	log.Debugf("Размер скриншота '%d' байт.", ScreenShotsSize)
 
+	// TODO:
+	maxScreenShotsSize := 1000000
+	if ScreenShotsSize > maxScreenShotsSize {
+		err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
+			ScreenShotsSize, maxScreenShotsSize)
+	} else {
 		log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
 			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
 
