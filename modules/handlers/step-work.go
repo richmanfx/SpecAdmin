@@ -140,7 +140,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	}
 
 	screenShotFileName := header.Filename
-	log.Infof("Загружается файл '%s'.", screenShotFileName)
+	log.Debugf("Загружается файл '%s'.", screenShotFileName)
 
 	// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
 	screenShotFileName = helpers.GetUniqueFileName() + ".png"
@@ -156,17 +156,23 @@ func UpdateAfterEditStep(context *gin.Context)  {
 			maxScreenShotsSize, ScreenShotsSize)
 	} else {
 
-		log.Infof("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
+		log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
 			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
 
 		// Получить путь до хранилища скриншотов
 		var screenShotsPath string
 		screenShotsPath = helpers.GetScreenShotsPath()
 
-		// TODO: Разделитель определять в конце пути и при необходимости вставлять Unix/Windows
-		fullScreenShotsPath := screenShotsPath + "\\" + screenShotFileName
+		lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+		log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+		var fullScreenShotsPath string
+		if lastSymbolOfPath != string(os.PathSeparator) {
+			fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+		} else {
+			fullScreenShotsPath = screenShotsPath  + screenShotFileName
+		}
 
-		log.Infof("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
+		log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
 		out, err := os.Create(fullScreenShotsPath)
 		if err != nil { panic(err) }
 		defer out.Close()		// Файл закроется после работы с ним, даже при панике

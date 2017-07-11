@@ -181,21 +181,21 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 	if err != nil {	return step, err }
 
 	// Получить данные о Шаге
-	log.Infof("Получение данных о Шаге '%s' из Сценария '%s' Сюиты '%s'.", editedStepName, stepsScriptName, scriptsSuiteName)
+	log.Debugf("Получение данных о Шаге '%s' из Сценария '%s' Сюиты '%s'.", editedStepName, stepsScriptName, scriptsSuiteName)
 
 	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Infof("requestResult: %v", requestResult)
+	log.Debugf("requestResult: %v", requestResult)
 
 	var scriptId int
 	err = requestResult.Scan(&scriptId)		// Получить значение ID Сценария
-	log.Infof("ID Сценария: '%d'", scriptId)
+	log.Debugf("ID Сценария: '%d'", scriptId)
 	if scriptId == 0 {
 		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
 		// Получить Шаг из БД
-		log.Infof("Получение Шага '%s' в сценарии с ID '%d'.", editedStepName, scriptId)
+		log.Debugf("Получение Шага '%s' в сценарии с ID '%d'.", editedStepName, scriptId)
 		requestResult := db.QueryRow("SELECT id,serial_number,description,expected_result,screen_shot_file_name,script_id FROM tests_steps WHERE name=? AND script_id=?", editedStepName, scriptId)
 
 		// Получить результаты запроса
@@ -208,9 +208,9 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 
 		err = requestResult.Scan(&stepId, &serialNumber, &description, &expectedResult, &screenShotFileName, &scriptsId)
 		if err != nil {
-			log.Infof("Ошибка при получении данных шага '%s' из БД.", editedStepName)
+			log.Debugf("Ошибка при получении данных шага '%s' из БД.", editedStepName)
 		} else {
-			log.Infof("rows.Next из таблицы tests_steps: %d, %d, %s, %s, %d",
+			log.Debugf("rows.Next из таблицы tests_steps: %d, %d, %s, %s, %d",
 				stepId, serialNumber, description, expectedResult, scriptsId)
 
 			// Заполнить данными Шаг
@@ -240,13 +240,13 @@ func UpdateTestStep(
 	if err != nil {	return err }
 
 	// Обновить данные о Шаге в БД
-	log.Infof("Обновление данных о Шаге '%s' в БД", stepsName)
+	log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
 	_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
 		stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
 	if err == nil {
-		log.Infof("Успешно обновлены данные Шага '%s' в БД.", stepsName)
+		log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
 	} else {
-		log.Infof("Ошибка обновления данных Шага '%s' в БД.", stepsName)
+		log.Debugf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
 	}
 	db.Close()
 	return err
