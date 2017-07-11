@@ -76,12 +76,9 @@
                                     <td class="steps-description">{{ .Description }}</td>
                                     <td class="steps-exp-result">{{ .ExpectedResult }}</td>
                                     <td class="steps-screen-shot">
-
-                              {{/*          <!--<a href="{{ $page.screenShotsPath/.ScreenShotFileName }}">-->  */}}
-                                            <img src="{{ printf "href=%q" $page.screenShotsPath | safeHTMLAttr }} alt="Скриншот" width="30" height="30">
-                                        {{/*          <!--</a>-->      */}}
-                                        {{/*           {{ $path_screen_shots }}      */}}
-
+                                        <a href="/images/screenshots/{{ .ScreenShotFileName }}" target="_blank">
+                                            <img src="/images/screenshots/{{ .ScreenShotFileName }}" alt="Скриншот" width="70" height="50">
+                                        </a>
                                     </td>
                                     <td class="steps-screen-shot">
                                         <a data-toggle="modal" data-target="#editStep" href="#" title="Редактировать Шаг"

@@ -17,7 +17,7 @@ func GetConfig() ([]models.Option, error) {
 	if err != nil {	return config, err }
 
 	// Получить из БД конфигурационные параметры
-	log.Infoln("Получение конфигурационных параметров из БД.")
+	log.Debugln("Получение конфигурационных параметров из БД.")
 	rows, err := db.Query("SELECT * FROM configuration ORDER BY id")
 
 	if err == nil {
