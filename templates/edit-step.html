@@ -32,9 +32,49 @@
         </div>
         <br>
 
-        <div>
-            <label for="id_screen_shot">Добавить скриншот</label>
-            <input type="file" name="screen_shot" id="id_screen_shot">
+        <label>Скриншот</label>
+        <div class="edit-screen-shot">
+            <table>
+                <thead>
+                <tr>
+                    <th class="left-align">Текущий скриншот</th>
+                    <th class="left-align">Добавить/заменить скриншот</th>
+                </tr>
+                </thead>
+                <tr>
+                    <td class="screen-shot">
+                        <div id="id_show_screen_shot" class="edit-screen-shot-loading">
+                            {{ if .step.ScreenShotFileName }}
+                                <span class="file-name">{{ .step.ScreenShotFileName }}</span>
+                            <br><br>
+                            <a href="/images/screenshots/{{ .step.ScreenShotFileName }}" target="_blank">
+                                <img src="/images/screenshots/{{ .step.ScreenShotFileName }}"
+                                     alt="Скриншот"
+                                     width="70"
+                                     height="50">
+                            </a>
+                            <a href="#"
+                               title="Удалить скриншот"
+                               id="id_del_screen_shot"
+                               data-stepId="{{ .step.Id }}">
+                                <img id="id_img_del_screen_shot"
+                                     src="/images/icons/delete.png"
+                                     alt="Удалить"
+                                     width="30"
+                                     height="30">
+                            </a>
+                            {{ else }}
+                                Нет скриншота
+                            {{ end }}
+                        </div>
+                    </td>
+                    <td class="screen-shot">
+                        <div class="edit-screen-shot-loading">
+                            <input type="file" name="screen_shot" id="id_screen_shot">
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
 
     </form>
@@ -59,5 +99,8 @@
     </a>
 
 </div>
+
+<!--<script async src="/js/apps-edit-step-page.js"></script>-->
+<script src="/js/apps-edit-step-page.js"></script>
 
 {{ template "footer.html" .}}

@@ -92,7 +92,7 @@ $('#editStep').on('show.bs.modal', function (event) {
             scripsSuiteName = answerFromServer.scripsSuiteName;
         },
         error: function(){
-            alert("Ошибка при ответе на AJAX POST запрос");
+            alert("Ошибка при ответе на AJAX POST запрос имени Сценария по его ScriptsId и имени Сюиты.");
         }
 
     });

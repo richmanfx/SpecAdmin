@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"../../models"
+	"os"
 )
 
 // Добавить Шаг в БД
@@ -255,5 +256,71 @@ func UpdateTestStep(
 		log.Debugf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
 	}
 	db.Close()
+	return err
+}
+
+
+// Удалить скриншот у Шага по заданному Id Шага
+func DeleteStepsScreenShot(stepsId int) error {
+
+	var err error
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return err }
+	log.Debugln("Подключились к БД.")
+
+	/// Удалить файл скриншота на диске
+
+	// Получить имя файла скриншота
+	requestResult := db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE id=?", stepsId)
+	db.Close()
+
+	// Получить результаты запроса
+	var screenShotFileName string
+	err = requestResult.Scan(&screenShotFileName)
+
+	if err != nil {
+		log.Errorf("Ошибка при получении имени файла скриншота '%s' из БД.", screenShotFileName)
+	} else {
+		log.Debugf("rows.Next из таблицы tests_steps: %s", screenShotFileName)
+	}
+
+	log.Debugf("Удаление файла скриншота '%s'", screenShotFileName)
+	// Получить путь до хранилища скриншотов
+	var screenShotsPath string
+	screenShotsPath = GetScreenShotsPath()
+
+	lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+	log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+	var fullScreenShotsPath string
+	if lastSymbolOfPath != string(os.PathSeparator) {
+		fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+	} else {
+		fullScreenShotsPath = screenShotsPath + screenShotFileName
+	}
+
+	err = os.Remove(fullScreenShotsPath)		// Удалить файл
+	if err != nil {
+		return err
+	} else {
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {	return err }
+		log.Debugln("Подключились к БД.")
+
+		// Удалить данные о скриншоте в БД
+		log.Debugf("Удаление данные о скриншоте в БД, Id Шага: '%d'.", stepsId)
+		_, err = db.Query("UPDATE tests_steps SET screen_shot_file_name=? WHERE id=? LIMIT 1", "", stepsId)
+		db.Close()
+	}
+
+	if err == nil {
+		log.Debugf("Скриншот успешно удалён из БД в Шаге с Id='%d'", stepsId)
+	} else {
+		log.Errorf("Ошибка при удалении скриншота из БД в Шаге с Id='%d', %v", stepsId, err)
+	}
+
 	return err
 }

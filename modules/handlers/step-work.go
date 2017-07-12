@@ -98,6 +98,7 @@ func EditStep(context *gin.Context)  {
 	var err error
 	var step models.Step
 	step, err = helpers.GetStep(editedStepName, stepsScript, scriptsSuite)
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -215,7 +216,7 @@ func GetStepsOptions(context *gin.Context)  {
 	helpers.SetLogFormat()
 	log.Debugln("Пришёл запрос в GetStepsOptions")
 
-	// Данные из формы
+	// Данные из AJAX запроса
 	stepsScriptsId, err := strconv.Atoi(context.PostForm("ScriptsId"))
 	log.Debugf("Данные из POST запроса AJAX: stepsScriptsId='%d'", stepsScriptsId)
 	if err != nil { panic(err) }
@@ -237,6 +238,29 @@ func GetStepsOptions(context *gin.Context)  {
 			},
 		)
 	}
+}
 
+
+// Удалить скриншот у Шага по заданному Id Шага (AJAX)
+func DelScreenShotFromStep(context *gin.Context)  {
+	helpers.SetLogFormat()
+	log.Debugln("Пришёл запрос в DelScreenShotFromStep на удаление Скриншота.")
+
+	// Данные из AJAX запроса
+	stepsId, err := strconv.Atoi(context.PostForm("StepsId"))
+	log.Debugf("Данные из POST запроса AJAX: stepsId='%d'", stepsId)
+	if err != nil { panic(err) }
+
+	// Удалить скриншот
+	err = helpers.DeleteStepsScreenShot(stepsId)
+
+	if err == nil {
+		result := gin.H{"deleteStatus": "OK"}
+		context.JSON(http.StatusOK, result)
+	} else {
+		log.Errorf("Ошибка удаления скриншота: %v", err)
+		result := gin.H{"deleteStatus": err}
+		context.JSON(http.StatusOK, result)
+	}
 
 }

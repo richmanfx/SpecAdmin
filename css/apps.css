@@ -3,6 +3,12 @@
     font-family: Verdana, serif;
 }
 
+img#id_img_del_screen_shot {
+    padding-left: 50px;
+    width: 80px;
+    height: 30px;
+}
+
 div#menu {
     background: #aaddff none repeat scroll 0 0;
     font-family: Verdana, serif;
@@ -31,9 +37,23 @@ div.config-button {
     text-align: center;
 }
 
+div.edit-screen-shot {
+    outline: 1px solid darkgrey;
+    padding: 1em;
+}
+
+div.edit-screen-shot-loading {
+    padding: 1em;
+}
+
 span.title {
     font-size: 2em;
     padding: 0 1em;
+}
+
+span.file-name {
+    color: green;
+    font-weight: bolder;
 }
 
 span#name {
@@ -113,6 +133,25 @@ td.statistic-value {
     text-align: right;
 }
 
+td.screen-shot {
+    padding: 1em;
+    width: 20em;
+    vertical-align: top;
+}
+
+
+.delete-button {
+    background: transparent url(/images/icons/delete.png) no-repeat 0 0;
+    background-size: 100% 100%;     /* Маштабирование изображения */
+    cursor:pointer;
+    width: 30px;
+    height: 30px;
+    border: none;
+    padding-left: 30px;
+    vertical-align: middle;
+    margin-left: 1.5em;
+    text-indent: -10000em;      /* Надпись кнопки сдвинуть в даль */
+}
 
 table.suite-table {
     background-color: #bfeeff;
@@ -180,6 +219,9 @@ footer {
     text-align: right;
 }
 
+.left-align {
+    text-align: left;
+}
 .version {
     color: #ff0000;
     font-weight: bold;
