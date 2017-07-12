@@ -241,8 +241,14 @@ func UpdateTestStep(
 
 	// Обновить данные о Шаге в БД
 	log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
-	_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
-		stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
+
+	if screenShotsFileName == "" {
+		_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=? LIMIT 1",
+			stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsId)
+	} else {
+		_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
+			stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
+	}
 	if err == nil {
 		log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
 	} else {
