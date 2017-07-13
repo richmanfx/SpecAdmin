@@ -24,8 +24,63 @@ func AddStep(context *gin.Context)  {
 	stepsExpectedResult := context.PostForm("steps_expected_result")
 	stepsScript := context.PostForm("steps_script")
 	scriptsSuite := context.PostForm("scripts_suite")
+	// Скриншот
+	var screenShotFileName string
+	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
+	if err != nil {		// Если в форме не указан файл скриншота, то пустую строку - без скриншота
+		log.Infoln("Не указан файл скриншота в функции 'AddStep' - передаём пустую строку (\"\").")
+		screenShotFileName = ""
+	} else {
 
-	err := helpers.AddTestStep(newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScript, scriptsSuite)
+		screenShotFileName = header.Filename
+		log.Debugf("Загружается файл '%s'.", screenShotFileName)
+
+		// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
+		screenShotFileName = helpers.GetUniqueFileName() + ".png"
+
+		// Проверяем размер файла и если он превышает заданный размер
+		// завершаем выполнение скрипта и выводим ошибку
+		ScreenShotsSize, _ := strconv.Atoi(context.Request.Header.Get("Content-Length"))
+		log.Debugf("Размер скриншота '%d' байт.", ScreenShotsSize)
+
+		maxScreenShotsSize := 1000000 // Максимальный размер файла скриншота
+		if ScreenShotsSize > maxScreenShotsSize {
+			err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
+				ScreenShotsSize, maxScreenShotsSize)
+		} else {
+			log.Debugf("Данные из формы: newStepName='%v', stepSerialNumber='%v', stepsDescription='%v', " +
+					   					"stepsExpectedResult='%v', stepsScript='%v', scriptsSuite='%v'",
+				newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScript, scriptsSuite)
+
+			// Получить путь до хранилища скриншотов
+			var screenShotsPath string
+			screenShotsPath = helpers.GetScreenShotsPath()
+
+			lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+			log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+			var fullScreenShotsPath string
+			if lastSymbolOfPath != string(os.PathSeparator) {
+				fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+			} else {
+				fullScreenShotsPath = screenShotsPath + screenShotFileName
+			}
+
+			log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
+			out, err := os.Create(fullScreenShotsPath)
+			if err != nil {
+				panic(err)
+			}
+			defer out.Close() // Файл закроется после работы с ним, даже при панике
+			_, err = io.Copy(out, screenShotFile)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	// Добавить Шаг в БД
+	err = helpers.AddTestStep(
+		newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName, stepsScript, scriptsSuite)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

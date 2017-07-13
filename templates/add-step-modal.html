@@ -9,7 +9,11 @@
             </div>
 
             <div class="modal-body">
-                <form id="id_add_step_form" name="add_step_form" method="post" action="/spec-admin/add-step">
+                <form id="id_add_step_form"
+                      name="add_step_form"
+                      method="post"
+                      enctype="multipart/form-data"
+                      action="/spec-admin/add-step">
 
                     <div class="auto_width">
                         <label for="id_step"> Имя нового шага </label><br>
@@ -34,6 +38,12 @@
                         <label for="id_steps_expected_result"> Ожидаемый результат от действий в шаге </label><br>
                         <textarea id="id_steps_expected_result" name="steps_expected_result" required="required"
                                   placeholder=" Ожидаемый результат от действий в шаге" rows="2"></textarea>
+                    </div>
+                    <br>
+
+                    <label for="id_screen_shot"> Скриншот </label>
+                    <div class="edit-screen-shot-loading with-border">
+                        <input type="file" name="screen_shot" id="id_screen_shot">
                     </div>
                     <br>
 
