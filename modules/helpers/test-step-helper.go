@@ -14,6 +14,7 @@ func AddTestStep(
 	stepsExpectedResult string, stepsScriptName string, scriptsSuiteName string) error {
 
 	var err error
+	var stepsScreenShotsName string = ""	// TODO: Пока пустая строка при добавлении Шага
 	SetLogFormat()
 
 	// Подключиться к БД
@@ -36,11 +37,13 @@ func AddTestStep(
 		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
-		// В основную таблицу с Шагами
+		// В таблицу с Шагами
 		_, err := db.Exec(
-			"INSERT INTO tests_steps (name, serial_number, description, expected_result, script_id) VALUES (?,?,?,?,?)",
-								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, id)
-		if err != nil {panic(err)}		// TODO: Сделать обработку и в Браузер
+			"INSERT INTO tests_steps (name, serial_number, description, expected_result, screen_shot_file_name, script_id) VALUES (?,?,?,?,?,?)",
+								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotsName, id)
+		if err != nil {
+			log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps'", newStepName)
+		}
 	}
 	db.Close()
 	return err
