@@ -48,7 +48,7 @@
                                 <span class="file-name">{{ .step.ScreenShotFileName }}</span>
                             <br><br>
                             <a href="/images/screenshots/{{ .step.ScreenShotFileName }}" target="_blank">
-                                <img src="/images/screenshots/{{ .step.ScreenShotFileName }}"
+                                <img class="with-border" src="/images/screenshots/{{ .step.ScreenShotFileName }}"
                                      alt="Скриншот"
                                      width="70"
                                      height="50">
@@ -59,9 +59,7 @@
                                data-stepId="{{ .step.Id }}">
                                 <img id="id_img_del_screen_shot"
                                      src="/images/icons/delete.png"
-                                     alt="Удалить"
-                                     width="30"
-                                     height="30">
+                                     alt="Удалить">
                             </a>
                             {{ else }}
                                 Нет скриншота

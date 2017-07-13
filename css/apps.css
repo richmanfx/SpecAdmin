@@ -42,6 +42,16 @@ div.edit-screen-shot {
     padding: 1em;
 }
 
+div.with-border {
+    outline: 1px solid darkgrey;
+}
+
+img.with-border
+{
+    outline: 1px solid darkgrey;
+}
+
+
 div.edit-screen-shot-loading {
     padding: 1em;
 }

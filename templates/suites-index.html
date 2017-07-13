@@ -78,7 +78,10 @@
                                     <td class="steps-screen-shot">
                                         {{ if .ScreenShotFileName }}
                                             <a href="/images/screenshots/{{ .ScreenShotFileName }}" target="_blank">
-                                                <img src="/images/screenshots/{{ .ScreenShotFileName }}" alt="Скриншот" width="70" height="50">
+                                                <img class="with-border"
+                                                     src="/images/screenshots/{{ .ScreenShotFileName }}"
+                                                     alt="Скриншот"
+                                                     width="70" height="50">
                                             </a>
                                         {{ else }}
                                             Нет скриншота
