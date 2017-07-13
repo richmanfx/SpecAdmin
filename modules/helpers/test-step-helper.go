@@ -61,6 +61,7 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 
 	// Удаление Шага из БД
 	log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+	var screenShotsFileName string		// Имя файла скриншота - удалим после удаления Шага из БД
 
 	// Получить ID Сценария в Сюите
 	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
@@ -74,10 +75,14 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 	} else {
+
+		// Получить имя файла скриншота Шага
+		screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
+		if err != nil {panic(err)}
+
 		log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
 		result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
 		if err != nil {
-			err = fmt.Errorf("Ошибка удаления Шага '%s'. Есть такой Шаг?", deletedStepName)
 			log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
 			return err
 		} else {
@@ -86,7 +91,6 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 
 			if err == nil {
 				if affected == 0 {
-					err = fmt.Errorf("Ошибка удаления Шага '%s'. Есть такой Шаг?", deletedStepName)
 					log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
 					return err
 				}
@@ -95,7 +99,33 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 		}
 	}
 	db.Close()
+
+	// Удаление файла скриншота из хранилища
+	if err == nil && screenShotsFileName != "" {		// Если из базы удалили без ошибок
+		err = DelScreenShotsFile(screenShotsFileName)
+
+		if err != nil {
+			log.Debugf("Ошибка удаления файла скриншота '%s'", screenShotsFileName)
+		}
+	}
+
 	return err
+}
+
+
+// Вернуть имя файла скриншота Шага по заданным Имени Шага и Id его сценария
+func GetStepsScreenShotsFileName(deletedStepName string, scriptId int) (string, error) {
+	var screenShotsFileName string
+
+	requestResult := db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
+	log.Debugf("requestResult: %v", requestResult)
+	err := requestResult.Scan(&screenShotsFileName)		// Получить имя файла скриншота
+	log.Debugf("Имя файла скриншота: '%s'", screenShotsFileName)
+	if err != nil {
+		log.Errorf("Не найдено имя файла скриншота для Шага '%s' в Сценарии с Id '%s' в таблице 'tests_steps'.",
+			deletedStepName, scriptId)
+	}
+	return screenShotsFileName, err
 }
 
 
@@ -291,26 +321,16 @@ func DeleteStepsScreenShot(stepsId int) error {
 	}
 
 	log.Debugf("Удаление файла скриншота '%s'", screenShotFileName)
-	// Получить путь до хранилища скриншотов
-	var screenShotsPath string
-	screenShotsPath = GetScreenShotsPath()
+	err = DelScreenShotsFile(screenShotFileName)
 
-	lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
-	log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
-	var fullScreenShotsPath string
-	if lastSymbolOfPath != string(os.PathSeparator) {
-		fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
-	} else {
-		fullScreenShotsPath = screenShotsPath + screenShotFileName
-	}
-
-	err = os.Remove(fullScreenShotsPath)		// Удалить файл
 	if err != nil {
 		return err
 	} else {
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {	return err }
+		if err != nil {
+			return err
+		}
 		log.Debugln("Подключились к БД.")
 
 		// Удалить данные о скриншоте в БД
@@ -324,6 +344,28 @@ func DeleteStepsScreenShot(stepsId int) error {
 	} else {
 		log.Errorf("Ошибка при удалении скриншота из БД в Шаге с Id='%d', %v", stepsId, err)
 	}
+
+	return err
+}
+
+
+// Удаление файла скриншота по имени файла
+func DelScreenShotsFile(screenShotsFileName string) error {
+
+	// Получить путь до хранилища скриншотов
+	var screenShotsPath string
+	screenShotsPath = GetScreenShotsPath()
+	lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+	log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+	var fullScreenShotsPath string
+	if lastSymbolOfPath != string(os.PathSeparator) {
+		fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotsFileName
+	} else {
+		fullScreenShotsPath = screenShotsPath + screenShotsFileName
+	}
+
+	// Удалить файл
+	err := os.Remove(fullScreenShotsPath)
 
 	return err
 }
