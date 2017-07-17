@@ -3,6 +3,16 @@
     font-family: Verdana, serif;
 }
 
+hr {
+    border: 0;
+    height: 1px;
+    background: #000;
+    background-image: -webkit-linear-gradient(left, #fff, #000, #fff);
+    background-image: -moz-linear-gradient(left, #fff, #000, #fff);
+    background-image: -ms-linear-gradient(left, #fff, #000, #fff);
+    background-image: -o-linear-gradient(left, #fff, #000, #fff);
+}
+
 img#id_img_del_screen_shot {
     padding-left: 50px;
     width: 80px;

@@ -4,6 +4,8 @@ import (
 	"../../models"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
+	"io/ioutil"
+	"fmt"
 )
 
 // Получить из БД конфигурационные данные
@@ -85,4 +87,93 @@ func GetScreenShotsPath() string {
 		}
 	}
 	return screenShotsPath
+}
+
+
+// Получить список имён неиспользуемых файлов скриншотов
+func GetUnusedScreenShotsFileName() ([]string, error) {
+
+	unusedScreenShotsFileNameList := make([]string, 0, 0)
+
+	// Получить все используемые имена файлов скриншотов
+	usedScreenShotsFileNameList, err := GetScreenShotsFileName()
+	if err != nil {
+		log.Errorln("Ошибка при получении списка используемых имён файлов скриншотов из БД.")
+	} else {
+
+		// Получить список имён файлов из хранилища
+		screenShotsFileNameInRepositoryList, err := GetScreenShotsFileNameInRepositoryList()
+		if err != nil {
+			log.Errorln("Ошибка при получении списка имён файлов скриншотов в хранилище.")
+		} else {
+			// Скрыжить имена файлов из хранилища и из БД
+			for _, inRepoFileName := range screenShotsFileNameInRepositoryList {
+				var matchesFlag bool = false
+				for _, usedFileName := range usedScreenShotsFileNameList {
+					if inRepoFileName == usedFileName {
+						matchesFlag = true
+						break
+					}
+				}
+				if matchesFlag == false {
+					unusedScreenShotsFileNameList = append(unusedScreenShotsFileNameList, inRepoFileName)
+				}
+			}
+		}
+	}
+	return  unusedScreenShotsFileNameList, err
+}
+
+
+// Получить все используемые имена файлов скриншотов
+func GetScreenShotsFileName() ([]string, error) {
+	var err error
+	usedScreenShotsFileNameList := make([]string, 0, 0)
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return usedScreenShotsFileNameList, err }
+
+	rows, err := db.Query("SELECT screen_shot_file_name FROM tests_steps ORDER BY screen_shot_file_name")
+
+	if err == nil {
+		// Данные получить из результата запроса
+		var usedScreenShotsFileName string
+		for rows.Next() {
+			err = rows.Scan(&usedScreenShotsFileName)
+			log.Infof("rows.Next из таблицы tests_steps: %s", usedScreenShotsFileName)
+
+			// Дополнить список файлов
+			usedScreenShotsFileNameList = append(usedScreenShotsFileNameList, usedScreenShotsFileName)
+		}
+	}
+	db.Close()
+	return usedScreenShotsFileNameList, err
+}
+
+
+// Получить список имён файлов из хранилища
+func GetScreenShotsFileNameInRepositoryList() ([]string, error) {
+
+	var err error
+	inRepositoryScreenShotsFileNameList := make([]string, 0, 0)
+	SetLogFormat()
+
+	// Получить Путь к скриншотам
+	screenShotsPath := GetScreenShotsPath()
+
+	// Получить список файлов
+	files, err := ioutil.ReadDir(screenShotsPath)
+	if err != nil {
+		log.Errorf("Ошибка при получении списка имён файлов из директории '%s'.", screenShotsPath)
+	}
+
+	for _, file := range files {
+		fmt.Println(file.Name())
+		inRepositoryScreenShotsFileNameList = append(inRepositoryScreenShotsFileNameList, file.Name())
+	}
+
+	log.Infof("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
+	return inRepositoryScreenShotsFileNameList, err
 }

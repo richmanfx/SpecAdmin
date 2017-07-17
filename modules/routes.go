@@ -35,4 +35,5 @@ func InitRoutes(router *gin.Engine) {
 
 	router.Handle("GET", "/spec-admin/edit-config", handlers.EditConfig)
 	router.Handle("POST", "/spec-admin/save-config", handlers.SaveConfig)
+	router.Handle("GET", "/spec-admin/del-old-screenshots-file", handlers.DelUnusedScreenShotsFile)
 }

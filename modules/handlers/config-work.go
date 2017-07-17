@@ -71,3 +71,39 @@ func SaveConfig(context *gin.Context)  {
 		)
 	}
 }
+
+
+// Удалить из хранилища неиспользуемые в БД файлы скриншотов
+func DelUnusedScreenShotsFile(context *gin.Context)  {
+
+	// Получить список имён неиспользуемых файлов скриншотов
+	unusedFileList, err := helpers.GetUnusedScreenShotsFileName()
+	log.Infof("Неиспользуемые файлы скриншотов для удаления: '%v'", unusedFileList)
+	countDeletedFile := len(unusedFileList)
+
+	// Удалить в цикле файлы
+	for _, deletedFile := range unusedFileList {
+		err = helpers.DelScreenShotsFile(deletedFile)
+	}
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
+				"message3": fmt.Sprintf("%s: ", err),
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
+				"message2": "",
+				"message3": fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
+			},
+		)
+	}
+}
+
