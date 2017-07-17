@@ -76,6 +76,10 @@ span.file-name {
     font-weight: bolder;
 }
 
+span.bold {
+    font-weight: bolder;
+}
+
 span#name {
     color: green;
     padding: 0;
@@ -195,10 +199,17 @@ table.step-table {
     color: red;
 }
 
+
+input#btn-group {
+    width: auto;
+}
+
 input {
     font-size: 1.5em;
     width: 20em;
 }
+
+
 
 input.group_name {
     font-size: 1em;

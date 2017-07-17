@@ -28,7 +28,7 @@ func AddStep(context *gin.Context)  {
 	var screenShotFileName string
 	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
 	if err != nil {		// Если в форме не указан файл скриншота, то пустую строку - без скриншота
-		log.Infoln("Не указан файл скриншота в функции 'AddStep' - передаём пустую строку (\"\").")
+		log.Debugln("Не указан файл скриншота в функции 'AddStep' - передаём пустую строку (\"\").")
 		screenShotFileName = ""
 	} else {
 
@@ -78,9 +78,15 @@ func AddStep(context *gin.Context)  {
 		}
 	}
 
-	// Добавить Шаг в БД
-	err = helpers.AddTestStep(
-		newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName, stepsScript, scriptsSuite)
+	// Группа Сюиты
+	suite, err := helpers.GetSuite(scriptsSuite)
+	suitesGroup := suite.Group
+
+	if err == nil {
+		// Добавить Шаг в БД
+		err = helpers.AddTestStep(
+			newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName, stepsScript, scriptsSuite)
+	}
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -100,6 +106,7 @@ func AddStep(context *gin.Context)  {
 					newStepName, stepsScript, scriptsSuite),
 				"message2": "",
 				"message3": "",
+				"SuitesGroup":	suitesGroup,
 			},
 		)
 	}
@@ -115,7 +122,11 @@ func DelStep(context *gin.Context)  {
 	stepsScript := context.PostForm("script")
 	scriptsSuite := context.PostForm("suite")
 
-	err := helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
+	// Группа Сюиты
+	suite, err := helpers.GetSuite(scriptsSuite)
+	suitesGroup := suite.Group
+
+	err = helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -132,6 +143,7 @@ func DelStep(context *gin.Context)  {
 				"title": "Информация",
 				"message1": fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
 				"message2": "",	"message3": "",
+				"SuitesGroup":	suitesGroup,
 			},
 		)
 	}
@@ -241,6 +253,8 @@ func UpdateAfterEditStep(context *gin.Context)  {
 			}
 		}
 	}
+
+
 	// Обновить в БД
 	err = helpers.UpdateTestStep(
 		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)

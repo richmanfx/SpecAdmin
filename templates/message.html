@@ -6,7 +6,18 @@
 <h4>{{ .message3 }}</h4>
 <br>
 <div class="center-align">
-    <a class="btn btn-success btn-lg" href="/spec-admin"> В начало </a>
+    {{ if .SuitesGroup }}
+        <form method="post" action="/spec-admin/show-suites">
+            <input class="btn btn-success btn-lg"
+                   id="btn-group"
+                   type="submit"
+                   value={{ .SuitesGroup }}
+                   name="group_name">
+    {{ end }}
+            <a class="btn btn-success btn-lg" href="/spec-admin"> В начало </a>
+    {{ if .SuitesGroup }}
+        </form>
+    {{ end }}
 </div>
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}
