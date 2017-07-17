@@ -203,9 +203,16 @@ input {
 input.group_name {
     font-size: 1em;
     text-align: left;
-    color: black;
-    background-color: #9ac8e7;
+    color: #337ab7;
+    background-color: white;
     width: 10em;
+    border: none;
+}
+
+.group_name:hover {
+    background-color: #bfeeff;
+    color: black;
+    text-decoration: underline;
 }
 
 input.suite_name {

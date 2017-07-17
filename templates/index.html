@@ -6,7 +6,9 @@
 {{ range .groupList }}
     <div class="group_list">
         <form method="post" action="/spec-admin/show-suites">
+
             <input class="group_name btn-primary" type="submit" value="{{ .Name }}" name="group_name">
+
             <span class="group_rename">
                 <a data-toggle="modal" data-target="#editGroup" href="#" title="Переименовать Группу" data-name="{{ .Name }}">
                     <img src="/images/icons/rename.png" alt="Rename Group" width="30" height="30">
