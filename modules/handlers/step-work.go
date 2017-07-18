@@ -205,7 +205,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	var screenShotFileName string
 	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
 	if err != nil {		// Если в форме не указан файл скриншота, то оставить прежний файл
-		log.Infoln("Не указан файл скриншота.")
+		log.Debugln("Не указан файл скриншота.")
 		screenShotFileName = ""
 	} else {
 
