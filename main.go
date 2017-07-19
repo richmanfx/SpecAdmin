@@ -3,6 +3,7 @@ package main
 import (
 	"./modules"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/sessions"
 )
 
 var Router *gin.Engine
@@ -16,7 +17,11 @@ func main() {
 	gin.SetMode(gin.DebugMode)
 
 	// Роутер по-умолчанию в Gin
-	Router = gin.Default()
+	//Router = gin.Default()
+	Router = gin.New()
+
+	store := sessions.NewCookieStore([]byte("secret"))
+	Router.Use(sessions.Sessions("mysession", store))
 
 	// Загрузить шаблоны
 	Router.LoadHTMLGlob("templates/*")
