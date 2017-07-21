@@ -21,8 +21,8 @@ func AuthRequired() gin.HandlerFunc {
 		cookies := session.Get("Cookie")		// Получить из сессии Куки???
 
 		// Получить отдельные куки
-		var splitCookie map[string]string
-		splitCookie = GetSplitCookie(cookies)
+		//var splitCookie map[string]string
+		//splitCookie = GetSplitCookie(cookies)
 
 		//session.Delete("Cookie")	// Удалить Куки - на будущее
 

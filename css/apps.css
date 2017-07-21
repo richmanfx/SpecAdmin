@@ -1,5 +1,5 @@
 ﻿body {
-    font-size: 1.5em;
+    font-size: 0.8vw;
     font-family: Verdana, serif;
 }
 
@@ -31,13 +31,13 @@ div.auto_width {
 }
 
 div.group_list {
-    font-size: 1.5em;
+    font-size: 0.8vw;
     padding-left: 10vh;
 }
 
 div.modal-header {
     color: #0000ff;
-    font-size: 1.5em;
+    font-size: 0.8vw;
     font-weight: bolder;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
 }
@@ -192,7 +192,7 @@ table.script-table {
 
 table.step-table {
     /*border: solid;*/
-    font-size: medium;
+    font-size: 0.8vw;
 }
 
 .error {
@@ -205,14 +205,14 @@ input#btn-group {
 }
 
 input {
-    font-size: 1.5em;
+    font-size: 0.8vw;
     width: 20em;
 }
 
 
 
 input.group_name {
-    font-size: 1em;
+    font-size: 0.8vw;
     text-align: left;
     color: #337ab7;
     background-color: white;
@@ -240,7 +240,7 @@ input.config {
 }
 
 textarea {
-    font-size: 1.5em;
+    font-size: 0.8vw;
     width: 100%;
 }
 
