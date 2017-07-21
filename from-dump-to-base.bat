@@ -1,4 +1,4 @@
 @echo off
 rem Восстановление базы "specadmin" из дампа
 
-mysql -p -u admin specadmin < specadmin.sql
+mysql -p -u admin specadmin < sql/specadmin.sql
