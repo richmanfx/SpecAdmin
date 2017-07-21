@@ -96,6 +96,7 @@ func AddStep(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
 					newStepName, stepsScript, scriptsSuite),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -107,6 +108,7 @@ func AddStep(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"SuitesGroup":	suitesGroup,
+				"Version":	Version,
 			},
 		)
 	}
@@ -135,6 +137,7 @@ func DelStep(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -144,6 +147,7 @@ func DelStep(context *gin.Context)  {
 				"message1": fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
 				"message2": "",	"message3": "",
 				"SuitesGroup":	suitesGroup,
+				"Version":	Version,
 			},
 		)
 	}
@@ -173,6 +177,7 @@ func EditStep(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -180,8 +185,8 @@ func EditStep(context *gin.Context)  {
 		context.HTML(http.StatusOK, "edit-step.html",
 			gin.H{
 				"title": 	"Редактирование шага",
-				"Version":	Version,
 				"step": 	step,
+				"Version":	Version,
 			},
 		)
 	}
@@ -254,7 +259,6 @@ func UpdateAfterEditStep(context *gin.Context)  {
 		}
 	}
 
-
 	// Обновить в БД
 	err = helpers.UpdateTestStep(
 		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
@@ -266,6 +270,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -275,6 +280,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 				"message1": fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
 				"message2": "",
 				"message3": "",
+				"Version":	Version,
 			},
 		)
 	}
@@ -304,6 +310,7 @@ func GetStepsOptions(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	}

@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "6.4"
+var Version string = "6.5"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -32,6 +32,7 @@ func ShowIndexPage(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении списка групп тестов из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -77,6 +78,8 @@ func ShowSuitesIndex(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении из БД списка Сюит для Группы тестов",
 				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+
 			},
 		)
 	} else {

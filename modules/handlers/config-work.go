@@ -27,14 +27,16 @@ func EditConfig(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении конфигурационных данных из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK,	"config.html",
 			gin.H{
 				"title":        "SpecAdmin",
-				"Version":      Version,
 				"config":	 	config,
+				"Version":	Version,
 			},
 		)
 	}
@@ -58,6 +60,8 @@ func SaveConfig(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintln("Ошибка при сохранении конфигурации"),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+
 			},
 		)
 	} else {
@@ -67,6 +71,8 @@ func SaveConfig(context *gin.Context)  {
 				"message1": fmt.Sprintln("Конфигурация успешно сохранена"),
 				"message2": "",
 				"message3": "",
+				"Version":	Version,
+
 			},
 		)
 	}
@@ -93,6 +99,8 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+
 			},
 		)
 	} else {
@@ -102,6 +110,8 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message1": fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
 				"message2": "",
 				"message3": fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
+				"Version":	Version,
+
 			},
 		)
 	}

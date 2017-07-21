@@ -26,6 +26,7 @@ func AddSuite(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при добавлении сюиты '%s' в группу '%s'.", newSuite, suitesGroup),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -35,6 +36,7 @@ func AddSuite(context *gin.Context)  {
 				"message1": fmt.Sprintf("Сюита '%s' успешно добавлена в группу '%s'.", newSuite, suitesGroup),
 				"message2": "",
 				"message3": "",
+				"Version":	Version,
 			},
 		)
 	}
@@ -55,6 +57,7 @@ func DelSuite(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при удалении сюиты '%s'.", deletedSuite),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -63,6 +66,7 @@ func DelSuite(context *gin.Context)  {
 				"title": "Информация",
 				"message1": fmt.Sprintf("Сюита '%s' удалена успешно.", deletedSuite),
 				"message2": "",	"message3": "",
+				"Version":	Version,
 			},
 		)
 	}
@@ -86,6 +90,7 @@ func EditSuite(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка получения данных о сюите '%s'.", editedSuite),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -94,8 +99,8 @@ func EditSuite(context *gin.Context)  {
 		context.HTML(http.StatusOK, "edit-suite.html",
 			gin.H{
 				"title": 	"Редактирование сюиты",
-				"Version":	Version,
 				"suite": 	suite,
+				"Version":	Version,
 			},
 		)
 	}
@@ -120,6 +125,7 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
 				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
 			},
 		)
 	} else {
@@ -129,6 +135,7 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 				"message1": fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
 				"message2": "",
 				"message3": "",
+				"Version":	Version,
 			},
 		)
 	}
