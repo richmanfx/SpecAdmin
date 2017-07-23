@@ -24,7 +24,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблиц 'tests_scripts'.", affected)
+		log.Debugf("Вставлено %d строк в таблицу 'tests_scripts'.", affected)
 	}
 	db.Close()
 	return err

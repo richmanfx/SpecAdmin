@@ -53,7 +53,7 @@ func AddTestGroup(groupName string) error {
 	if err == nil {
 		affected, err := result.RowsAffected()
 		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблиц 'tests_groups'.", affected)
+		log.Debugf("Вставлено %d строк в таблицу 'tests_groups'.", affected)
 	}
 	db.Close()
 	return err

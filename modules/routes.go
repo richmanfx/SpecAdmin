@@ -9,11 +9,10 @@ import (
 func InitRoutes(router *gin.Engine) {
 
 	// Роутинг страницы: метод, путь -> обработчик
-	router.Handle("GET", "/spec-admin", handlers.ShowIndexPage)
+	router.Handle("GET", "/spec-admin", auth.AuthRequired(), handlers.ShowIndexPage)	// Навесил мидлеварю
 	router.Handle("POST", "/spec-admin/show-suites", handlers.ShowSuitesIndex)
 
-	router.Handle("POST", "/spec-admin/add-group", auth.AuthRequired(), handlers.AddGroup)	// Навесил мидлеварю
-	//router.POST("/spec-admin/add-group", auth.AuthRequired(), handlers.AddGroup)
+	router.Handle("POST", "/spec-admin/add-group", handlers.AddGroup)
 	router.Handle("POST", "/spec-admin/del-group", handlers.DelGroup)
 	router.Handle("POST", "/spec-admin/edit-group", handlers.EditGroup)
 

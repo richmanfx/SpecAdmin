@@ -8,6 +8,8 @@ import (
 	"../handlers"
 	"../helpers"
 	"strings"
+	"fmt"
+	"time"
 )
 
 // Мидлеваря - проверяет авторизацию
@@ -26,51 +28,22 @@ func AuthRequired() gin.HandlerFunc {
 		// Получить отдельные куки
 		var splitCookie map[string]string
 		splitCookie = GetSplitCookie(cookies.(string))
-		log.Printf("splitCookie: '%v'", splitCookie)
+		log.Infof("Разделённые Куки из браузера: '%v'", splitCookie)
 
 
 		// Если Кук нет или если 'sessid' в БД не нашёлся, то на страницу авторизации
-		sessidExist := helpers.SessionIdExistInBD(splitCookie["sessid"])
+		sessidValue := splitCookie["sessid"]
+		sessidExist := helpers.SessionIdExistInBD(sessidValue)
 
-		if (len(splitCookie) == 0) || (sessidExist == false) {
+		if len(splitCookie) == 0 {
+			log.Infoln("Кук из браузера нет.")
 			context.Abort()
-			//Login(context)
+			context.Redirect(http.StatusSeeOther, "/spec-admin/login")
+		} else if sessidExist == false {
+			log.Infoln("'sessid' из браузера не обнаружена в БД.")
+			context.Abort()
 			context.Redirect(http.StatusSeeOther, "/spec-admin/login")
 		}
-
-
-
-		//if cookies == nil{
-		//
-		//	// Выставить Кук
-		//	newCookie := "sessid=хитрыйIDкуки;"
-		//	session.Set("Cookie", newCookie)
-		//	session.Save()
-		//
-		//} else {
-		//
-		//	log.Printf("Куки от браузера: %v", cookies)
-		//	session.Delete("Cookie")	// Удалить Куки - на будущее
-		//	log.Println("Куки удалены")
-		//}
-		//
-		//
-		//
-		//context.JSON(http.StatusOK, gin.H{"Cookie": cookies})
-
-
-
-		// before request
-		//context.Next()
-
-
-
-		// after request
-		//log.Printf("Здесь будем логиниться.")
-
-		// access the status we are sending
-		//status := context.Writer.Status()
-		//log.Println(status)
 	}
 }
 
@@ -84,11 +57,11 @@ func GetSplitCookie(cookies string) map[string]string {
 	// Разделить по ";"
 	cookieList = strings.Split(cookies, ";")
 	cookieList = cookieList[0:len(cookieList)-1]
-	log.Printf("cookieList: '%v'", cookieList)
+	log.Infof("Список Кук из браузера: '%v'", cookieList)
 
 	// Разделить по "=" на ключ/значение
 	for _, cookie := range cookieList {
-		log.Printf("Кука: %s", cookie)
+		log.Debugf("Кука: %s", cookie)
 		splitCookie[strings.Split(cookie, "=")[0]] = strings.Split(cookie, "=")[1]
 	}
 
@@ -97,7 +70,6 @@ func GetSplitCookie(cookies string) map[string]string {
 
 // Страница авторизации
 func Login(context *gin.Context)  {
-
 	context.HTML(
 		http.StatusOK,
 		"login.html",
@@ -112,8 +84,71 @@ func Login(context *gin.Context)  {
 func Authorization(context *gin.Context)  {
 	userName := context.PostForm("user_name")
 	userPassword := context.PostForm("user_password")
-
 	log.Infof("Пользователь: %s, Пароль: %s", userName, userPassword)
+
+	// Пока без базы проверяем
+	validUserName := "user"
+	validUserPassword := "Qwerty123"
+	if (userName == validUserName) && (userPassword == validUserPassword) {
+
+		// Изменить сессию
+		session := sessions.Default(context)
+
+		// Сгенерировать sessid
+		sessid := helpers.GetUniqueFileName()		// TODO: временно, сделать отдельный генератор
+		newCookie := fmt.Sprintf("sessid=%s;", sessid)
+		log.Infof("Сгенерирована новая Кука: '%s'", newCookie)
+
+
+		//	session.Delete("Cookie")	// Удалить Куки - на будущее
+		//	log.Println("Куки удалены")
+		//context.JSON(http.StatusOK, gin.H{"Cookie": cookies})
+
+		// Сохранить сессию в БД
+		var expire time.Time = time.Now().Add(12 * time.Hour)	// Кука устаревает через 12 часов
+		err := helpers.SaveSessionInDB(sessid, expire, validUserName)
+		if err != nil {
+			log.Errorf("Ошибка сохранения сессии в БД: %v", err)
+			context.HTML(http.StatusOK, "message.html",
+				gin.H{
+					"title": 		"Ошибка",
+					"message1": 	"",
+					"message2": 	"Ошибка сохранения сессии в БД.",
+					"message3": 	err,
+					"Version":		handlers.Version,
+				},
+			)
+		}
+
+		// Выставить в браузере Куки
+		session.Set("Cookie", newCookie)
+		session.Save()
+		log.Infof("Новая Кука '%s' отправлена в браузер", newCookie)
+
+		// Направить на индексную страницу
+		context.Abort()
+		context.Redirect(http.StatusSeeOther, "/spec-admin")
+
+	} else {
+		log.Errorln("Ошибка авторизации - неверный логин/пароль.")
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка авторизации - неверный логин/пароль.",
+				"message3": 	"",
+				"Version":		handlers.Version,
+			},
+		)
+	}
+
+
 }
 
 
+// Разлогирование
+func Logout(context *gin.Context)  {
+
+	context.Abort()
+	context.Redirect(http.StatusSeeOther, "/spec-admin/login")
+}

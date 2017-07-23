@@ -22,7 +22,7 @@ func dbConnect() error {
 
 	// Соединение с БД
 	log.Debugf("Соединение с БД")
-	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8")
+	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8&parseTime=true")
 	if err != nil {
 		log.Errorf("Ошибка соединение с БД", err)
 		return err
