@@ -1,13 +1,15 @@
 {{ template "header.html" .}}
 
 <span class="title">Вход в SpecAdmin</span>
-<p>
-<form method="post" action="/spec-admin/login-processing">
 
+
+<p>
+<form method="post" class="form-horizontal" role="form" action="/spec-admin/login-processing">
+    <div class="form-group">
     <table class="login" border="0">
         <tr>
             <td class="login-user-name">
-                <label>Имя пользователя:</label>
+                <label>Логин:</label>
             </td>
             <td class="login-user-name">
                 <input class="login" name="user_name" placeholder=" Имя пользователя" required="required" type="text">
@@ -23,11 +25,16 @@
             </td>
         </tr>
 
-    </table>
-    <button type="submit">
-        Вход
-    </button>
+        <tr>
+            <td colspan="2" class="login-button">
+                <button type="submit" class="btn btn-success btn-lg">
+                    Войти
+                </button>
+            </td>
+        </tr>
 
+    </table>
+    </div>
 </form>
 
 {{ template "footer.html" .}}

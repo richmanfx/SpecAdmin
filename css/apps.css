@@ -129,6 +129,11 @@ td.login-user-password {
 
 }
 
+td.login-button {
+    text-align: center;
+    padding: 1vw;
+}
+
 th,td.steps-numbers {
     width: 8%;
     /*border: solid;*/
@@ -207,6 +212,8 @@ table.step-table {
 table.login {
     background-color: #bfeeff;
     font-size: 1.5vw;
+    margin-left: 10vw;
+    margin-top: 2vw;
 }
 
 .error {
@@ -226,7 +233,7 @@ input {
 input.login {
     font-size: 1.5vw;
     width: 15vw;
-    background-color: #d9edf7;
+    background-color: #e1f5ff;
     padding-left: 7px;
     padding-right: 7px;
 }
