@@ -1,0 +1,33 @@
+{{ template "header.html" .}}
+
+<span class="title">Вход в SpecAdmin</span>
+<p>
+<form method="post" action="/spec-admin/login-processing">
+
+    <table class="login" border="0">
+        <tr>
+            <td class="login-user-name">
+                <label>Имя пользователя:</label>
+            </td>
+            <td class="login-user-name">
+                <input class="login" name="user_name" placeholder=" Имя пользователя" required="required" type="text">
+            </td>
+        </tr>
+
+        <tr>
+            <td class="login-user-name">
+                <label>Пароль: </label>
+            </td>
+            <td class="login-user-password">
+                <input class="login" name="user_password" placeholder=" Пароль" required="required" type="password">
+            </td>
+        </tr>
+
+    </table>
+    <button type="submit">
+        Вход
+    </button>
+
+</form>
+
+{{ template "footer.html" .}}

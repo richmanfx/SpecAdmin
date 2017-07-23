@@ -38,6 +38,10 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("POST", "/spec-admin/save-config", handlers.SaveConfig)
 	router.Handle("GET", "/spec-admin/del-old-screenshots-file", handlers.DelUnusedScreenShotsFile)
 
+	router.Handle("GET", "/spec-admin/login", auth.Login)
+	router.Handle("POST", "/spec-admin/login-processing", auth.Authorization)
+
+
 	//authorized := router.Group("/spec-admin/")
 	//authorized.Use(gin.BasicAuth(gin.Accounts{
 	//	"user1": "user1", // user:user1 password:user1
