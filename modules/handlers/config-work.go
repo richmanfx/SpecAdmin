@@ -125,7 +125,7 @@ func UsersConfig(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Считать в БД пользователей и их пермишены
-	users := helpers.GetUsekrs
+	users := helpers.GetUsers
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
