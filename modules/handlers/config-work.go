@@ -117,3 +117,36 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 	}
 }
 
+
+// Конфигурирование пользователей
+func UsersConfig(context *gin.Context)  {
+
+	var err error
+	helpers.SetLogFormat()
+
+	// Считать в БД пользователей и их пермишены
+	users := helpers.GetUsekrs
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
+				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+
+			},
+		)
+	} else {
+		context.HTML(
+			http.StatusOK,
+			"users-config.html",
+			gin.H{
+				"title":   "SpecAdmin",
+				"users":	users,
+				"Version": Version,
+			},
+		)
+	}
+}

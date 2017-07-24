@@ -1,0 +1,31 @@
+{{ template "header.html" .}}
+
+<span class="title">Пользователи</span>
+<p>
+    <table class="users-table table table-bordered">
+        <thead>
+        <tr>
+            <th class="steps-numbers">N </th>
+            <th class="center-align">Логин</th>
+            <th class="center-align">Полное имя</th>
+            <th class="center-align">Редактирование</th>
+            <th class="center-align">Создание</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{ range .users }}
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            {{ end }}
+        </tbody>
+    </table>
+
+<script async src="/js/apps-index-page.js"></script>
+
+<!-- Шаблон футера -->
+{{ template "footer.html" .}}

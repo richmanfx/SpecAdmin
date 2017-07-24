@@ -39,6 +39,7 @@ func InitRoutes(router *gin.Engine) {
 
 	router.Handle("GET", "/spec-admin/login", auth.Login)
 	router.Handle("POST", "/spec-admin/login-processing", auth.Authorization)
+	router.Handle("GET", "/spec-admin/users-config", handlers.UsersConfig)
 
 
 	//authorized := router.Group("/spec-admin/")
