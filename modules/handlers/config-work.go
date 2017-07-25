@@ -125,7 +125,7 @@ func UsersConfig(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Считать в БД пользователей и их пермишены
-	users := helpers.GetUsers
+	//users := helpers.GetUsers
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -144,9 +144,23 @@ func UsersConfig(context *gin.Context)  {
 			"users-config.html",
 			gin.H{
 				"title":   "SpecAdmin",
-				"users":	users,
+				//"users":	users,
 				"Version": Version,
 			},
 		)
 	}
+}
+
+
+// Создать нового пользователя
+func CreateUser(context *gin.Context)  {
+
+	context.HTML(
+		http.StatusOK,
+		"create-user-modal.html",
+		gin.H{
+			"title":   "SpecAdmin",
+			"Version": Version,
+		},
+	)
 }

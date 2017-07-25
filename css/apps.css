@@ -56,6 +56,10 @@ div.with-border {
     outline: 1px solid darkgrey;
 }
 
+div.users-config-button {
+    padding: 1em 5em 1em 5em;
+}
+
 img.with-border
 {
     outline: 1px solid darkgrey;
@@ -227,11 +231,11 @@ input#btn-group {
 
 input {
     font-size: 0.8vw;
-    width: 20em;
+    width: 14vw;
 }
 
 input.login {
-    font-size: 1.5vw;
+    font-size: 1vw;
     width: 15vw;
     background-color: #e1f5ff;
     padding-left: 7px;
@@ -290,4 +294,46 @@ footer {
 .version {
     color: #ff0000;
     font-weight: bold;
+}
+
+/*******************************************************************************
+ * CheckBox                                                                    *
+ ******************************************************************************/
+input[type=checkbox] {
+    visibility: hidden;
+}
+
+.permission {
+    /*padding: 0;*/
+    width: 30px;
+    height: 30px;
+    background: #333333;
+    margin: 10px 10px 10px 20px;
+    border-radius: 100%;
+    position: relative;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.permission {
+    padding: 0 1rem;
+    margin: 0;
+}
+
+.permission label {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    transition: all .5s ease;
+    cursor: pointer;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    z-index: 1;
+    background: #FF0000;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.permission input[type=checkbox]:checked + label {
+    background: #00FF00;
 }

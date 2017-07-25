@@ -1,6 +1,18 @@
 {{ template "header.html" .}}
 
+{{ template "create-user-modal.html" . }}
+
 <span class="title">Пользователи</span>
+
+<p>
+    <div class="users-config-button">
+        <a type="button" class="btn btn-success btn-lg" data-toggle="modal" data-target="#createUser" href="#">
+            Создать нового пользователя
+        </a>
+
+    <!--<a class="navbar-brand" data-toggle="modal" data-target="#addGroup" href="#"> Добавить группу </a>-->
+
+    </div>
 <p>
     <table class="users-table table table-bordered">
         <thead>
