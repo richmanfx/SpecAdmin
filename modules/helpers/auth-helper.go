@@ -5,6 +5,7 @@ import (
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
+	"../../models"
 )
 
 
@@ -87,3 +88,29 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 	db.Close()
 	return err
 }
+
+
+// Создать пользователя в БД
+func CreateUserInDb(user models.User) error {
+
+	var err error
+
+	log.Infof("user в 'CreateUserInDb': '%v'", user)
+
+
+	return err
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

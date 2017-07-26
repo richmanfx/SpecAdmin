@@ -9,7 +9,7 @@
             </div>
 
             <div class="modal-body">
-                <form id="id_create_user_form" name="create_user_form" method="post" action="/spec-admin/save-user">
+                <form id="id_create_user_form" name="create_user_form" method="post" action="/spec-admin/create-user">
 
                     <label for="id_login"> Логин </label><br>
                     <input id="id_login" name="login" placeholder=" Логин" required="required" type="text"><br>
@@ -29,7 +29,7 @@
                         <table>
                             <tr>
                                 <td class="permission">
-                                    <input class="permission" title="Создание" name="create_permission" required="required" type="checkbox">
+                                    <input class="permission" title="Создание" name="create_permission" type="checkbox">
                                 </td>
                                 <td>
                                     <label class="permission">Создание</label>
@@ -38,7 +38,7 @@
 
                             <tr>
                                 <td class="permission">
-                                    <input class="permission" title="Редактирование" name="edit_permission" required="required" type="checkbox">
+                                    <input class="permission" title="Редактирование" name="edit_permission" type="checkbox">
                                 </td>
                                 <td>
                                     <label class="permission">Редактирование</label>
@@ -47,7 +47,7 @@
 
                             <tr>
                                 <td class="permission">
-                                    <input class="permission" title="Удаление" name="delete_permission" required="required" type="checkbox">
+                                    <input class="permission" title="Удаление" name="delete_permission" type="checkbox">
                                 </td>
                                 <td>
                                     <label class="permission">Удаление</label>
@@ -56,7 +56,7 @@
 
                             <tr>
                                 <td class="permission">
-                                    <input class="permission" title="Конфигурация" name="config_permission" required="required" type="checkbox">
+                                    <input class="permission" title="Конфигурация" name="config_permission" type="checkbox">
                                 </td>
                                 <td>
                                     <label class="permission">Конфигурация</label>
@@ -65,7 +65,7 @@
 
                             <tr>
                                 <td class="permission">
-                                    <input class="permission" title="Работа с пользователями" name="users_permission" required="required" type="checkbox">
+                                    <input class="permission" title="Работа с пользователями" name="users_permission" type="checkbox">
                                 </td>
                                 <td>
                                     <label class="permission">Работа с пользователями</label>
