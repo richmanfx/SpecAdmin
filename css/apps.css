@@ -299,41 +299,62 @@ footer {
 /*******************************************************************************
  * CheckBox                                                                    *
  ******************************************************************************/
-input[type=checkbox] {
-    visibility: hidden;
+/*input[type=checkbox] {*/
+    /*visibility: hidden;*/
+/*}*/
+
+label.permission {
+    padding-left: 0px;
+    color: #398439;
+    font-weight: 300;
+
 }
 
-.permission {
-    /*padding: 0;*/
-    width: 30px;
+input.permission {
+    -ms-transform: scale(2);
+    -moz-transform: scale(2);
+    -o-transform: scale(2);
     height: 30px;
-    background: #333333;
-    margin: 10px 10px 10px 20px;
-    border-radius: 100%;
-    position: relative;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    width: 30px
 }
 
-.permission {
-    padding: 0 1rem;
-    margin: 0;
+td.permission {
+    width: 2em;
+    padding: 20px;
 }
 
-.permission label {
-    display: block;
-    width: 30px;
-    height: 30px;
-    border-radius: 100%;
-    transition: all .5s ease;
-    cursor: pointer;
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    z-index: 1;
-    background: #FF0000;
-    box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
-}
+/*.permission {*/
+    /*!*padding: 0;*!*/
+    /*width: 30px;*/
+    /*height: 30px;*/
+    /*background: black;*/
+    /*margin-left: 10px;*/
+    /*!*margin: 10px 10px 10px 20px;*!*/
+    /*border-radius: 100%;*/
+    /*position: relative;*/
+    /*box-shadow: 0 1px 3px rgba(0,0,0,0.5);*/
+/*}*/
 
-.permission input[type=checkbox]:checked + label {
-    background: #00FF00;
-}
+/*.permission {*/
+    /*padding: 0 1rem;*/
+    /*margin: 0;*/
+/*}*/
+
+/*.permission label {*/
+    /*display: block;*/
+    /*width: 30px;*/
+    /*height: 30px;*/
+    /*border-radius: 100%;*/
+    /*transition: all .5s ease;*/
+    /*cursor: pointer;*/
+    /*position: absolute;*/
+    /*top: 10px;*/
+    /*left: 10px;*/
+    /*z-index: 1;*/
+    /*background: #FF0000;*/
+    /*box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);*/
+/*}*/
+
+/*.permission input[type=checkbox]:checked + label {*/
+    /*background: #00FF00;*/
+/*}*/

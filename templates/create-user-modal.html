@@ -26,27 +26,53 @@
                     <label> Права </label>
                     <div class="with-border">
 
-                        <div class="permission">
-                            <input id="permission-input-create" title="Создание" name="create_permission" required="required" type="checkbox">
-                            <label for="permission-input-create">Создание</label>
-                        </div>
+                        <table>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Создание" name="create_permission" required="required" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Создание</label>
+                                </td>
+                            </tr>
 
-                        <div class="permission">
-                            <input id="permission-input-edit" title="Редактирование" name="edit_permission" required="required" type="checkbox">
-                            <label for="permission-input-edit">Редактирование</label>
-                        </div>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Редактирование" name="edit_permission" required="required" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Редактирование</label>
+                                </td>
+                            </tr>
 
-                        <div class="permission">
-                            <input title="Удаление" name="delete_permission" required="required" type="checkbox" value="0">
-                        </div>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Удаление" name="delete_permission" required="required" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Удаление</label>
+                                </td>
+                            </tr>
 
-                        <div class="permission">
-                            <input title="Конфигурация" name="config_permission" required="required" type="checkbox" value="0">
-                        </div>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Конфигурация" name="config_permission" required="required" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Конфигурация</label>
+                                </td>
+                            </tr>
 
-                        <div class="permission">
-                            <input title="Работа с пользователями" name="users_permission" required="required" type="checkbox" value="0">
-                        </div>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Работа с пользователями" name="users_permission" required="required" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Работа с пользователями</label>
+                                </td>
+                            </tr>
+
+                        </table>
                     </div>
 
                 </form>
