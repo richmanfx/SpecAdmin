@@ -27,13 +27,13 @@
         <tbody>
             {{ range .users }}
             <tr>
-                <td></td>
-                <td></td>
+                <td>{{ .Login }}</td>
+                <td>{{ .FullName }}</td>
                 <td></td>
                 <td></td>
                 <td></td>
             </tr>
-            {{ end }}
+            {{end }}
         </tbody>
     </table>
 

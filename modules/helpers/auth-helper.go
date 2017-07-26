@@ -111,11 +111,37 @@ func CreateUserInDb(user models.User) error {
 	}
 
 	db.Close()
-
 	return err
 }
 
+// // Считать из БД всех пользователей
+func GetUsers() ([]models.User, error) {
 
+	var err error
+	usersList := make([]models.User, 0, 0)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Считать
+	rows, err := db.Query("SELECT login, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission FROM user ORDER BY login")
+	if err != nil {panic(err)}
+
+	// Данные получить из результата запроса
+	for rows.Next() {
+		var user models.User
+		err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit, &user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
+		if err != nil {panic(err)}
+		log.Infof("User из таблицы user: %v", user)
+
+		// Заполнить пользователями список пользователей
+		usersList = append(usersList, user)
+	}
+
+	db.Close()
+	return usersList, err
+}
 
 
 

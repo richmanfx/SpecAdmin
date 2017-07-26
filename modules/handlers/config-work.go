@@ -126,8 +126,9 @@ func UsersConfig(context *gin.Context)  {
 	var err error
 	helpers.SetLogFormat()
 
-	// Считать в БД пользователей и их пермишены
-	//users := helpers.GetUsers
+	// Считать из БД пользователей и их пермишены
+	users, err := helpers.GetUsers()
+	log.Infof("Пользователи из БД: '%v'", users)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -146,7 +147,7 @@ func UsersConfig(context *gin.Context)  {
 			"users-config.html",
 			gin.H{
 				"title":   "SpecAdmin",
-				//"users":	users,
+				"users":	users,
 				"Version": Version,
 			},
 		)
