@@ -75,7 +75,6 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 
 	// Внести в БД
 	result, err := db.Exec("INSERT INTO sessions (session_id,expires,user) VALUE (?,?,?)", sessid, expires, userName)
-	//result, err := db.Exec("INSERT INTO sessions (session_id, expires) VALUE (?,?)", sessid, expires)
 
 	if err == nil {
 		affected, err := result.RowsAffected()
@@ -94,9 +93,24 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 func CreateUserInDb(user models.User) error {
 
 	var err error
-
 	log.Infof("user в 'CreateUserInDb': '%v'", user)
 
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Занести пользователя в БД
+	result, err := db.Exec("INSERT INTO user (login, passwd, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission) VALUE (?,?,?,?,?,?,?,?)", user.Login, user.Password, user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users)
+
+	if err == nil {
+		affected, err := result.RowsAffected()
+		if err != nil {
+			panic(err)
+		}
+		log.Infof("Вставлено %d строк в таблицу 'user'.", affected)
+	}
+
+	db.Close()
 
 	return err
 }
