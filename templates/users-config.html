@@ -3,6 +3,7 @@
 {{ template "create-user-modal.html" . }}
 {{ template "delete-user-modal.html" . }}
 {{ template "edit-user-modal.html" . }}
+{{ template "change-password-modal.html" . }}
 
 <span class="title">Пользователи</span>
 
@@ -87,7 +88,7 @@
                         <img src="/images/icons/delete.png" alt="Delete" width="30" height="30"/>
                     </a>
                     <a data-toggle="modal" data-target="#changePassword" href="#" title="Изменить пароль"
-                       data-login="{{ .Login }}" data-name="{{ .FullName }}">
+                       data-login="{{ .Login }}">
                         <img src="/images/icons/password.png" alt="Delete" width="30" height="30"/>
                     </a>
 
