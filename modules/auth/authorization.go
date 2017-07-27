@@ -84,7 +84,7 @@ func Login(context *gin.Context)  {
 func Authorization(context *gin.Context)  {
 	userName := context.PostForm("user_name")
 	userPassword := context.PostForm("user_password")
-	log.Infof("Пользователь: %s, Пароль: %s", userName, userPassword)
+	log.Debugf("Пользователь: %s, Пароль: %s", userName, userPassword)
 
 	// Пока без базы проверяем
 	validUserName := "user"

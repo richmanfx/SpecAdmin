@@ -85,7 +85,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 
 	// Получить список имён неиспользуемых файлов скриншотов
 	unusedFileList, err := helpers.GetUnusedScreenShotsFileName()
-	log.Infof("Неиспользуемые файлы скриншотов для удаления: '%v'", unusedFileList)
+	log.Debugf("Неиспользуемые файлы скриншотов для удаления: '%v'", unusedFileList)
 	countDeletedFile := len(unusedFileList)
 
 	// Удалить в цикле файлы
@@ -127,7 +127,7 @@ func UsersConfig(context *gin.Context)  {
 
 	// Считать из БД пользователей и их пермишены
 	users, err := helpers.GetUsers()
-	log.Infof("Пользователи из БД: '%v'", users)
+	log.Debugf("Пользователи из БД: '%v'", users)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -198,7 +198,7 @@ func CreateUser(context *gin.Context)  {
 		user.Permissions.Users = false
 	}
 
-	log.Infof("user из формы создания = '%v'", user)
+	log.Debugf("user из формы создания = '%v'", user)
 
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)
@@ -240,7 +240,7 @@ func DeleteUser(context *gin.Context)  {
 	user.Login = context.PostForm("login")
 	user.FullName = context.PostForm("full_name")
 
-	log.Infof("user из формы удаления = '%v'", user)
+	log.Debugf("user из формы удаления = '%v'", user)
 
 	// Удалить из БД
 	err = helpers.DeleteUserInDb(user)

@@ -1,0 +1,109 @@
+<div id="editUser" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                Редактирование пользователя
+            </div>
+
+            <div class="modal-body">
+                <form id="id_create_user_form" name="create_user_form" method="post" action="/spec-admin/edit-user">
+
+                    <label for="id_login"> Логин </label><br>
+                    <input id="id_login" name="login" placeholder=" Логин" required="required" type="text"><br>
+                    <br>
+
+                    <label for="id_password"> Пароль </label><br>
+                    <input id="id_password" name="password" placeholder=" Пароль" required="required" type="text"><br>
+                    <br>
+
+                    <label for="id_full_name"> Полное имя (ФИО) </label><br>
+                    <input id="id_full_name" name="full_name" placeholder=" ФИО" required="required" type="text"><br>
+                    <br>
+
+                    <label> Права </label>
+                    <div class="with-border">
+
+                        <table>
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Создание" name="create_permission" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Создание</label>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Редактирование" name="edit_permission" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Редактирование</label>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Удаление" name="delete_permission" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Удаление</label>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Конфигурация" name="config_permission" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Конфигурация</label>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="permission">
+                                    <input class="permission" title="Работа с пользователями" name="users_permission" type="checkbox">
+                                </td>
+                                <td>
+                                    <label class="permission">Работа с пользователями</label>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#editUser').on('shown.bs.modal', function (e) {
+                    $('#id_login', e.target).focus();
+                });
+            </script>
+
+            <div class="modal-footer">
+                <button type="submit"
+                        class="btn btn-success btn-lg"
+                        form="id_create_user_form">
+                    Сохранить
+                </button>
+
+                <button form="id_create_user_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить форму
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

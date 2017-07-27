@@ -93,7 +93,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 func CreateUserInDb(user models.User) error {
 
 	var err error
-	log.Infof("user в 'CreateUserInDb': '%v'", user)
+	log.Debugf("user в 'CreateUserInDb': '%v'", user)
 
 	// Подключиться к БД
 	err = dbConnect()
@@ -107,7 +107,7 @@ func CreateUserInDb(user models.User) error {
 		if err != nil {
 			panic(err)
 		}
-		log.Infof("Вставлено %d строк в таблицу 'user'.", affected)
+		log.Debugf("Вставлено %d строк в таблицу 'user'.", affected)
 	}
 
 	db.Close()
@@ -120,7 +120,7 @@ func CreateUserInDb(user models.User) error {
 func DeleteUserInDb(user models.User) error {
 
 	var err error
-	log.Infof("user в 'DeleteUserInDb': '%v'", user)
+	log.Debugf("user в 'DeleteUserInDb': '%v'", user)
 
 	// Подключиться к БД
 	err = dbConnect()
@@ -141,7 +141,7 @@ func DeleteUserInDb(user models.User) error {
 				log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
 				return err
 			}
-			log.Infof("Удалено строк в БД: %d", affected)
+			log.Debugf("Удалено строк в БД: %d", affected)
 		}
 	}
 
@@ -170,7 +170,7 @@ func GetUsers() ([]models.User, error) {
 		var user models.User
 		err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit, &user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
 		if err != nil {panic(err)}
-		log.Infof("User из таблицы user: %v", user)
+		log.Debugf("User из таблицы user: %v", user)
 
 		// Заполнить пользователями список пользователей
 		usersList = append(usersList, user)

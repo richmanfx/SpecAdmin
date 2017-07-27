@@ -55,7 +55,7 @@ func SaveConfig(screenShotPath string) error {
 	if err != nil {	return err }
 
 	// Записать в БД
-	log.Infoln("Запись в БД пути к директории со скриншотами.")
+	log.Debugln("Запись в БД пути к директории со скриншотами.")
 	_, err = db.Query("UPDATE configuration SET property_value=? WHERE property_name=? LIMIT 1", screenShotPath, "Путь к скриншотам")
 
 	// Здесь будет запись других параметров
@@ -142,7 +142,7 @@ func GetScreenShotsFileName() ([]string, error) {
 		var usedScreenShotsFileName string
 		for rows.Next() {
 			err = rows.Scan(&usedScreenShotsFileName)
-			log.Infof("rows.Next из таблицы tests_steps: %s", usedScreenShotsFileName)
+			log.Debugf("rows.Next из таблицы tests_steps: %s", usedScreenShotsFileName)
 
 			// Дополнить список файлов
 			usedScreenShotsFileNameList = append(usedScreenShotsFileNameList, usedScreenShotsFileName)
@@ -174,6 +174,6 @@ func GetScreenShotsFileNameInRepositoryList() ([]string, error) {
 		inRepositoryScreenShotsFileNameList = append(inRepositoryScreenShotsFileNameList, file.Name())
 	}
 
-	log.Infof("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
+	log.Debugf("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
 	return inRepositoryScreenShotsFileNameList, err
 }
