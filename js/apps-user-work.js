@@ -28,6 +28,6 @@ $('#changePassword').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var Login = button.data('login');
     var modal = $(this);
-    modal.find('#id_login_label').val(Login);
-    document.getElementById('id_login_label').innerHTML = ' ' + Login;
+    modal.find('#id_login').val(Login);     // В скрытый input
+    document.getElementById('id_login_label').innerHTML = ' ' + Login;  // На label
 });

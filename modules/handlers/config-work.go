@@ -165,7 +165,7 @@ func CreateUser(context *gin.Context)  {
 
 	// Данные из формы
 	user.Login = context.PostForm("login")
-	user.Password = context.PostForm("password")
+	openPassword := context.PostForm("password")
 	user.FullName = context.PostForm("full_name")
 
 	if context.PostForm("create_permission") == "on" {
@@ -199,6 +199,11 @@ func CreateUser(context *gin.Context)  {
 	}
 
 	log.Debugf("user из формы создания = '%v'", user)
+
+
+	// Получить Соль и Хеш пароля
+	user.Salt = helpers.GetSalt()
+	user.Password = helpers.GetHash(openPassword, user.Salt)
 
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)

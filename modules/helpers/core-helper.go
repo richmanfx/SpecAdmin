@@ -7,6 +7,7 @@ import (
 	"../../models"
 	"fmt"
 	"crypto/md5"
+	"crypto/sha512"
 	"io"
 	"time"
 )
@@ -107,3 +108,17 @@ func GetUniqueFileName() string {
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
+// Получить "соль"
+func GetSalt() string {
+	hash := sha512.New()
+	io.WriteString(hash, time.Now().String())
+	return fmt.Sprintf("%x", hash.Sum(nil))
+}
+
+// Получить Хеш пароля с заданной солью
+func GetHash(password string, salt string) string {
+	hash := sha512.New()
+	io.WriteString(hash, salt)
+	return fmt.Sprintf("%x", hash.Sum(nil))
+
+}

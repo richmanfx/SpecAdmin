@@ -152,3 +152,49 @@ func Logout(context *gin.Context)  {
 	context.Abort()
 	context.Redirect(http.StatusSeeOther, "/spec-admin/login")
 }
+
+
+// Смена пароля
+func ChangePassword(context *gin.Context)  {
+
+	// Данные из формы
+	userName := context.PostForm("login")
+	oldPassword := context.PostForm("old_password")
+	newPassword := context.PostForm("new_password")
+	log.Infof("Данные из формы смены пароля: '%s', '%s', '%s'", userName, oldPassword, newPassword)
+
+
+	// Проверить валидность старого пароля
+	err := helpers.ValidatePassword(userName, oldPassword)
+	if err != nil {
+		log.Errorln("Указан неверный старый пароль.")
+	} else {
+		// Записать в БД новый пароль
+		//err = SavePassword(userName, newPassword)
+	}
+
+	if err != nil {
+		log.Errorf("Ошибка изменения пароля: %v", err)
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка изменения пароля.",
+				"message3": 	err,
+				"Version":		handlers.Version,
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintln("Пароль успешно изменён"),
+				"message2": "",
+				"message3": "",
+				"Version":	handlers.Version,
+			},
+		)
+	}
+
+}
+

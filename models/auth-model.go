@@ -3,6 +3,7 @@ package models
 type User struct {
 	Login 		string
 	Password	string
+	Salt 		string
 	FullName	string
 	Permissions Permission
 }

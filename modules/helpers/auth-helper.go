@@ -100,7 +100,7 @@ func CreateUserInDb(user models.User) error {
 	if err != nil {	panic(err) }
 
 	// Занести пользователя в БД
-	result, err := db.Exec("INSERT INTO user (login, passwd, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission) VALUE (?,?,?,?,?,?,?,?)", user.Login, user.Password, user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users)
+	result, err := db.Exec("INSERT INTO user (login, passwd, salt, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission) VALUE (?,?,?,?,?,?,?,?,?)", user.Login, user.Password, user.Salt, user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users)
 
 	if err == nil {
 		affected, err := result.RowsAffected()
@@ -181,8 +181,35 @@ func GetUsers() ([]models.User, error) {
 }
 
 
+// Проверка валидности пароля
+func ValidatePassword(userName, oldPassword string) error {
+	var err error
+
+	//// Сгенерить Соль
+	//salt := GetSalt()
+	//log.Infof("Соль: '%s'", salt)
 
 
+	// Получить Соль из БД
+
+
+	// Сгенерить Хеш пароля с Солью
+	//hash := GetHash(oldPassword, salt)
+	//log.Infof("Хеш с Солью: '%s'", hash)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Сверить полученный Хеш с Хешем в БД
+
+
+	db.Close()
+	return err
+}
+
+
+//
 
 
 

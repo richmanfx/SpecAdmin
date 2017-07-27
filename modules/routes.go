@@ -42,6 +42,7 @@ func InitRoutes(router *gin.Engine) {
 	router.Handle("GET", "/spec-admin/users-config", handlers.UsersConfig)
 	router.Handle("POST", "/spec-admin/create-user", handlers.CreateUser)
 	router.Handle("POST", "/spec-admin/delete-user", handlers.DeleteUser)
+	router.Handle("POST", "/spec-admin/change-password", auth.ChangePassword)
 
 
 	//authorized := router.Group("/spec-admin/")
