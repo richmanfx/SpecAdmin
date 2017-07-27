@@ -122,3 +122,65 @@ func GetHash(password string, salt string) string {
 	return fmt.Sprintf("%x", hash.Sum(nil))
 
 }
+
+// Получить "соль" из БД для заданного пользователя
+func GetSaltFromDb(userName string) (string, error) {
+
+	var err error
+	var salt string
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return salt, err }
+
+	// Получить "соль"
+	requestResult := db.QueryRow("SELECT salt FROM user WHERE login=?", userName)
+	err = requestResult.Scan(&salt)
+
+	if err != nil {
+		log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err)
+	}
+
+	db.Close()
+	return salt, err
+}
+
+
+// Получить хеш из БД для заданного пользователя
+func GetHashFromDb(userName string) (string, error) {
+
+	var err error
+	var hash string
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return hash, err }
+
+	// Получить "Хеш"
+	requestResult := db.QueryRow("SELECT passwd FROM user WHERE login=?", userName)
+	err = requestResult.Scan(&hash)
+
+	if err != nil {
+		log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err)
+	}
+
+	db.Close()
+	return hash, err
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -170,7 +170,7 @@ func ChangePassword(context *gin.Context)  {
 		log.Errorln("Указан неверный старый пароль.")
 	} else {
 		// Записать в БД новый пароль
-		//err = SavePassword(userName, newPassword)
+		err = helpers.SavePassword(userName, newPassword)
 	}
 
 	if err != nil {

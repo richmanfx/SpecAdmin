@@ -184,32 +184,52 @@ func GetUsers() ([]models.User, error) {
 // Проверка валидности пароля
 func ValidatePassword(userName, oldPassword string) error {
 	var err error
-
-	//// Сгенерить Соль
-	//salt := GetSalt()
-	//log.Infof("Соль: '%s'", salt)
-
-
-	// Получить Соль из БД
-
-
-	// Сгенерить Хеш пароля с Солью
-	//hash := GetHash(oldPassword, salt)
-	//log.Infof("Хеш с Солью: '%s'", hash)
+	var salt string
 
 	// Подключиться к БД
 	err = dbConnect()
 	if err != nil {	panic(err) }
 
-	// Сверить полученный Хеш с Хешем в БД
 
+	// Получить Соль из БД
+	salt, err = GetSaltFromDb(userName)
+	log.Infof("Соль из БД: '%s'", salt)
+
+
+	// Сгенерить Хеш пароля с Солью
+	newHash := GetHash(oldPassword, salt)
+	log.Infof("Хеш с Солью: '%s'", newHash)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Получить старый Хеш из БД
+	oldHash, err := GetHashFromDb(userName)
+	log.Infof("Хеш из БД: '%s'", oldHash)
+
+	if err == nil {
+		// Сверить полученный Хеш с Хешем в БД
+		if newHash != oldHash {
+			log.Errorln("Хеш пароля не совпадает с хешем в БД")
+			err = fmt.Errorf("Пароль не валидный")
+		}
+	}
 
 	db.Close()
 	return err
 }
 
 
-//
+// Записать в БД новый пароль заданного пользователя
+func SavePassword(userName, newPassword string) error {
+
+	var err error
+
+	!!!!
+
+	return err
+}
 
 
 
