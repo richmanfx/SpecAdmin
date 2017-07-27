@@ -1,6 +1,7 @@
 {{ template "header.html" .}}
 
 {{ template "create-user-modal.html" . }}
+{{ template "delete-user-modal.html" . }}
 
 <span class="title">Пользователи</span>
 
@@ -76,12 +77,12 @@
                 </td>
 
                 <td class="steps-screen-shot">
-                    <a data-toggle="modal" data-target="#editSUser" href="#" title="Редактировать пользоватп"
-                       data-login="{{ .Login }}">
+                    <a data-toggle="modal" data-target="#editSUser" href="#" title="Редактировать пользователя"
+                       data-login="{{ .Login }}" data-name="{{ .FullName }}">
                         <img src="/images/icons/edit.png" alt="Rename" width="30" height="30"/>
                     </a>
                     <a data-toggle="modal" data-target="#deleteUser" href="#" title="Удалить пользователя"
-                       data-login="{{ .Login }}">
+                       data-login="{{ .Login }}" data-name="{{ .FullName }}">
                         <img src="/images/icons/delete.png" alt="Delete" width="30" height="30"/>
                     </a>
                 </td>
@@ -90,7 +91,7 @@
         </tbody>
     </table>
 
-<script async src="/js/apps-index-page.js"></script>
+<script async src="/js/apps-user-work.js"></script>
 
 <!-- Шаблон футера -->
 {{ template "footer.html" .}}
