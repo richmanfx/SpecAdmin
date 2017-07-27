@@ -114,7 +114,44 @@ func CreateUserInDb(user models.User) error {
 	return err
 }
 
-// // Считать из БД всех пользователей
+
+
+// Удалить пользователя из БД
+func DeleteUserInDb(user models.User) error {
+
+	var err error
+	log.Infof("user в 'DeleteUserInDb': '%v'", user)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Удалить пользователя в БД
+	result, err := db.Exec("DELETE FROM user WHERE login=? AND full_name=?", user.Login, user.FullName)
+
+	if err != nil {
+		log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
+		return err
+	} else {
+		var affected int64
+		affected, err = result.RowsAffected()
+
+		if err == nil {
+			if affected == 0 {
+				log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
+				return err
+			}
+			log.Infof("Удалено строк в БД: %d", affected)
+		}
+	}
+
+	db.Close()
+	return err
+}
+
+
+
+// Считать из БД всех пользователей
 func GetUsers() ([]models.User, error) {
 
 	var err error

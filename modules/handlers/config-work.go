@@ -7,7 +7,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"fmt"
 	"net/http"
-	//"strconv"
 )
 
 // Отобразить страницу конфигурации для редактирования параметров
@@ -199,7 +198,7 @@ func CreateUser(context *gin.Context)  {
 		user.Permissions.Users = false
 	}
 
-	log.Infof("user из формы = '%v'", user)
+	log.Infof("user из формы создания = '%v'", user)
 
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)
@@ -225,6 +224,49 @@ func CreateUser(context *gin.Context)  {
 			},
 		)
 	}
+}
+
+
+// Удалить пользователя
+func DeleteUser(context *gin.Context)  {
+
+	var err error
+	helpers.SetLogFormat()
+
+	// Пользователь
+	var user models.User
+
+	// Данные из формы
+	user.Login = context.PostForm("login")
+	user.FullName = context.PostForm("full_name")
+
+	log.Infof("user из формы удаления = '%v'", user)
+
+	// Удалить из БД
+	err = helpers.DeleteUserInDb(user)
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": "",
+				"message2": "Ошибка при удалении пользователя из БД.",
+				"message3": fmt.Sprintf("%s: ", err),
+				"Version":	Version,
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Информация",
+				"message1": fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", user.Login),
+				"message2": "",
+				"message3": "",
+				"Version":	Version,
+			},
+		)
+	}
+
 }
 
 
