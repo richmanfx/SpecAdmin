@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "6.9"
+var Version string = "6.10"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error

@@ -17,21 +17,74 @@
     <table class="users-table table table-bordered">
         <thead>
         <tr>
-            <th class="steps-numbers">N </th>
             <th class="center-align">Логин</th>
             <th class="center-align">Полное имя</th>
-            <th class="center-align">Редактирование</th>
             <th class="center-align">Создание</th>
+            <th class="center-align">Редактирование</th>
+            <th class="center-align">Удаление</th>
+            <th class="center-align">Конфигурирование</th>
+            <th class="center-align">Работа с пользователями</th>
+            <th class="center-align">Действия</th>
+
         </tr>
         </thead>
         <tbody>
             {{ range .users }}
             <tr>
                 <td>{{ .Login }}</td>
+
                 <td>{{ .FullName }}</td>
-                <td></td>
-                <td></td>
-                <td></td>
+
+                <td class="center-align">
+                    {{ if .Permissions.Create }}
+                        <img src="/images/icons/true.png" width="30" height="30"/>
+                    {{ else }}
+                        <img src="/images/icons/false.png" width="30" height="30"/>
+                    {{ end }}
+                </td>
+
+                <td class="center-align">
+                    {{ if .Permissions.Edit }}
+                    <img src="/images/icons/true.png" width="30" height="30"/>
+                    {{ else }}
+                    <img src="/images/icons/false.png" width="30" height="30"/>
+                    {{ end }}
+                </td>
+
+                <td class="center-align">
+                    {{ if .Permissions.Delete }}
+                    <img src="/images/icons/true.png" width="30" height="30"/>
+                    {{ else }}
+                    <img src="/images/icons/false.png" width="30" height="30"/>
+                    {{ end }}
+                </td>
+
+                <td class="center-align">
+                    {{ if .Permissions.Config }}
+                    <img src="/images/icons/true.png" width="30" height="30"/>
+                    {{ else }}
+                    <img src="/images/icons/false.png" width="30" height="30"/>
+                    {{ end }}
+                </td>
+
+                <td class="center-align">
+                    {{ if .Permissions.Users }}
+                    <img src="/images/icons/true.png" width="30" height="30"/>
+                    {{ else }}
+                    <img src="/images/icons/false.png" width="30" height="30"/>
+                    {{ end }}
+                </td>
+
+                <td class="steps-screen-shot">
+                    <a data-toggle="modal" data-target="#editSUser" href="#" title="Редактировать пользоватп"
+                       data-login="{{ .Login }}">
+                        <img src="/images/icons/edit.png" alt="Rename" width="30" height="30"/>
+                    </a>
+                    <a data-toggle="modal" data-target="#deleteUser" href="#" title="Удалить пользователя"
+                       data-login="{{ .Login }}">
+                        <img src="/images/icons/delete.png" alt="Delete" width="30" height="30"/>
+                    </a>
+                </td>
             </tr>
             {{end }}
         </tbody>
