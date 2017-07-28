@@ -76,6 +76,7 @@ func Login(context *gin.Context)  {
 		gin.H{
 			"title":        "SpecAdmin",
 			"Version":      handlers.Version,
+			"UserLogin":	handlers.UserLogin,
 		},
 	)
 }
@@ -90,6 +91,9 @@ func Authorization(context *gin.Context)  {
 	validUserName := "user"
 	validUserPassword := "Qwerty123"
 	if (userName == validUserName) && (userPassword == validUserPassword) {
+
+		// Логин пользователя в заголовок
+		handlers.UserLogin = userName
 
 		// Изменить сессию
 		session := sessions.Default(context)
@@ -116,6 +120,7 @@ func Authorization(context *gin.Context)  {
 					"message2": 	"Ошибка сохранения сессии в БД.",
 					"message3": 	err,
 					"Version":		handlers.Version,
+					"UserLogin":	handlers.UserLogin,
 				},
 			)
 		}
@@ -138,6 +143,7 @@ func Authorization(context *gin.Context)  {
 				"message2": 	"Ошибка авторизации - неверный логин/пароль.",
 				"message3": 	"",
 				"Version":		handlers.Version,
+				"UserLogin":	handlers.UserLogin,
 			},
 		)
 	}
@@ -182,6 +188,7 @@ func ChangePassword(context *gin.Context)  {
 				"message2": 	"Ошибка изменения пароля.",
 				"message3": 	err,
 				"Version":		handlers.Version,
+				"UserLogin":	handlers.UserLogin,
 			},
 		)
 	} else {
@@ -192,6 +199,7 @@ func ChangePassword(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	handlers.Version,
+				"UserLogin":	handlers.UserLogin,
 			},
 		)
 	}

@@ -29,7 +29,7 @@ func EditConfig(context *gin.Context)  {
 				"message2": 	"Ошибка при получении конфигурационных данных из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -38,6 +38,7 @@ func EditConfig(context *gin.Context)  {
 				"title":        "SpecAdmin",
 				"config":	 	config,
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -62,7 +63,7 @@ func SaveConfig(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка при сохранении конфигурации"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -73,7 +74,7 @@ func SaveConfig(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -101,7 +102,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -112,7 +113,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message2": "",
 				"message3": fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -137,7 +138,7 @@ func UsersConfig(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -148,6 +149,7 @@ func UsersConfig(context *gin.Context)  {
 				"title":   "SpecAdmin",
 				"users":	users,
 				"Version": Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -216,6 +218,7 @@ func CreateUser(context *gin.Context)  {
 				"message2": "Ошибка при создании пользователя в БД.",
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -226,6 +229,7 @@ func CreateUser(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -258,6 +262,7 @@ func DeleteUser(context *gin.Context)  {
 				"message2": "Ошибка при удалении пользователя из БД.",
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -268,6 +273,7 @@ func DeleteUser(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}

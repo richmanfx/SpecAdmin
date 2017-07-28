@@ -89,6 +89,12 @@ span#name {
     padding: 0;
 }
 
+span.user-name {
+    color: green;
+    padding-right: 30px;
+    font-weight: bolder;
+}
+
 td.suite-numbers {
     width: 3vw;
     /*border: solid;*/

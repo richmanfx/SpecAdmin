@@ -81,7 +81,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 		if err != nil {
 			panic(err)
 		}
-		log.Debugf("Вставлено %d строк в таблицу 'sessions'.", affected)
+		log.Infof("Вставлено %d строк в таблицу 'sessions'.", affected)
 	}
 
 	db.Close()
@@ -212,7 +212,7 @@ func ValidatePassword(userName, oldPassword string) error {
 		// Сверить полученный Хеш с Хешем в БД
 		if newHash != oldHash {
 			log.Errorln("Хеш пароля не совпадает с хешем в БД")
-			err = fmt.Errorf("Пароль не валидный")
+			err = fmt.Errorf("Не верный пароль")
 		}
 	}
 
@@ -225,9 +225,31 @@ func ValidatePassword(userName, oldPassword string) error {
 func SavePassword(userName, newPassword string) error {
 
 	var err error
+	var salt string
 
-	!!!!
+	// Получить Соль из БД
+	salt, err = GetSaltFromDb(userName)
+	log.Infof("Соль из БД: '%s'", salt)
 
+	// Сгенерить Хеш пароля с Солью
+	newHash := GetHash(newPassword, salt)
+	log.Infof("Хеш с Солью: '%s'", newHash)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Занести новый хеш пароля и соль в БД
+	result, err := db.Exec("UPDATE user SET passwd=?,salt=? WHERE login=?", newHash, salt, userName)
+
+	if err == nil {
+		affected, err := result.RowsAffected()
+		if err == nil {
+			log.Debugf("Вставлено %d строк в таблицу 'user'.", affected)
+		}
+	}
+
+	db.Close()
 	return err
 }
 

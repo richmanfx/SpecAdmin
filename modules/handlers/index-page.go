@@ -9,7 +9,8 @@ import (
 	"../../models"
 )
 
-var Version string = "6.12"
+var Version 	string = "6.13"
+var UserLogin	string
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -32,7 +33,8 @@ func ShowIndexPage(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении списка групп тестов из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"Version":		Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -42,6 +44,7 @@ func ShowIndexPage(context *gin.Context)  {
 			gin.H{
 				"title":        "SpecAdmin",
 				"Version":      Version,
+				"UserLogin":	UserLogin,
 				"groupList": 	groupList,
 				"statistic":	statistic,
 			},
@@ -78,8 +81,8 @@ func ShowSuitesIndex(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении из БД списка Сюит для Группы тестов",
 				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":	Version,
-
+				"Version":		Version,
+				"user":			UserLogin,
 			},
 		)
 	} else {
@@ -89,6 +92,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 			gin.H{
 				"title":        "SpecAdmin",
 				"Version":      Version,
+				"UserLogin":	UserLogin,
 				"groupName":	groupName,
 				"suitesList": 	suitesList,
 				"statistic":	statistic,

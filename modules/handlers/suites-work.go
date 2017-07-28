@@ -27,6 +27,7 @@ func AddSuite(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при добавлении сюиты '%s' в группу '%s'.", newSuite, suitesGroup),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -37,6 +38,7 @@ func AddSuite(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -58,6 +60,7 @@ func DelSuite(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при удалении сюиты '%s'.", deletedSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -67,6 +70,7 @@ func DelSuite(context *gin.Context)  {
 				"message1": fmt.Sprintf("Сюита '%s' удалена успешно.", deletedSuite),
 				"message2": "",	"message3": "",
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -91,6 +95,7 @@ func EditSuite(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка получения данных о сюите '%s'.", editedSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -101,6 +106,7 @@ func EditSuite(context *gin.Context)  {
 				"title": 	"Редактирование сюиты",
 				"suite": 	suite,
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
@@ -126,6 +132,7 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	} else {
@@ -136,6 +143,7 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
+				"UserLogin":	UserLogin,
 			},
 		)
 	}
