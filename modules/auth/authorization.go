@@ -180,26 +180,16 @@ func Logout(context *gin.Context)  {
 }
 
 
-
-
 // Смена пароля
 func ChangePassword(context *gin.Context)  {
 
 	// Данные из формы
 	userName := context.PostForm("login")
-	oldPassword := context.PostForm("old_password")
 	newPassword := context.PostForm("new_password")
-	log.Infof("Данные из формы смены пароля: '%s', '%s', '%s'", userName, oldPassword, newPassword)
+	log.Infof("Данные из формы смены пароля: '%s', '%s', '%s'", userName, newPassword)
 
-
-	// Проверить валидность старого пароля
-	err := helpers.ValidatePassword(userName, oldPassword)
-	if err != nil {
-		log.Errorln("Указан неверный старый пароль.")
-	} else {
-		// Записать в БД новый пароль
-		err = helpers.SavePassword(userName, newPassword)
-	}
+	// Записать в БД новый пароль
+	err := helpers.SavePassword(userName, newPassword)
 
 	if err != nil {
 		log.Errorf("Ошибка изменения пароля: %v", err)

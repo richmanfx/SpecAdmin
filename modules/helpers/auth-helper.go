@@ -212,7 +212,7 @@ func ValidatePassword(userName, oldPassword string) error {
 		// Сверить полученный Хеш с Хешем в БД
 		if newHash != oldHash {
 			log.Errorln("Хеш пароля не совпадает с хешем в БД")
-			err = fmt.Errorf("Не верный пароль")
+			err = fmt.Errorf("Неверный пароль")
 		}
 	}
 

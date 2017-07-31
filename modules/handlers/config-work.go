@@ -236,6 +236,11 @@ func CreateUser(context *gin.Context)  {
 }
 
 
+// Сохранить пользователя после редактирования
+func SaveUser(context *gin.Context)  {
+
+}
+
 // Удалить пользователя
 func DeleteUser(context *gin.Context)  {
 

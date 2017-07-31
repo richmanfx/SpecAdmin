@@ -82,12 +82,15 @@
 
 
         <ul class="navbar-right">
-            {{ if .UserLogin }}
+
                 Пользователь: <button id="logout-button" form="id_logout_form" type="submit" title="Выход">
-                                 <span class="user-name">{{ .UserLogin }}</span>
-                             </button>
-                             <span class="title"></span>
+            {{ if .UserLogin }}
+                <span class="user-name">{{ .UserLogin }}</span>
+            {{ else }}
+                <span class="user-name"> Нет </span>
             {{ end }}
+                              </button>
+                              <span class="title"></span>
 
             Версия: <span class="version">{{ .Version }}</span>
 
