@@ -101,14 +101,14 @@ func GetStatistic() (models.Statistic, error) {
 }
 
 
-// Получить уникальное имя файла - 32 hex-символа
-func GetUniqueFileName() string {
+// Сгенерировать уникальную строку в 32 hex-символа
+func GetUnique32SymbolsString() string {
 	h := md5.New()
 	io.WriteString(h, time.Now().String())
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
-// Получить "соль"
+// Сгенерировать "соль"
 func GetSalt() string {
 	hash := sha512.New()
 	io.WriteString(hash, time.Now().String())

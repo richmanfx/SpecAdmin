@@ -36,7 +36,7 @@ func AddStep(context *gin.Context)  {
 		log.Debugf("Загружается файл '%s'.", screenShotFileName)
 
 		// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
-		screenShotFileName = helpers.GetUniqueFileName() + ".png"
+		screenShotFileName = helpers.GetUnique32SymbolsString() + ".png"
 
 		// Проверяем размер файла и если он превышает заданный размер
 		// завершаем выполнение скрипта и выводим ошибку
@@ -224,7 +224,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 		log.Debugf("Загружается файл '%s'.", screenShotFileName)
 
 		// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
-		screenShotFileName = helpers.GetUniqueFileName() + ".png"
+		screenShotFileName = helpers.GetUnique32SymbolsString() + ".png"
 
 		// Проверяем размер файла и если он превышает заданный размер
 		// завершаем выполнение скрипта и выводим ошибку

@@ -99,7 +99,7 @@ func Authorization(context *gin.Context)  {
 		session := sessions.Default(context)
 
 		// Сгенерировать sessid
-		sessid := helpers.GetUniqueFileName()		// TODO: временно, сделать отдельный генератор
+		sessid := helpers.GetUnique32SymbolsString()
 		newCookie := fmt.Sprintf("sessid=%s;", sessid)
 		log.Infof("Сгенерирована новая Кука: '%s'", newCookie)
 
