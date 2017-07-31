@@ -17,6 +17,8 @@ func AuthRequired() gin.HandlerFunc {
 
 	return func(context *gin.Context) {
 
+		log.Infoln("Мы в Мидлеваре 'AuthRequired'.")
+
 		session := sessions.Default(context)	// Получить сессию контекста
 		cookies := session.Get("Cookie")		// Получить из сессии все Куки
 
@@ -139,7 +141,6 @@ func Authorization(context *gin.Context)  {
 				"message2": 	"Ошибка авторизации - неверный логин/пароль.",
 				"message3": 	"",
 				"Version":		handlers.Version,
-				"UserLogin":	handlers.UserLogin,
 			},
 		)
 	}
