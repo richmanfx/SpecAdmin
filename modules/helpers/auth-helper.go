@@ -197,7 +197,7 @@ func ValidatePassword(userName, oldPassword string) error {
 
 
 	// Сгенерить Хеш пароля с Солью
-	newHash := GetHash(oldPassword, salt)
+	newHash := CreateHash(oldPassword, salt)
 	log.Infof("Хеш с Солью: '%s'", newHash)
 
 	// Подключиться к БД
@@ -224,15 +224,12 @@ func ValidatePassword(userName, oldPassword string) error {
 // Записать в БД новый пароль заданного пользователя
 func SavePassword(userName, newPassword string) error {
 
-	var err error
-	var salt string
-
 	// Получить Соль из БД
-	salt, err = GetSaltFromDb(userName)
+	salt, err := GetSaltFromDb(userName)
 	log.Infof("Соль из БД: '%s'", salt)
 
 	// Сгенерить Хеш пароля с Солью
-	newHash := GetHash(newPassword, salt)
+	newHash := CreateHash(newPassword, salt)
 	log.Infof("Хеш с Солью: '%s'", newHash)
 
 	// Подключиться к БД
@@ -248,12 +245,95 @@ func SavePassword(userName, newPassword string) error {
 			log.Debugf("Вставлено %d строк в таблицу 'user'.", affected)
 		}
 	}
-
 	db.Close()
 	return err
 }
 
 
+// Проверить пароль по Хешу в БД
+func CheckPasswordInDB(login, password string) error {
+
+	// Получить Соль из БД
+	salt, err := GetSaltFromDb(login)
+	log.Infof("Соль из БД: '%s'", salt)
+
+	if err == nil {
+
+		// Сгенерить Хеш пароля с Солью
+		newHash := CreateHash(password, salt)
+		log.Infof("Хеш с Солью: '%s'", newHash)
+
+		// Считать Хеш из БД
+		var oldHash string
+		oldHash, err = GetHashFromDb(login)
+
+		if err == nil {
+			if newHash == oldHash {
+				log.Infoln("Хеш пароля совпадает с Хешем из БД.")
+			} else {
+				log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
+				err = fmt.Errorf("Не верный логин/пароль.")
+			}
+		}
+	}
+	return err
+}
+
+
+// Проверить наличие пользователя в БД
+func CheckUserInDB(login string) error {
+
+	// Подключиться к БД
+	err := dbConnect()
+	if err != nil {	panic(err) }
+
+	// Считать из БД
+	rows, err := db.Query("SELECT login FROM user WHERE login=?", login)
+
+	if err == nil {
+		// Данные получить из результата запроса
+		for rows.Next() {
+			var userLogin string
+			err = rows.Scan(&userLogin)
+			if err == nil {
+				log.Infof("Пользователь '%s' существует", userLogin)
+			}
+		}
+	}
+	db.Close()
+	return err
+}
+
+
+// Удалить сессию из БД для заданного пользователя
+func DeleteSession(userName string) error {
+
+	// Подключиться к БД
+	err := dbConnect()
+	if err != nil {	panic(err) }
+
+	// Удалить сессию в БД
+	result, err := db.Exec("DELETE FROM sessions WHERE user=?", userName)
+
+	if err != nil {
+		log.Errorf("Ошибка удаления сессии пользователя '%s'", userName)
+		return err
+	} else {
+		var affected int64
+		affected, err = result.RowsAffected()
+
+		if err == nil {
+			if affected == 0 {
+				log.Errorf("Ошибка удаления сессии пользователя '%s'", userName)
+				return err
+			}
+			log.Infof("Удалено %d строк из таблицы 'sessions'", affected)
+		}
+	}
+
+	db.Close()
+	return err
+}
 
 
 

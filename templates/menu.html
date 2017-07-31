@@ -80,10 +80,26 @@
             </li>
         </ul>
 
+
         <ul class="navbar-right">
-            Пользователь: <span class="user-name">{{ .UserLogin }}</span>
+
+            Пользователь:<button id="logout-button" form="id_logout_form" type="submit" title="Выход">
+                            <span class="user-name">{{ .UserLogin }}</span>
+                        </button>
+                        <span class="title"></span>
+
             Версия: <span class="version">{{ .Version }}</span>
+
             <span class="title"> SpecAdmin </span>
+
         </ul>
+
     </div>
 </nav>
+
+<form id="id_logout_form" method="post" action="/spec-admin/logout" type="submit">
+    <input type="hidden" value="{{ .UserLogin }}" name="name">
+</form>
+
+<script async src="/js/apps-user-work.js"></script>
+

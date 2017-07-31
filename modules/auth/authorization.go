@@ -17,19 +17,13 @@ func AuthRequired() gin.HandlerFunc {
 
 	return func(context *gin.Context) {
 
-		// Set example variable
-		//context.Set("example", "12345")
-
 		session := sessions.Default(context)	// Получить сессию контекста
-
 		cookies := session.Get("Cookie")		// Получить из сессии все Куки
-
 
 		// Получить отдельные куки
 		var splitCookie map[string]string
 		splitCookie = GetSplitCookie(cookies.(string))
 		log.Infof("Разделённые Куки из браузера: '%v'", splitCookie)
-
 
 		// Если Кук нет или если 'sessid' в БД не нашёлся, то на страницу авторизации
 		sessidValue := splitCookie["sessid"]
@@ -76,7 +70,6 @@ func Login(context *gin.Context)  {
 		gin.H{
 			"title":        "SpecAdmin",
 			"Version":      handlers.Version,
-			"UserLogin":	handlers.UserLogin,
 		},
 	)
 }
@@ -87,11 +80,14 @@ func Authorization(context *gin.Context)  {
 	userPassword := context.PostForm("user_password")
 	log.Debugf("Пользователь: %s, Пароль: %s", userName, userPassword)
 
-	// Пока без базы проверяем
-	validUserName := "user"
-	validUserPassword := "Qwerty123"
-	if (userName == validUserName) && (userPassword == validUserPassword) {
+	// Проверить существование пользователя в базе
+	err := helpers.CheckUserInDB(userName)
 
+	if err == nil {
+		err = helpers.CheckPasswordInDB(userName, userPassword)
+	}
+
+	if err == nil {
 		// Логин пользователя в заголовок
 		handlers.UserLogin = userName
 
@@ -110,7 +106,7 @@ func Authorization(context *gin.Context)  {
 
 		// Сохранить сессию в БД
 		var expire time.Time = time.Now().Add(12 * time.Hour)	// Кука устаревает через 12 часов
-		err := helpers.SaveSessionInDB(sessid, expire, validUserName)
+		err = helpers.SaveSessionInDB(sessid, expire, userName)
 		if err != nil {
 			log.Errorf("Ошибка сохранения сессии в БД: %v", err)
 			context.HTML(http.StatusOK, "message.html",
@@ -155,9 +151,34 @@ func Authorization(context *gin.Context)  {
 // Разлогирование
 func Logout(context *gin.Context)  {
 
-	context.Abort()
-	context.Redirect(http.StatusSeeOther, "/spec-admin/login")
+	// Пользователь из формы
+	userName := context.PostForm("name")
+	log.Infof("Пользователь в Logout-e: '%s'", userName)
+
+
+	// Удалить сессию из БД
+	err := helpers.DeleteSession(userName)
+
+	if err == nil {
+		// На страницу Логина
+		context.Abort()
+		context.Redirect(http.StatusSeeOther, "/spec-admin/login")
+	} else {
+		log.Errorf("Ошибка разлогинивания пользователя: %v", err)
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка разлогинивания пользователя.",
+				"message3": 	err,
+				"Version":		handlers.Version,
+				"UserLogin":	"нет",
+			},
+		)
+	}
 }
+
+
 
 
 // Смена пароля

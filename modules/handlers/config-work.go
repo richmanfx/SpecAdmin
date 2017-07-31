@@ -204,8 +204,8 @@ func CreateUser(context *gin.Context)  {
 
 
 	// Получить Соль и Хеш пароля
-	user.Salt = helpers.GetSalt()
-	user.Password = helpers.GetHash(openPassword, user.Salt)
+	user.Salt = helpers.CreateSalt()
+	user.Password = helpers.CreateHash(openPassword, user.Salt)
 
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)

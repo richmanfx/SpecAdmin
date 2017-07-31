@@ -109,17 +109,17 @@ func GetUnique32SymbolsString() string {
 }
 
 // Сгенерировать "соль"
-func GetSalt() string {
+func CreateSalt() string {
 	hash := sha512.New()
 	io.WriteString(hash, time.Now().String())
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
 // Получить Хеш пароля с заданной солью
-func GetHash(password string, salt string) string {
+func CreateHash(password string, salt string) string {
 	hash := sha512.New()
 	io.WriteString(hash, salt)
-	return fmt.Sprintf("%x", hash.Sum(nil))
+	return fmt.Sprintf("%x", hash.Sum([]byte(password)))
 
 }
 
