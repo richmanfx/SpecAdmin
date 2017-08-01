@@ -17,7 +17,7 @@ func AuthRequired() gin.HandlerFunc {
 
 	return func(context *gin.Context) {
 
-		log.Infoln("Мы в Мидлеваре 'AuthRequired'.")
+		log.Debugln("Мы в Мидлеваре 'AuthRequired'.")
 
 		session := sessions.Default(context)	// Получить сессию контекста
 		cookies := session.Get("Cookie")		// Получить из сессии все Куки

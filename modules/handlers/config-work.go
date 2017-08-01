@@ -124,20 +124,27 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 func UsersConfig(context *gin.Context)  {
 
 	var err error
+	var users []models.User
 	helpers.SetLogFormat()
 
-	// Считать из БД пользователей и их пермишены
-	users, err := helpers.GetUsers()
-	log.Debugf("Пользователи из БД: '%v'", users)
+	// Проверить пермишен пользователя для работы с пользователями
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = helpers.CheckOneUserPermission(UserLogin, "users_permission")
+
+	if err == nil {
+		// Считать из БД пользователей и их пермишены
+		users, err = helpers.GetUsers()
+		log.Debugf("Пользователи из БД: '%v'", users)
+	}
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	UserLogin,
 			},
 		)
@@ -239,7 +246,7 @@ func CreateUser(context *gin.Context)  {
 // Сохранить пользователя после редактирования
 func SaveUser(context *gin.Context)  {
 
-	log.Infoln("Мы в 'SaveUser'!")
+	log.Debugln("Мы в 'SaveUser'!")
 
 	var err error
 	helpers.SetLogFormat()

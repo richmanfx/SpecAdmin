@@ -100,7 +100,11 @@ func CreateUserInDb(user models.User) error {
 	if err != nil {	panic(err) }
 
 	// Занести пользователя в БД
-	result, err := db.Exec("INSERT INTO user (login, passwd, salt, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission) VALUE (?,?,?,?,?,?,?,?,?)", user.Login, user.Password, user.Salt, user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users)
+	result, err := db.Exec(
+		"INSERT INTO user (login, passwd, salt, full_name, create_permission, edit_permission, delete_permission, " +
+			"config_permission, users_permission) VALUE (?,?,?,?,?,?,?,?,?)",
+		user.Login, user.Password, user.Salt, user.FullName, user.Permissions.Create, user.Permissions.Edit,
+		user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users)
 
 	if err == nil {
 		affected, err := result.RowsAffected()
@@ -308,23 +312,24 @@ func CheckPasswordInDB(login, password string) error {
 // Проверить наличие пользователя в БД
 func CheckUserInDB(login string) error {
 
+	var loginFromDB string
+
 	// Подключиться к БД
 	err := dbConnect()
 	if err != nil {	panic(err) }
 
 	// Считать из БД
-	rows, err := db.Query("SELECT login FROM user WHERE login=?", login)
+	requestResult := db.QueryRow("SELECT login FROM user WHERE login=?", login)
+
+	err = requestResult.Scan(&loginFromDB)
 
 	if err == nil {
-		// Данные получить из результата запроса
-		for rows.Next() {
-			var userLogin string
-			err = rows.Scan(&userLogin)
-			if err == nil {
-				log.Infof("Пользователь '%s' существует", userLogin)
-			}
-		}
+		log.Infof("Пользователь '%s' существует", login)
+	} else {
+		log.Infof("Пользователь '%s' в БД не существует", login)
+		err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
 	}
+
 	db.Close()
 	return err
 }
@@ -361,6 +366,43 @@ func DeleteSession(userName string) error {
 }
 
 
+// Проверить заданный пермишен у пользователя
+func CheckOneUserPermission(login string, permission string) error {
+
+	var err error
+
+	// А существует ли пользователь?
+	err = CheckUserInDB(login)
+
+	if err == nil {
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err == nil {
+
+			// Считать из БД
+			//requestResult := db.QueryRow("SELECT (?) FROM user WHERE login=?", permission, login)
+			requestResult := db.QueryRow("SELECT users_permission FROM user WHERE login=?", login)
+			db.Prepare()
+
+			var permissionFromDB string		// Вовсе не bool !
+			err = requestResult.Scan(&permissionFromDB)
+			log.Infof("permissionFromDB: '%v'", permissionFromDB)
+
+			if err == nil {
+
+				if permissionFromDB == "0" {
+					err = fmt.Errorf("У пользователя %s недостаточно прав.", login)
+					log.Infof("У пользователя %s недостаточно прав.", login)
+				} else {
+					log.Infof("У пользователя %s есть права %s.", login, permission)
+				}
+			}
+		}
+	}
+	db.Close()
+	return err
+}
 
 
 
