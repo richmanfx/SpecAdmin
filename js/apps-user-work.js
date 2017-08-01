@@ -21,6 +21,36 @@ $('#deleteUser').on('show.bs.modal', function (event) {
     modal.find('#id_full_name').val(deletedFullName);
 });
 
+// Для кнопки "Редактировать"
+$('#editUser').on('show.bs.modal', function (event) {
+
+    // Кнопка, вызвавшая модальное окно
+    var button = $(event.relatedTarget);
+
+    // Извлечь информацию из "data-*" полей у кнопки
+    var editedLogin = button.data('login');
+    var editedFullName = button.data('name');
+    var editedPermissionCreate = button.data('perm-create');
+    var editedPermissionEdit = button.data('perm-edit');
+    var editedPermissionDelete = button.data('perm-delete');
+    var editedPermissionConfig = button.data('perm-config');
+    var editedPermissionUsers = button.data('perm-users');
+
+    // Обновить модальное окно
+    var modal = $(this);
+
+    // В input-ы вставить
+    modal.find('#id_login').val(editedLogin);
+    modal.find('#id_full_name').val(editedFullName);
+
+    // Чекбоксы выставить
+    if (editedPermissionCreate === true) { modal.find('#id_create_permission').attr('checked', "checked") }
+    if (editedPermissionEdit === true) { modal.find('#id_edit_permission').attr('checked', "checked") }
+    if (editedPermissionDelete === true) { modal.find('#id_delete_permission').attr('checked', "checked") }
+    if (editedPermissionConfig === true) { modal.find('#id_config_permission').attr('checked', "checked") }
+    if (editedPermissionUsers === true) { modal.find('#id_users_permission').attr('checked', "checked") }
+});
+
 
 /// Вывод логина на label модальной формы изменения пароля
 // Для кнопки "Изменить пароль"

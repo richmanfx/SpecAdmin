@@ -80,7 +80,13 @@
 
                 <td class="steps-screen-shot">
                     <a data-toggle="modal" data-target="#editUser" href="#" title="Редактировать пользователя"
-                       data-login="{{ .Login }}" data-name="{{ .FullName }}">
+                       data-login="{{ .Login }}" data-name="{{ .FullName }}"
+                       data-perm-create="{{ .Permissions.Create }}"
+                       data-perm-edit="{{ .Permissions.Edit }}"
+                       data-perm-delete="{{ .Permissions.Delete }}"
+                       data-perm-config="{{ .Permissions.Config }}"
+                       data-perm-users="{{ .Permissions.Users }}"
+                    >
                         <img src="/images/icons/edit.png" alt="Rename" width="30" height="30"/>
                     </a>
                     <a data-toggle="modal" data-target="#deleteUser" href="#" title="Удалить пользователя"
