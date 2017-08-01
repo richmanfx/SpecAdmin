@@ -31,3 +31,12 @@ $('#changePassword').on('show.bs.modal', function (event) {
     modal.find('#id_login').val(Login);     // В скрытый input
     document.getElementById('id_login_label').innerHTML = ' ' + Login;  // На label
 });
+
+
+/// Для исключения ошибки типа "An invalid form control with name='full_name' is not focusable." при
+/// скрытии полей модальной формой.
+jQuery(function ($) {
+    $(document).on('nested:fieldRemoved', function (event) {
+        $('[required]', event.field).removeAttr('required');
+    });
+});

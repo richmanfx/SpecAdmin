@@ -9,14 +9,10 @@
             </div>
 
             <div class="modal-body">
-                <form id="id_create_user_form" name="create_user_form" method="post" action="/spec-admin/save-user">
+                <form id="id_edit_user_form" name="edit_user_form" method="post" action="/spec-admin/save-user">
 
                     <label for="id_login"> Логин </label><br>
                     <input id="id_login" name="login" placeholder=" Логин" required="required" type="text"><br>
-                    <br>
-
-                    <label for="id_password"> Пароль </label><br>
-                    <input id="id_password" name="password" placeholder=" Пароль" required="required" type="password"><br>
                     <br>
 
                     <label for="id_full_name"> Полное имя (ФИО) </label><br>
@@ -81,18 +77,18 @@
             <!-- Автофокус в поле ввода в модальном окне -->
             <script>
                 $('#editUser').on('shown.bs.modal', function (e) {
-                    $('#id_login', e.target).focus();
+                    $('#id_full_name', e.target).focus();
                 });
             </script>
 
             <div class="modal-footer">
                 <button type="submit"
                         class="btn btn-success btn-lg"
-                        form="id_create_user_form">
+                        form="id_edit_user_form">
                     Сохранить
                 </button>
 
-                <button form="id_create_user_form"
+                <button form="id_edit_user_form"
                         type="reset"
                         class="btn btn-success btn-lg">
                     Очистить форму

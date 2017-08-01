@@ -239,6 +239,77 @@ func CreateUser(context *gin.Context)  {
 // Сохранить пользователя после редактирования
 func SaveUser(context *gin.Context)  {
 
+	log.Infoln("Мы в 'SaveUser'!")
+
+	var err error
+	helpers.SetLogFormat()
+
+	// Пользователь
+	var user models.User
+
+	// Данные из формы
+	user.Login = context.PostForm("login")
+	user.FullName = context.PostForm("full_name")
+
+	if context.PostForm("create_permission") == "on" {
+		user.Permissions.Create = true
+	} else {
+		user.Permissions.Create = false
+	}
+
+	if context.PostForm("edit_permission") == "on" {
+		user.Permissions.Edit = true
+	} else {
+		user.Permissions.Edit = false
+	}
+
+	if context.PostForm("delete_permission") == "on" {
+		user.Permissions.Delete = true
+	} else {
+		user.Permissions.Delete = false
+	}
+
+	if context.PostForm("config_permission") == "on" {
+		user.Permissions.Config = true
+	} else {
+		user.Permissions.Config = false
+	}
+
+	if context.PostForm("users_permission") == "on" {
+		user.Permissions.Users = true
+	} else {
+		user.Permissions.Users = false
+	}
+
+	log.Infof("user из формы редактирования = '%v'", user)
+
+	// Сохранить пользователя в БД
+	err = helpers.SaveUserInDb(user)
+
+	if err != nil {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": "Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка при сохранении пользователя в БД.",
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
+				"UserLogin":	UserLogin,
+			},
+		)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Пользователь '%s' успешно сохранён в БД.", user.Login),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
+				"UserLogin":	UserLogin,
+			},
+		)
+	}
+
 }
 
 // Удалить пользователя

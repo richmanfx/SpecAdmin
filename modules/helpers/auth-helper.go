@@ -115,6 +115,31 @@ func CreateUserInDb(user models.User) error {
 }
 
 
+// Сохранить пользователя в БД после редактирования
+func SaveUserInDb(user models.User) error {
+
+	var err error
+	log.Debugf("user в 'SaveUserInDb': '%v'", user)
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	panic(err) }
+
+	// Занести пользователя в БД
+	result, err := db.Exec("UPDATE user SET full_name=?, create_permission=?, edit_permission=?, delete_permission=?, config_permission=?, users_permission=? WHERE login=? LIMIT 1",
+		user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users, user.Login)
+
+	if err == nil {
+		affected, err := result.RowsAffected()
+		if err == nil {
+			log.Debugf("Изменено %d строк в таблице 'user'.", affected)
+		}
+	}
+
+	db.Close()
+	return err
+}
+
 
 // Удалить пользователя из БД
 func DeleteUserInDb(user models.User) error {
