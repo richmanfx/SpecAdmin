@@ -382,8 +382,10 @@ func CheckOneUserPermission(login string, permission string) error {
 
 			// Считать из БД
 			//requestResult := db.QueryRow("SELECT (?) FROM user WHERE login=?", permission, login)
-			requestResult := db.QueryRow("SELECT users_permission FROM user WHERE login=?", login)
-			db.Prepare()
+			//requestResult := db.QueryRow("SELECT users_permission FROM user WHERE login=?", login)
+			reqString := fmt.Sprintf("SELECT %s FROM user WHERE login=?", permission)
+			stmt, err := db.Prepare(reqString)
+			requestResult := stmt.QueryRow(login)
 
 			var permissionFromDB string		// Вовсе не bool !
 			err = requestResult.Scan(&permissionFromDB)
