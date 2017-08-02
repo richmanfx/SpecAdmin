@@ -86,12 +86,13 @@ func Authorization(context *gin.Context)  {
 	err := helpers.CheckUserInDB(userName)
 
 	if err == nil {
-		//err = helpers.CheckPasswordInDB(userName, userPassword)
+		// Можно закомментировать для возможности залогиниться без Хешей из БД
+		err = helpers.CheckPasswordInDB(userName, userPassword)
 	}
 
 	if err == nil {
 		// Логин пользователя в заголовок
-		handlers.UserLogin = userName
+		helpers.UserLogin = userName
 
 		// Изменить сессию
 		session := sessions.Default(context)
@@ -118,7 +119,7 @@ func Authorization(context *gin.Context)  {
 					"message2": 	"Ошибка сохранения сессии в БД.",
 					"message3": 	err,
 					"Version":		handlers.Version,
-					"UserLogin":	handlers.UserLogin,
+					"UserLogin":	helpers.UserLogin,
 				},
 			)
 		}
@@ -200,7 +201,7 @@ func ChangePassword(context *gin.Context)  {
 				"message2": 	"Ошибка изменения пароля.",
 				"message3": 	err,
 				"Version":		handlers.Version,
-				"UserLogin":	handlers.UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -211,7 +212,7 @@ func ChangePassword(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	handlers.Version,
-				"UserLogin":	handlers.UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}

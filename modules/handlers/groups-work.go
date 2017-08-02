@@ -49,7 +49,7 @@ func DelGroup(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при удалении группы тестов '%s'.", deletedGroup),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -60,7 +60,7 @@ func DelGroup(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -82,7 +82,7 @@ func EditGroup(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при редактировании группы тестов '%s'.", oldGroup),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -96,7 +96,7 @@ func EditGroup(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}

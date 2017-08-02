@@ -29,7 +29,7 @@ func EditConfig(context *gin.Context)  {
 				"message2": 	"Ошибка при получении конфигурационных данных из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -38,7 +38,7 @@ func EditConfig(context *gin.Context)  {
 				"title":        "SpecAdmin",
 				"config":	 	config,
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -63,7 +63,7 @@ func SaveConfig(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка при сохранении конфигурации"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -74,7 +74,7 @@ func SaveConfig(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -102,7 +102,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -113,7 +113,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 				"message2": "",
 				"message3": fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -128,8 +128,8 @@ func UsersConfig(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для работы с пользователями
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
-	err = helpers.CheckOneUserPermission(UserLogin, "users_permission")
+	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	err = helpers.CheckOneUserPermission(helpers.UserLogin, "users_permission")
 
 	if err == nil {
 		// Считать из БД пользователей и их пермишены
@@ -145,7 +145,7 @@ func UsersConfig(context *gin.Context)  {
 				"message2": 	fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
 				"message3": 	fmt.Sprintf("%s: ", err),
 				"Version":		Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -156,7 +156,7 @@ func UsersConfig(context *gin.Context)  {
 				"title":   "SpecAdmin",
 				"users":	users,
 				"Version": Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -225,7 +225,7 @@ func CreateUser(context *gin.Context)  {
 				"message2": "Ошибка при создании пользователя в БД.",
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -236,7 +236,7 @@ func CreateUser(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -301,7 +301,7 @@ func SaveUser(context *gin.Context)  {
 				"message2": 	"Ошибка при сохранении пользователя в БД.",
 				"message3": 	fmt.Sprintf("%s: ", err),
 				"Version":		Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -312,7 +312,7 @@ func SaveUser(context *gin.Context)  {
 				"message2": 	"",
 				"message3": 	"",
 				"Version":		Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -345,7 +345,7 @@ func DeleteUser(context *gin.Context)  {
 				"message2": "Ошибка при удалении пользователя из БД.",
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -356,12 +356,13 @@ func DeleteUser(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
 
 }
+
 
 
 

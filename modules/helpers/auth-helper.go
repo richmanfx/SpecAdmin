@@ -8,6 +8,7 @@ import (
 	"../../models"
 )
 
+var UserLogin string
 
 // Проверить наличие sessid в БД
 func SessionIdExistInBD(sessidFromBrowser string) bool {
@@ -22,10 +23,11 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 
 	// Если expire у сессии истекло, то сессию удалить из БД и вернуть false
 	var expires time.Time
+	var user string
 
-	requestResult := db.QueryRow("SELECT expires FROM sessions WHERE session_id=?", sessidFromBrowser)
+	requestResult := db.QueryRow("SELECT expires,user FROM sessions WHERE session_id=?", sessidFromBrowser)
 	log.Infof("requestResult: %v", requestResult)
-	err = requestResult.Scan(&expires)
+	err = requestResult.Scan(&expires, &user)
 
 	if err == nil {
 		log.Infof("'expires' из БД для sessid='%s': %v", sessidFromBrowser, expires)
@@ -34,6 +36,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 		if expires.After(time.Now()) {
 			log.Infoln("Сессия не истекла")
 			sessidExist = true
+			UserLogin = user		// Имя пользователя в Хедер вывести
 		} else {
 			// Если сессия истекла, то удаляем её из БД
 			result, err := db.Exec("DELETE FROM sessions WHERE session_id=?", sessidFromBrowser)
@@ -191,13 +194,15 @@ func GetUsers() ([]models.User, error) {
 	if err != nil {	panic(err) }
 
 	// Считать
-	rows, err := db.Query("SELECT login, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission FROM user ORDER BY login")
+	rows, err := db.Query(
+		"SELECT login, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission FROM user ORDER BY login")
 	if err != nil {panic(err)}
 
 	// Данные получить из результата запроса
 	for rows.Next() {
 		var user models.User
-		err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit, &user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
+		err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit,
+						&user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
 		if err != nil {panic(err)}
 		log.Debugf("User из таблицы user: %v", user)
 
@@ -371,6 +376,7 @@ func CheckOneUserPermission(login string, permission string) error {
 
 	var err error
 
+
 	// А существует ли пользователь?
 	err = CheckUserInDB(login)
 
@@ -381,10 +387,9 @@ func CheckOneUserPermission(login string, permission string) error {
 		if err == nil {
 
 			// Считать из БД
-			//requestResult := db.QueryRow("SELECT (?) FROM user WHERE login=?", permission, login)
-			//requestResult := db.QueryRow("SELECT users_permission FROM user WHERE login=?", login)
-			reqString := fmt.Sprintf("SELECT %s FROM user WHERE login=?", permission)
-			stmt, err := db.Prepare(reqString)
+			stmt, _ := db.Prepare("")	// По другому не с мог определить переменную :-)
+			requestString := fmt.Sprintf("SELECT %s FROM user WHERE login=?", permission)
+			stmt, err = db.Prepare(requestString)
 			requestResult := stmt.QueryRow(login)
 
 			var permissionFromDB string		// Вовсе не bool !
@@ -394,10 +399,10 @@ func CheckOneUserPermission(login string, permission string) error {
 			if err == nil {
 
 				if permissionFromDB == "0" {
-					err = fmt.Errorf("У пользователя %s недостаточно прав.", login)
-					log.Infof("У пользователя %s недостаточно прав.", login)
+					err = fmt.Errorf("У пользователя '%s' недостаточно прав.", login)
+					log.Infof("У пользователя '%s' недостаточно прав.", login)
 				} else {
-					log.Infof("У пользователя %s есть права %s.", login, permission)
+					log.Infof("У пользователя '%s' есть права '%s'.", login, permission)
 				}
 			}
 		}
@@ -405,7 +410,6 @@ func CheckOneUserPermission(login string, permission string) error {
 	db.Close()
 	return err
 }
-
 
 
 

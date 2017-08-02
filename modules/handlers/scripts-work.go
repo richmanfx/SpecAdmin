@@ -30,7 +30,7 @@ func AddScript(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -41,7 +41,7 @@ func AddScript(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -64,7 +64,7 @@ func DelScript(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -74,7 +74,7 @@ func DelScript(context *gin.Context)  {
 				"message1": fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
 				"message2": "",	"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -104,7 +104,7 @@ func EditScript(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка получения данных о сценарии '%s'.", editedScript),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -115,7 +115,7 @@ func EditScript(context *gin.Context)  {
 				"script": 	script,
 				"scriptId":	scriptId,
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -143,7 +143,7 @@ func UpdateAfterEditScript(context *gin.Context) {
 				"message2": fmt.Sprintf("Ошибка при обновлении сценария '%s' в сюите '%s'.", scriptName, scriptsSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -154,7 +154,7 @@ func UpdateAfterEditScript(context *gin.Context) {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}

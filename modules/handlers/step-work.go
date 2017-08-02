@@ -97,7 +97,7 @@ func AddStep(context *gin.Context)  {
 					newStepName, stepsScript, scriptsSuite),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -110,7 +110,7 @@ func AddStep(context *gin.Context)  {
 				"message3": "",
 				"SuitesGroup":	suitesGroup,
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -140,7 +140,7 @@ func DelStep(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -151,7 +151,7 @@ func DelStep(context *gin.Context)  {
 				"message2": "",	"message3": "",
 				"SuitesGroup":	suitesGroup,
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -182,7 +182,7 @@ func EditStep(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -192,7 +192,7 @@ func EditStep(context *gin.Context)  {
 				"title": 	"Редактирование шага",
 				"step": 	step,
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -277,7 +277,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 				"message2": fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
@@ -288,7 +288,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 				"message2": "",
 				"message3": "",
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
@@ -319,7 +319,7 @@ func GetStepsOptions(context *gin.Context)  {
 				"message2": fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
 				"message3": fmt.Sprintf("%s: ", err),
 				"Version":	Version,
-				"UserLogin":	UserLogin,
+				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	}
