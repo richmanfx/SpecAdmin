@@ -12,12 +12,19 @@ import (
 // Отобразить страницу конфигурации для редактирования параметров
 func EditConfig(context *gin.Context)  {
 	var err error
+	var config []models.Option
 	helpers.SetLogFormat()
 
-	// Получить конфигурационные данные из БД
-	config, err := helpers.GetConfig()
-	if len(config) == 0 {
-		err = fmt.Errorf("Нет конфигурационных данных в БД")
+	// Проверить пермишен пользователя для работы с конфигурацией
+	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	err = helpers.CheckOneUserPermission(helpers.UserLogin, "config_permission")
+
+	if err == nil {
+		// Получить конфигурационные данные из БД
+		config, err = helpers.GetConfig()
+		if len(config) == 0 {
+			err = fmt.Errorf("Нет конфигурационных данных в БД")
+		}
 	}
 
 	if err != nil {
@@ -28,7 +35,7 @@ func EditConfig(context *gin.Context)  {
 				"message1": 	"",
 				"message2": 	"Ошибка при получении конфигурационных данных из БД",
 				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
