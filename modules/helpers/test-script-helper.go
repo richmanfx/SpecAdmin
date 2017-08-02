@@ -34,26 +34,35 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	// Удаление скрипта из БД
-	log.Debugf("Удаление Скрипта '%s'.", scriptName)
-	result, err := db.Exec("DELETE FROM tests_scripts WHERE name=? AND name_suite=?", scriptName, scriptsSuiteName)
 	if err == nil {
-		var affected int64
-		affected, err = result.RowsAffected()
-		if err == nil {
-			if affected == 0 {
-				_, goModuleName, lineNumber, _ := runtime.Caller(1)
-				log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
-					scriptName, goModuleName, lineNumber)
-			}
-			log.Debugf("Удалено строк в БД: %v.", affected)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
 		}
+
+		// Удаление скрипта из БД
+		log.Debugf("Удаление Скрипта '%s'.", scriptName)
+		result, err := db.Exec("DELETE FROM tests_scripts WHERE name=? AND name_suite=?", scriptName, scriptsSuiteName)
+		if err == nil {
+			var affected int64
+			affected, err = result.RowsAffected()
+			if err == nil {
+				if affected == 0 {
+					_, goModuleName, lineNumber, _ := runtime.Caller(1)
+					log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
+						scriptName, goModuleName, lineNumber)
+				}
+				log.Debugf("Удалено строк в БД: %v.", affected)
+			}
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 

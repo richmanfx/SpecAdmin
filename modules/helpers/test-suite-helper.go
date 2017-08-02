@@ -104,24 +104,32 @@ func DelTestSuite(suitesName string) error {
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	// Удаление Сюиты из базы данных
-	log.Debugf("Удаление Сюиты '%s'.", suitesName)
-	result, err := db.Exec("DELETE FROM tests_suits WHERE name=?", suitesName)
 	if err == nil {
-		var affected int64
-		affected, err = result.RowsAffected()
+
+		// Подключиться к БД
+		err = dbConnect()
 		if err == nil {
-			if affected == 0 {
-				_, goModuleName, lineNumber, _ := runtime.Caller(1)
-				err = fmt.Errorf("Ошибка удаления Сюиты '%s'. Есть такая Сюита?", suitesName)
-				log.Debugf("Ошибка удаления Сюиты '%s'. goModuleName=%v, lineNumber=%v",
-					suitesName, goModuleName, lineNumber)
+			// Удаление Сюиты из базы данных
+			log.Debugf("Удаление Сюиты '%s'.", suitesName)
+			result, _ := db.Exec("")	// Накостылил
+			result, err = db.Exec("DELETE FROM tests_suits WHERE name=?", suitesName)
+			if err == nil {
+				var affected int64
+				affected, err = result.RowsAffected()
+				if err == nil {
+					if affected == 0 {
+						_, goModuleName, lineNumber, _ := runtime.Caller(1)
+						err = fmt.Errorf("Ошибка удаления Сюиты '%s'. Есть такая Сюита?", suitesName)
+						log.Debugf("Ошибка удаления Сюиты '%s'. goModuleName=%v, lineNumber=%v",
+							suitesName, goModuleName, lineNumber)
+					}
+					log.Debugf("Удалено строк в БД: %v", affected)
+				}
 			}
-			log.Debugf("Удалено строк в БД: %v", affected)
 		}
 	}
 	db.Close()

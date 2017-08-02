@@ -154,30 +154,39 @@ func DeleteUserInDb(user models.User) error {
 	var err error
 	log.Debugf("user в 'DeleteUserInDb': '%v'", user)
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	panic(err) }
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	// Удалить пользователя в БД
-	result, err := db.Exec("DELETE FROM user WHERE login=? AND full_name=?", user.Login, user.FullName)
+	if err == nil {
 
-	if err != nil {
-		log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
-		return err
-	} else {
-		var affected int64
-		affected, err = result.RowsAffected()
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			panic(err)
+		}
+
+		// Удалить пользователя в БД
+		result, _ := db.Exec("") 	// Накостылил здесь
+		result, err = db.Exec("DELETE FROM user WHERE login=? AND full_name=?", user.Login, user.FullName)
 
 		if err == nil {
-			if affected == 0 {
-				log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
-				return err
-			}
-			log.Debugf("Удалено строк в БД: %d", affected)
-		}
-	}
+			var affected int64
+			affected, err = result.RowsAffected()
 
-	db.Close()
+			if err == nil {
+				if affected == 0 {
+					log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
+					return err
+				}
+				log.Debugf("Удалено строк в БД: %d", affected)
+			}
+		} else {
+			log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
+		}
+
+		db.Close()
+	}
 	return err
 }
 

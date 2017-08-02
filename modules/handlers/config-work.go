@@ -91,14 +91,24 @@ func SaveConfig(context *gin.Context)  {
 // Удалить из хранилища неиспользуемые в БД файлы скриншотов
 func DelUnusedScreenShotsFile(context *gin.Context)  {
 
-	// Получить список имён неиспользуемых файлов скриншотов
-	unusedFileList, err := helpers.GetUnusedScreenShotsFileName()
-	log.Debugf("Неиспользуемые файлы скриншотов для удаления: '%v'", unusedFileList)
-	countDeletedFile := len(unusedFileList)
+	var countDeletedFile int
 
-	// Удалить в цикле файлы
-	for _, deletedFile := range unusedFileList {
-		err = helpers.DelScreenShotsFile(deletedFile)
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	err := helpers.CheckOneUserPermission(helpers.UserLogin, "delete_permission")
+
+	if err == nil {
+
+		// Получить список имён неиспользуемых файлов скриншотов
+		var unusedFileList []string
+		unusedFileList, err = helpers.GetUnusedScreenShotsFileName()
+		log.Debugf("Неиспользуемые файлы скриншотов для удаления: '%v'", unusedFileList)
+		countDeletedFile = len(unusedFileList)
+
+		// Удалить в цикле файлы
+		for _, deletedFile := range unusedFileList {
+			err = helpers.DelScreenShotsFile(deletedFile)
+		}
 	}
 
 	if err != nil {
@@ -259,46 +269,46 @@ func SaveUser(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Пользователь
-	var user models.User
+	var savedUser models.User
 
 	// Данные из формы
-	user.Login = context.PostForm("login")
-	user.FullName = context.PostForm("full_name")
+	savedUser.Login = context.PostForm("login")
+	savedUser.FullName = context.PostForm("full_name")
 
 	if context.PostForm("create_permission") == "on" {
-		user.Permissions.Create = true
+		savedUser.Permissions.Create = true
 	} else {
-		user.Permissions.Create = false
+		savedUser.Permissions.Create = false
 	}
 
 	if context.PostForm("edit_permission") == "on" {
-		user.Permissions.Edit = true
+		savedUser.Permissions.Edit = true
 	} else {
-		user.Permissions.Edit = false
+		savedUser.Permissions.Edit = false
 	}
 
 	if context.PostForm("delete_permission") == "on" {
-		user.Permissions.Delete = true
+		savedUser.Permissions.Delete = true
 	} else {
-		user.Permissions.Delete = false
+		savedUser.Permissions.Delete = false
 	}
 
 	if context.PostForm("config_permission") == "on" {
-		user.Permissions.Config = true
+		savedUser.Permissions.Config = true
 	} else {
-		user.Permissions.Config = false
+		savedUser.Permissions.Config = false
 	}
 
 	if context.PostForm("users_permission") == "on" {
-		user.Permissions.Users = true
+		savedUser.Permissions.Users = true
 	} else {
-		user.Permissions.Users = false
+		savedUser.Permissions.Users = false
 	}
 
-	log.Infof("user из формы редактирования = '%v'", user)
+	log.Infof("savedUser из формы редактирования = '%v'", savedUser)
 
 	// Сохранить пользователя в БД
-	err = helpers.SaveUserInDb(user)
+	err = helpers.SaveUserInDb(savedUser)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -315,7 +325,7 @@ func SaveUser(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Пользователь '%s' успешно сохранён в БД.", user.Login),
+				"message1": 	fmt.Sprintf("Пользователь '%s' успешно сохранён в БД.", savedUser.Login),
 				"message2": 	"",
 				"message3": 	"",
 				"Version":		Version,
@@ -330,19 +340,26 @@ func SaveUser(context *gin.Context)  {
 func DeleteUser(context *gin.Context)  {
 
 	var err error
+	var deletedUser models.User // Пользователь
 	helpers.SetLogFormat()
 
-	// Пользователь
-	var user models.User
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	err = helpers.CheckOneUserPermission(helpers.UserLogin, "delete_permission")
 
-	// Данные из формы
-	user.Login = context.PostForm("login")
-	user.FullName = context.PostForm("full_name")
+	if err == nil {
 
-	log.Debugf("user из формы удаления = '%v'", user)
 
-	// Удалить из БД
-	err = helpers.DeleteUserInDb(user)
+
+		// Данные из формы
+		deletedUser.Login = context.PostForm("login")
+		deletedUser.FullName = context.PostForm("full_name")
+
+		log.Debugf("deletedUser из формы удаления = '%v'", deletedUser)
+
+		// Удалить из БД
+		err = helpers.DeleteUserInDb(deletedUser)
+	}
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -359,7 +376,7 @@ func DeleteUser(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", user.Login),
+				"message1": fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", deletedUser.Login),
 				"message2": "",
 				"message3": "",
 				"Version":	Version,

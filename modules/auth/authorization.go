@@ -208,10 +208,10 @@ func ChangePassword(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": fmt.Sprintln("Пароль успешно изменён"),
-				"message2": "",
-				"message3": "",
-				"Version":	handlers.Version,
+				"message1": 	fmt.Sprintln("Пароль успешно изменён"),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		handlers.Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)

@@ -55,60 +55,70 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	// Удаление Шага из БД
-	log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
-	var screenShotsFileName string		// Имя файла скриншота - удалим после удаления Шага из БД
+	if err == nil {
 
-	// Получить ID Сценария в Сюите
-	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Debugf("requestResult: %v", requestResult)
-
-	// Получить значение ID Сценария
-	var scriptId int
-	err = requestResult.Scan(&scriptId)
-	log.Debugf("ID Сценария: '%d'", scriptId)
-	if scriptId == 0 {
-		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-	} else {
-
-		// Получить имя файла скриншота Шага
-		screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
-		if err != nil {panic(err)}
-
-		log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
-		result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
+		// Подключиться к БД
+		err = dbConnect()
 		if err != nil {
-			log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
 			return err
-		} else {
-			var affected int64
-			affected, err = result.RowsAffected()
+		}
 
-			if err == nil {
-				if affected == 0 {
-					log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
-					return err
+		// Удаление Шага из БД
+		log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+		var screenShotsFileName string // Имя файла скриншота - удалим после удаления Шага из БД
+
+		// Получить ID Сценария в Сюите
+		requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+		log.Debugf("requestResult: %v", requestResult)
+
+		// Получить значение ID Сценария
+		var scriptId int
+		err = requestResult.Scan(&scriptId)
+		log.Debugf("ID Сценария: '%d'", scriptId)
+		if scriptId == 0 {
+			log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+			err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+		} else {
+
+			// Получить имя файла скриншота Шага
+			screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
+			if err != nil {
+				panic(err)
+			}
+
+			log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+			result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
+			if err != nil {
+				log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
+				return err
+			} else {
+				var affected int64
+				affected, err = result.RowsAffected()
+
+				if err == nil {
+					if affected == 0 {
+						log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
+						return err
+					}
+					log.Debugf("Удалено строк в БД: %d", affected)
 				}
-				log.Debugf("Удалено строк в БД: %d", affected)
+			}
+		}
+		db.Close()
+
+		// Удаление файла скриншота из хранилища
+		if err == nil && screenShotsFileName != "" { // Если из базы удалили без ошибок
+			err = DelScreenShotsFile(screenShotsFileName)
+
+			if err != nil {
+				log.Debugf("Ошибка удаления файла скриншота '%s'", screenShotsFileName)
 			}
 		}
 	}
-	db.Close()
-
-	// Удаление файла скриншота из хранилища
-	if err == nil && screenShotsFileName != "" {		// Если из базы удалили без ошибок
-		err = DelScreenShotsFile(screenShotsFileName)
-
-		if err != nil {
-			log.Debugf("Ошибка удаления файла скриншота '%s'", screenShotsFileName)
-		}
-	}
-
 	return err
 }
 
@@ -299,33 +309,12 @@ func DeleteStepsScreenShot(stepsId int) error {
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
-	log.Debugln("Подключились к БД.")
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	/// Удалить файл скриншота на диске
+	if err == nil {
 
-	// Получить имя файла скриншота
-	requestResult := db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE id=?", stepsId)
-	db.Close()
-
-	// Получить результаты запроса
-	var screenShotFileName string
-	err = requestResult.Scan(&screenShotFileName)
-
-	if err != nil {
-		log.Errorf("Ошибка при получении имени файла скриншота '%s' из БД.", screenShotFileName)
-	} else {
-		log.Debugf("rows.Next из таблицы tests_steps: %s", screenShotFileName)
-	}
-
-	log.Debugf("Удаление файла скриншота '%s'", screenShotFileName)
-	err = DelScreenShotsFile(screenShotFileName)
-
-	if err != nil {
-		return err
-	} else {
 		// Подключиться к БД
 		err = dbConnect()
 		if err != nil {
@@ -333,18 +322,47 @@ func DeleteStepsScreenShot(stepsId int) error {
 		}
 		log.Debugln("Подключились к БД.")
 
-		// Удалить данные о скриншоте в БД
-		log.Debugf("Удаление данные о скриншоте в БД, Id Шага: '%d'.", stepsId)
-		_, err = db.Query("UPDATE tests_steps SET screen_shot_file_name=? WHERE id=? LIMIT 1", "", stepsId)
+		/// Удалить файл скриншота на диске
+
+		// Получить имя файла скриншота
+		requestResult := db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE id=?", stepsId)
 		db.Close()
-	}
 
-	if err == nil {
-		log.Debugf("Скриншот успешно удалён из БД в Шаге с Id='%d'", stepsId)
-	} else {
-		log.Errorf("Ошибка при удалении скриншота из БД в Шаге с Id='%d', %v", stepsId, err)
-	}
+		// Получить результаты запроса
+		var screenShotFileName string
+		err = requestResult.Scan(&screenShotFileName)
 
+		if err != nil {
+			log.Errorf("Ошибка при получении имени файла скриншота '%s' из БД.", screenShotFileName)
+		} else {
+			log.Debugf("rows.Next из таблицы tests_steps: %s", screenShotFileName)
+		}
+
+		log.Debugf("Удаление файла скриншота '%s'", screenShotFileName)
+		err = DelScreenShotsFile(screenShotFileName)
+
+		if err != nil {
+			return err
+		} else {
+			// Подключиться к БД
+			err = dbConnect()
+			if err != nil {
+				return err
+			}
+			log.Debugln("Подключились к БД.")
+
+			// Удалить данные о скриншоте в БД
+			log.Debugf("Удаление данные о скриншоте в БД, Id Шага: '%d'.", stepsId)
+			_, err = db.Query("UPDATE tests_steps SET screen_shot_file_name=? WHERE id=? LIMIT 1", "", stepsId)
+			db.Close()
+		}
+
+		if err == nil {
+			log.Debugf("Скриншот успешно удалён из БД в Шаге с Id='%d'", stepsId)
+		} else {
+			log.Errorf("Ошибка при удалении скриншота из БД в Шаге с Id='%d', %v", stepsId, err)
+		}
+	}
 	return err
 }
 

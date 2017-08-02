@@ -63,28 +63,36 @@ func AddTestGroup(groupName string) error {
 // Получает имя удаляемой группы
 func DelTestGroup(groupName string) error {
 	var err error
-
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для удалений
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
-	// Удаление Группы из базы
-	log.Debugf("Удаление Группы: %s", groupName)
-	result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
 	if err == nil {
-		var affected int64
-		affected, err = result.RowsAffected()
-		if err == nil {
-			if affected == 0 {
-				err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
-				log.Debugf("Ошибка удаления Группы '%s'", groupName)
-			}
-			log.Debugf("Удалено строк в БД: %v", affected)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
 		}
+
+		// Удаление Группы из базы
+		log.Debugf("Удаление Группы: %s", groupName)
+		result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
+		if err == nil {
+			var affected int64
+			affected, err = result.RowsAffected()
+			if err == nil {
+				if affected == 0 {
+					err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
+					log.Debugf("Ошибка удаления Группы '%s'", groupName)
+				}
+				log.Debugf("Удалено строк в БД: %v", affected)
+			}
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
