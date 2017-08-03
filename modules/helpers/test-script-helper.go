@@ -7,6 +7,7 @@ import (
 	"../../models"
 )
 
+// Добавляет сценарий в БД
 func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite string) error {
 	var err error
 	SetLogFormat()

@@ -18,17 +18,22 @@ func AddScript(context *gin.Context)  {
 	// Данные из формы
 	newScript := context.PostForm("script")
 	scriptSerialNumber := context.PostForm("scripts_serial_number")
-	scriptSuite := context.PostForm("script_suite")
+	scriptsSuite := context.PostForm("script_suite")
 
-	err := helpers.AddTestScript(newScript, scriptSerialNumber, scriptSuite)
+	// Группа Сюиты
+	suite, err := helpers.GetSuite(scriptsSuite)
+	suitesGroup := suite.Group
+
+	err = helpers.AddTestScript(newScript, scriptSerialNumber, scriptsSuite)
 	
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
 				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptSuite),
+				"message2": fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptsSuite),
 				"message3": fmt.Sprintf("%s: ", err),
+				"SuitesGroup":	suitesGroup,
 				"Version":	Version,
 				"UserLogin":	helpers.UserLogin,
 			},
@@ -37,9 +42,10 @@ func AddScript(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptSuite),
+				"message1": fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptsSuite),
 				"message2": "",
 				"message3": "",
+				"SuitesGroup":	suitesGroup,
 				"Version":	Version,
 				"UserLogin":	helpers.UserLogin,
 			},
@@ -133,27 +139,33 @@ func UpdateAfterEditScript(context *gin.Context) {
 	scriptSerialNumber := context.PostForm("scripts_serial_number")
 	scriptsSuite := context.PostForm("scripts_suite")
 
+	// Группа Сюиты
+	suite, err := helpers.GetSuite(scriptsSuite)
+	suitesGroup := suite.Group
+
 	// Обновить в БД
 	err = helpers.UpdateTestScript(scriptId, scriptName, scriptSerialNumber, scriptsSuite)
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при обновлении сценария '%s' в сюите '%s'.", scriptName, scriptsSuite),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при обновлении сценария '%s' в сюите '%s'.", scriptName, scriptsSuite),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"SuitesGroup":	suitesGroup,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Сценарий '%s' успешно обновлён.", scriptName),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Сценарий '%s' успешно обновлён.", scriptName),
+				"message2": 	"",
+				"message3": 	"",
+				"SuitesGroup":	suitesGroup,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
