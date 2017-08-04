@@ -279,8 +279,8 @@ func SavePassword(userName, newPassword string) error {
 	err = dbConnect()
 	if err != nil {	panic(err) }
 
-	// Занести новый хеш пароля и соль в БД
-	result, err := db.Exec("UPDATE user SET passwd=?,salt=? WHERE login=?", newHash, salt, userName)
+	// Занести новый хеш пароля в БД (соль не меняется)
+	result, err := db.Exec("UPDATE user SET passwd=? WHERE login=?", newHash, userName)
 
 	if err == nil {
 		affected, err := result.RowsAffected()
@@ -384,7 +384,6 @@ func DeleteSession(userName string) error {
 func CheckOneUserPermission(login string, permission string) error {
 
 	var err error
-
 
 	// А существует ли пользователь?
 	err = CheckUserInDB(login)
