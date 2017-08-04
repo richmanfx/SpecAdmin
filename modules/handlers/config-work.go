@@ -16,7 +16,7 @@ func EditConfig(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для работы с конфигурацией
-	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err = helpers.CheckOneUserPermission(helpers.UserLogin, "config_permission")
 
 	if err == nil {
@@ -94,7 +94,7 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 	var countDeletedFile int
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err := helpers.CheckOneUserPermission(helpers.UserLogin, "delete_permission")
 
 	if err == nil {
@@ -145,7 +145,7 @@ func UsersConfig(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для работы с пользователями
-	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err = helpers.CheckOneUserPermission(helpers.UserLogin, "users_permission")
 
 	if err == nil {
@@ -305,7 +305,7 @@ func SaveUser(context *gin.Context)  {
 		savedUser.Permissions.Users = false
 	}
 
-	log.Infof("savedUser из формы редактирования = '%v'", savedUser)
+	log.Debugf("savedUser из формы редактирования = '%v'", savedUser)
 
 	// Сохранить пользователя в БД
 	err = helpers.SaveUserInDb(savedUser)
@@ -344,7 +344,7 @@ func DeleteUser(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err = helpers.CheckOneUserPermission(helpers.UserLogin, "delete_permission")
 
 	if err == nil {

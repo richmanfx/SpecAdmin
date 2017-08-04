@@ -26,15 +26,15 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 	var user string
 
 	requestResult := db.QueryRow("SELECT expires,user FROM sessions WHERE session_id=?", sessidFromBrowser)
-	log.Infof("requestResult: %v", requestResult)
+	log.Debugf("requestResult: %v", requestResult)
 	err = requestResult.Scan(&expires, &user)
 
 	if err == nil {
-		log.Infof("'expires' из БД для sessid='%s': %v", sessidFromBrowser, expires)
+		log.Debugf("'expires' из БД для sessid='%s': %v", sessidFromBrowser, expires)
 
 		// Если expire позднее текущего времени, то сессия существует и валидна
 		if expires.After(time.Now()) {
-			log.Infoln("Сессия не истекла")
+			log.Debugln("Сессия не истекла")
 			sessidExist = true
 			UserLogin = user		// Имя пользователя в Хедер вывести
 		} else {
@@ -55,7 +55,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 		}
 	} else {
 		// Такой сессии в БД нет
-		log.Infof("Сессии '%s' в таблице 'sessions' нет: %v", sessidFromBrowser, err)
+		log.Debugf("Сессии '%s' в таблице 'sessions' нет: %v", sessidFromBrowser, err)
 		sessidExist = false
 	}
 
@@ -84,7 +84,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 		if err != nil {
 			panic(err)
 		}
-		log.Infof("Вставлено %d строк в таблицу 'sessions'.", affected)
+		log.Debugf("Вставлено %d строк в таблицу 'sessions'.", affected)
 	}
 
 	db.Close()
@@ -155,7 +155,7 @@ func DeleteUserInDb(user models.User) error {
 	log.Debugf("user в 'DeleteUserInDb': '%v'", user)
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
 	if err == nil {
@@ -236,12 +236,12 @@ func ValidatePassword(userName, oldPassword string) error {
 
 	// Получить Соль из БД
 	salt, err = GetSaltFromDb(userName)
-	log.Infof("Соль из БД: '%s'", salt)
+	log.Debugf("Соль из БД: '%s'", salt)
 
 
 	// Сгенерить Хеш пароля с Солью
 	newHash := CreateHash(oldPassword, salt)
-	log.Infof("Хеш с Солью: '%s'", newHash)
+	log.Debugf("Хеш с Солью: '%s'", newHash)
 
 	// Подключиться к БД
 	err = dbConnect()
@@ -249,7 +249,7 @@ func ValidatePassword(userName, oldPassword string) error {
 
 	// Получить старый Хеш из БД
 	oldHash, err := GetHashFromDb(userName)
-	log.Infof("Хеш из БД: '%s'", oldHash)
+	log.Debugf("Хеш из БД: '%s'", oldHash)
 
 	if err == nil {
 		// Сверить полученный Хеш с Хешем в БД
@@ -269,11 +269,11 @@ func SavePassword(userName, newPassword string) error {
 
 	// Получить Соль из БД
 	salt, err := GetSaltFromDb(userName)
-	log.Infof("Соль из БД: '%s'", salt)
+	log.Debugf("Соль из БД: '%s'", salt)
 
 	// Сгенерить Хеш пароля с Солью
 	newHash := CreateHash(newPassword, salt)
-	log.Infof("Хеш с Солью: '%s'", newHash)
+	log.Debugf("Хеш с Солью: '%s'", newHash)
 
 	// Подключиться к БД
 	err = dbConnect()
@@ -298,13 +298,13 @@ func CheckPasswordInDB(login, password string) error {
 
 	// Получить Соль из БД
 	salt, err := GetSaltFromDb(login)
-	log.Infof("Соль из БД: '%s'", salt)
+	log.Debugf("Соль из БД: '%s'", salt)
 
 	if err == nil {
 
 		// Сгенерить Хеш пароля с Солью
 		newHash := CreateHash(password, salt)
-		log.Infof("Хеш с Солью: '%s'", newHash)
+		log.Debugf("Хеш с Солью: '%s'", newHash)
 
 		// Считать Хеш из БД
 		var oldHash string
@@ -338,9 +338,9 @@ func CheckUserInDB(login string) error {
 	err = requestResult.Scan(&loginFromDB)
 
 	if err == nil {
-		log.Infof("Пользователь '%s' существует", login)
+		log.Debugf("Пользователь '%s' существует", login)
 	} else {
-		log.Infof("Пользователь '%s' в БД не существует", login)
+		log.Debugf("Пользователь '%s' в БД не существует", login)
 		err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
 	}
 
@@ -371,7 +371,7 @@ func DeleteSession(userName string) error {
 				log.Errorf("Ошибка удаления сессии пользователя '%s'", userName)
 				return err
 			}
-			log.Infof("Удалено %d строк из таблицы 'sessions'", affected)
+			log.Debugf("Удалено %d строк из таблицы 'sessions'", affected)
 		}
 	}
 
@@ -402,15 +402,15 @@ func CheckOneUserPermission(login string, permission string) error {
 
 			var permissionFromDB string		// Вовсе не bool !
 			err = requestResult.Scan(&permissionFromDB)
-			log.Infof("permissionFromDB: '%v'", permissionFromDB)
+			log.Debugf("permissionFromDB: '%v'", permissionFromDB)
 
 			if err == nil {
 
 				if permissionFromDB == "0" {
 					err = fmt.Errorf("У пользователя '%s' недостаточно прав", login)
-					log.Infof("У пользователя '%s' недостаточно прав", login)
+					log.Debugf("У пользователя '%s' недостаточно прав", login)
 				} else {
-					log.Infof("У пользователя '%s' есть права '%s'", login, permission)
+					log.Debugf("У пользователя '%s' есть права '%s'", login, permission)
 				}
 			}
 		}

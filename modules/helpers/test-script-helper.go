@@ -13,7 +13,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для создания
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "create_permission")
 
 	if err == nil {
@@ -47,7 +47,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
 	if err == nil {
@@ -120,7 +120,7 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для редактирования
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
 	if err == nil {

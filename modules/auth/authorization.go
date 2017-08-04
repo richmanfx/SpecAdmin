@@ -25,18 +25,18 @@ func AuthRequired() gin.HandlerFunc {
 		// Получить отдельные куки
 		var splitCookie map[string]string
 		splitCookie = GetSplitCookie(cookies.(string))
-		log.Infof("Разделённые Куки из браузера: '%v'", splitCookie)
+		log.Debugf("Разделённые Куки из браузера: '%v'", splitCookie)
 
 		// Если Кук нет или если 'sessid' в БД не нашёлся, то на страницу авторизации
 		sessidValue := splitCookie["sessid"]
 		sessidExist := helpers.SessionIdExistInBD(sessidValue)
 
 		if len(splitCookie) == 0 {
-			log.Infoln("Кук из браузера нет.")
+			log.Debugln("Кук из браузера нет.")
 			context.Abort()
 			context.Redirect(http.StatusSeeOther, "/spec-admin/login")
 		} else if sessidExist == false {
-			log.Infoln("'sessid' из браузера не обнаружена в БД.")
+			log.Debugln("'sessid' из браузера не обнаружена в БД.")
 			context.Abort()
 			context.Redirect(http.StatusSeeOther, "/spec-admin/login")
 		}
@@ -53,7 +53,7 @@ func GetSplitCookie(cookies string) map[string]string {
 	// Разделить по ";"
 	cookieList = strings.Split(cookies, ";")
 	cookieList = cookieList[0:len(cookieList)-1]
-	log.Infof("Список Кук из браузера: '%v'", cookieList)
+	log.Debugf("Список Кук из браузера: '%v'", cookieList)
 
 	// Разделить по "=" на ключ/значение
 	for _, cookie := range cookieList {
@@ -100,7 +100,7 @@ func Authorization(context *gin.Context)  {
 		// Сгенерировать sessid
 		sessid := helpers.GetUnique32SymbolsString()
 		newCookie := fmt.Sprintf("sessid=%s;", sessid)
-		log.Infof("Сгенерирована новая Кука: '%s'", newCookie)
+		log.Debugf("Сгенерирована новая Кука: '%s'", newCookie)
 
 
 		//	session.Delete("Cookie")	// Удалить Куки - на будущее
@@ -127,7 +127,7 @@ func Authorization(context *gin.Context)  {
 		// Выставить в браузере Куки
 		session.Set("Cookie", newCookie)
 		session.Save()
-		log.Infof("Новая Кука '%s' отправлена в браузер", newCookie)
+		log.Debugf("Новая Кука '%s' отправлена в браузер", newCookie)
 
 		// Направить на индексную страницу
 		context.Abort()
@@ -155,7 +155,7 @@ func Logout(context *gin.Context)  {
 
 	// Пользователь из формы
 	userName := context.PostForm("name")
-	log.Infof("Пользователь в Logout-e: '%s'", userName)
+	log.Debugf("Пользователь в Logout-e: '%s'", userName)
 
 
 	// Удалить сессию из БД
@@ -187,7 +187,7 @@ func ChangePassword(context *gin.Context)  {
 	// Данные из формы
 	userName := context.PostForm("login")
 	newPassword := context.PostForm("new_password")
-	log.Infof("Данные из формы смены пароля: '%s', '%s', '%s'", userName, newPassword)
+	log.Debugf("Данные из формы смены пароля: '%s', '%s', '%s'", userName, newPassword)
 
 	// Записать в БД новый пароль
 	err := helpers.SavePassword(userName, newPassword)

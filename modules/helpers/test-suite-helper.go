@@ -81,7 +81,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для создания
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "create_permission")
 
 	if err == nil {
@@ -116,7 +116,7 @@ func DelTestSuite(suitesName string) error {
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
 	if err == nil {
@@ -158,7 +158,7 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 	if err != nil {	return suite, err }
 
 	// Получить данные о Сюите и её ключ 'id'
-	log.Debugf("Получение данных Сюиты '%s' из БД.", suitesName)
+	log.Infof("Получение данных Сюиты '%s' из БД.", suitesName)
 	rows := db.QueryRow("SELECT serial_number, description, name_group FROM tests_suits WHERE name=?", suitesName)
 
 	var description string
@@ -168,7 +168,7 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 		// Данные получить из результата запроса
 		err = rows.Scan(&serialNumber, &description, &groupName)
 		if err != nil {
-			log.Debugf("Ошибка при получении данных по сюите '%s' из БД.", suitesName)
+			log.Errorf("Ошибка при получении данных по сюите '%s' из БД.", suitesName)
 		} else {
 			log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", description, serialNumber, groupName)
 
@@ -204,13 +204,24 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 		}
 
 		// Обновить данные о Сюите в БД
-		log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
-		_, err = db.Query("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
-			suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
+		log.Infof("Обновление данных о Сюите '%s' в БД", suitesName)
+		result, _ := db.Exec("")
+		result, err = db.Exec("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
+							   suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
+
 		if err == nil {
-			log.Debugf("Успешно обновлены данные Сюиты '%s' в БД.", suitesName)
+
+			var affected int64
+			affected, err = result.RowsAffected()
+			if affected == 0 {
+				log.Errorf("Ошибка обновления данных Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
+				err = fmt.Errorf("Ошибка обновления данных Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
+				return err
+			}
+
+			log.Infof("Успешно обновлены данные Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
 		} else {
-			log.Debugf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
+			log.Errorf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
 		}
 		db.Close()
 	}

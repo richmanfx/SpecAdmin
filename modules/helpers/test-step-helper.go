@@ -18,7 +18,7 @@ func AddTestStep(
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для создания
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "create_permission")
 
 	if err == nil {
@@ -65,7 +65,7 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
 	if err == nil {
@@ -289,7 +289,7 @@ func UpdateTestStep(
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для редактирования
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
 	if err == nil {
@@ -328,7 +328,7 @@ func DeleteStepsScreenShot(stepsId int) error {
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "delete_permission")
 
 	if err == nil {
