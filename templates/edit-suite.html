@@ -4,8 +4,8 @@
     <form id="id_after_edit_suite_form" name="after_edit_suite_form" method="post" action="/spec-admin/update-after-edit-suite">
 
         <label for="id_suite"> Имя сюиты </label><br>
-        <input id="id_suite" name="suite" value="{{ .suite.Name }}" autofocus readonly hidden>
-        <input id="id_suite_disabled" name="suite" value="{{ .suite.Name }}" autofocus disabled>
+        <input id="id_suite" name="suite" value="{{ .suite.Name }}" readonly hidden>
+        <input id="id_suite_disabled" name="suite" value="{{ .suite.Name }}" disabled>
         <br><br>
 
 
@@ -15,7 +15,7 @@
         <br><br>
 
         <label for="id_suites_serial_number">Порядковый номер сюиты</label><br>
-        <input id="id_suites_serial_number" name="suites_serial_number" value="{{ .suite.SerialNumber }}"
+        <input id="id_suites_serial_number" name="suites_serial_number" value="{{ .suite.SerialNumber }}" autofocus
         >
         <br><br>
 

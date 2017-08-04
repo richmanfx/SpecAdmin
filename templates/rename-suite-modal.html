@@ -1,41 +1,41 @@
-<div id="editGroup" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+<div id="renameSuite" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                Переименовать группу
+                Переименовать сюиту
             </div>
 
             <div class="modal-body">
-                <form id="id_edit_group_form" name="edit_group_form" method="post" action="/spec-admin/edit-group">
+                <form id="id_rename_suite_form" name="rename_suite_form" method="post" action="/spec-admin/rename-suite">
 
-                    <label for="id_old_group"> Старое имя группы </label><br>
-                    <input id="id_old_group" name="old_group" placeholder="Старое имя группы" readonly>
+                    <label for="id_old_suite"> Старое имя сюиты </label><br>
+                    <input id="id_old_suite" name="old_suite" data-old_name="" placeholder="Старое имя сюиты" readonly>
                     <br><br>
 
-                    <label for="id_new_group"> Новое имя группы </label><br>
-                    <input id="id_new_group" name="new_group"
-                           placeholder=" Новое имя группы">
+                    <label for="id_new_suite"> Новое имя сюиты </label><br>
+                    <input id="id_new_suite" name="new_suite" data-new_name=""
+                           placeholder=" Новое имя сюиты">
                 </form>
             </div>
 
             <!-- Автофокус в поле ввода в модальном окне -->
             <script>
-                $('#editGroup').on('shown.bs.modal', function (e) {
-                    $('#id_old_group', e.target).focus();
+                $('#renameSuite').on('shown.bs.modal', function (e) {
+                    $('#id_old_suite', e.target).focus();
                 });
             </script>
 
             <div class="modal-footer">
                 <button
                         class="btn btn-success btn-lg"
-                        form="id_edit_group_form">
+                        form="id_rename_suite_form">
                     Изменить имя группы
                 </button>
 
-                <button form="id_edit_group_form"
+                <button form="id_rename_suite_form"
                         type="reset"
                         class="btn btn-success btn-lg">
                     Очистить форму

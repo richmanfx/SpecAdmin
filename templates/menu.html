@@ -11,6 +11,7 @@
 {{ template "add-suite-modal.html" . }}
 {{ template "del-suite-modal.html" . }}
 {{ template "edit-suite-modal.html" . }}
+{{ template "rename-suite-modal.html" . }}
 
 {{ template "add-script-modal.html" . }}
 {{ template "del-script-modal.html" . }}
@@ -19,6 +20,7 @@
 {{ template "add-step-modal.html" . }}
 {{ template "del-step-modal.html" . }}
 {{ template "edit-step-modal.html" . }}
+
 
 <nav class="navbar navbar-default">
     <div id="menu" class="container">
@@ -83,7 +85,7 @@
 
         <ul class="navbar-right">
 
-                Пользователь: <button id="logout-button" form="id_logout_form" type="submit" title="Выход">
+                Пользователь: <button id="logout-button" form="id_logout_form" title="Выход">
             {{ if .UserLogin }}
                 <span class="user-name">{{ .UserLogin }}</span>
             {{ else }}

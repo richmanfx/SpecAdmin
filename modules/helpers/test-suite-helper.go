@@ -158,7 +158,7 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 	if err != nil {	return suite, err }
 
 	// Получить данные о Сюите и её ключ 'id'
-	log.Infof("Получение данных Сюиты '%s' из БД.", suitesName)
+	log.Debugf("Получение данных Сюиты '%s' из БД.", suitesName)
 	rows := db.QueryRow("SELECT serial_number, description, name_group FROM tests_suits WHERE name=?", suitesName)
 
 	var description string
@@ -192,7 +192,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для редактирования
-	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
 	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
 	if err == nil {
@@ -204,7 +204,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 		}
 
 		// Обновить данные о Сюите в БД
-		log.Infof("Обновление данных о Сюите '%s' в БД", suitesName)
+		log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
 		result, _ := db.Exec("")
 		result, err = db.Exec("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
 							   suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
@@ -219,7 +219,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 				return err
 			}
 
-			log.Infof("Успешно обновлены данные Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
+			log.Debugf("Успешно обновлены данные Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
 		} else {
 			log.Errorf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
 		}
@@ -227,3 +227,49 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 	}
 	return err
 }
+
+
+// Переименование Сюиты
+func RenameTestSuite(oldSuiteName, newSuiteName string) error {
+
+	var err error
+	SetLogFormat()
+
+	// Проверить пермишен пользователя для редактирования
+	log.Debugf("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "edit_permission")
+
+	if err == nil {
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Обновить данные о Сюите в БД
+		log.Debugf("Переименование Сюиты '%s' в '%s'", oldSuiteName, newSuiteName)
+		result, _ := db.Exec("")
+		result, err = db.Exec("UPDATE tests_suits SET name=? WHERE name=? LIMIT 1", newSuiteName, oldSuiteName)
+
+		if err == nil {
+
+			var affected int64
+			affected, err = result.RowsAffected()
+			if affected == 0 {
+				log.Errorf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
+				err = fmt.Errorf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
+				return err
+			}
+
+			log.Debugf("Успешно переименована Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
+		} else {
+			log.Errorf("Ошибка переименования Сюиты '%s' в '%s'.", oldSuiteName, newSuiteName)
+		}
+		db.Close()
+
+
+	}
+	return err
+}
+

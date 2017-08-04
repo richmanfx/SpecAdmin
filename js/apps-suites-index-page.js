@@ -12,16 +12,24 @@ function anichange(a) {
 }
 
 
-// Подстановка имени сюиты в поле в модальном окне
-// Для кнопки "Редактировать"
-$('#editSuite').on('show.bs.modal', function (event) {
+/// Подстановка имени сюиты в поле в модальном окне
+// Для кнопки "Переименовать Сюиту"
+$('#renameSuite').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
     var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки
-    var modal = $(this);         // Обновить модальное окно
-    modal.find('#id_suite').val(recipientName)      // Только в input со старым значением
+    var modal = $(this);                         // Обновить модальное окно
+    modal.find('#id_old_suite').val(recipientName)      // Только в input со старым значением
 });
 
-// Для кнопки "Удалить"
+// Для кнопки "Редактировать Сюиту"
+$('#editSuite').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var recipientName = button.data('name');
+    var modal = $(this);
+    modal.find('#id_suite').val(recipientName)
+});
+
+// Для кнопки "Удалить Сюиту"
 $('#delSuite').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
     var recipientName = button.data('name');

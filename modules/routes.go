@@ -19,6 +19,7 @@ func InitRoutes(router *gin.Engine) {
 		router.Handle("POST", "/spec-admin/add-suite", auth.AuthRequired(), handlers.AddSuite)
 		router.Handle("POST", "/spec-admin/del-suite", auth.AuthRequired(), handlers.DelSuite)
 		router.Handle("POST", "/spec-admin/edit-suite", auth.AuthRequired(), handlers.EditSuite)
+	router.Handle("POST", "/spec-admin/rename-suite", auth.AuthRequired(), handlers.RenameSuite)
 		router.Handle("POST", "/spec-admin/update-after-edit-suite", auth.AuthRequired(), handlers.UpdateAfterEditSuite)
 
 		router.Handle("POST", "/spec-admin/add-script", auth.AuthRequired(), handlers.AddScript)

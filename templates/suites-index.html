@@ -18,12 +18,17 @@
             </td>
             <td>{{ .Description }}</td>
             <td class="suite-icons">
+
+                <a data-toggle="modal" data-target="#renameSuite" href="#" title="Переименовать Сюиту" data-name="{{ .Name }}">
+                    <img src="/images/icons/rename.png" alt="Rename Suite" width="30" height="30">
+                </a>
+
                 <a data-toggle="modal" data-target="#editSuite" href="#" title="Редактировать Сюиту" data-name="{{ .Name }}">
-                    <img src="/images/icons/edit.png" alt="Rename" width="30" height="30">
+                    <img src="/images/icons/edit.png" alt="Edit Suite" width="30" height="30">
                 </a>
 
                 <a data-toggle="modal" data-target="#delSuite" href="#" title="Удалить Сюиту" data-name="{{ .Name }}">
-                    <img src="/images/icons/delete.png" alt="Delete" width="30" height="30">
+                    <img src="/images/icons/delete.png" alt="Delete Suite" width="30" height="30">
                 </a>
 
                 <a data-toggle="modal" data-target="#addScript" href="#" title="Добавить Сценарий" data-name="{{ .Name }}">
