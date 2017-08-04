@@ -38,24 +38,33 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 // Добавляет в базу новую группу тестов
 // Получает имя новой группы
 func AddTestGroup(groupName string) error {
-	var err error
 
+	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {
-		return err
-	}
+	// Проверить пермишен пользователя для создания
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "create_permission")
 
-	// Добавление Группы в базу, используем плейсхолдер
-	result, err := db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
 	if err == nil {
-		affected, err := result.RowsAffected()
-		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблицу 'tests_groups'.", affected)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Добавление Группы в базу, используем плейсхолдер
+		result, err := db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
+		if err == nil {
+			affected, err := result.RowsAffected()
+			if err != nil {
+				panic(err)
+			}
+			log.Debugf("Вставлено %d строк в таблицу 'tests_groups'.", affected)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
@@ -99,28 +108,41 @@ func DelTestGroup(groupName string) error {
 // Изменяет имя группы тестов
 // Получает имя редактируемой группы
 func EditTestGroup(oldName string, newName string) error {
-	var err error
 
+	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для редактирования
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
-	// Изменение имени Группы
-	result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
-	if err != nil {panic(err)}
+	if err == nil {
 
-	affected, err := result.RowsAffected()
-	if err != nil {panic(err)}
-	log.Debugf("Изменено строк: %v", affected)
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
 
-	if affected == 0 {
-		err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
-		log.Debugf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName )
+		// Изменение имени Группы
+		result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
+		if err != nil {
+			panic(err)
+		}
+
+		affected, err := result.RowsAffected()
+		if err != nil {
+			panic(err)
+		}
+		log.Debugf("Изменено строк: %v", affected)
+
+		if affected == 0 {
+			err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+			log.Debugf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+		}
+
+		db.Close()
 	}
-
-	db.Close()
 	return err
 }
 

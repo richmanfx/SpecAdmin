@@ -408,10 +408,10 @@ func CheckOneUserPermission(login string, permission string) error {
 			if err == nil {
 
 				if permissionFromDB == "0" {
-					err = fmt.Errorf("У пользователя '%s' недостаточно прав.", login)
-					log.Infof("У пользователя '%s' недостаточно прав.", login)
+					err = fmt.Errorf("У пользователя '%s' недостаточно прав", login)
+					log.Infof("У пользователя '%s' недостаточно прав", login)
 				} else {
-					log.Infof("У пользователя '%s' есть права '%s'.", login, permission)
+					log.Infof("У пользователя '%s' есть права '%s'", login, permission)
 				}
 			}
 		}

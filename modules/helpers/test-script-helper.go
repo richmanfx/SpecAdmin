@@ -12,22 +12,33 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для создания
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "create_permission")
 
-	// Добавление Скрипта в БД
-	log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",
-		newScriptName, scriptSerialNumber, scriptSuite)
-
-	result, err := db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)",
-		newScriptName, scriptSerialNumber, scriptSuite)
 	if err == nil {
-		affected, err := result.RowsAffected()
-		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблицу 'tests_scripts'.", affected)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Добавление Скрипта в БД
+		log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",
+			newScriptName, scriptSerialNumber, scriptSuite)
+
+		result, err := db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)",
+			newScriptName, scriptSerialNumber, scriptSuite)
+		if err == nil {
+			affected, err := result.RowsAffected()
+			if err != nil {
+				panic(err)
+			}
+			log.Debugf("Вставлено %d строк в таблицу 'tests_scripts'.", affected)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
@@ -108,20 +119,29 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для редактирования
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
-	// Обновить данные о Сценарии в БД
-	log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
-	_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
-		scriptName, scriptSerialNumber, scriptsSuite, scriptId)
 	if err == nil {
-		log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
-	} else {
-		log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Обновить данные о Сценарии в БД
+		log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
+		_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
+			scriptName, scriptSerialNumber, scriptsSuite, scriptId)
+		if err == nil {
+			log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
+		} else {
+			log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 

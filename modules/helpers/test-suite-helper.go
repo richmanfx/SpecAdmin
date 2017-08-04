@@ -80,21 +80,32 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для создания
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "create_permission")
 
-	// Добавление Сюиты в базу, используем плейсхолдер
-	log.Debugf("Добавление Сюиты: %s, Описание: %s, Порядковый номер '%s' Группа: %s",
-		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
-	result, err := db.Exec("INSERT INTO tests_suits (name, description, serial_number, name_group) VALUES (?,?,?,?)",
-		suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
 	if err == nil {
-		affected, err := result.RowsAffected()
-		if err != nil {panic(err)}
-		log.Debugf("Вставлено %d строк в таблицу 'tests_suits'.", affected)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Добавление Сюиты в базу, используем плейсхолдер
+		log.Debugf("Добавление Сюиты: %s, Описание: %s, Порядковый номер '%s' Группа: %s",
+			suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
+		result, err := db.Exec("INSERT INTO tests_suits (name, description, serial_number, name_group) VALUES (?,?,?,?)",
+			suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
+		if err == nil {
+			affected, err := result.RowsAffected()
+			if err != nil {
+				panic(err)
+			}
+			log.Debugf("Вставлено %d строк в таблицу 'tests_suits'.", affected)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
@@ -180,19 +191,28 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для редактирования
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
-	// Обновить данные о Сюите в БД
-	log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
-	_, err = db.Query("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
-		suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
 	if err == nil {
-		log.Debugf("Успешно обновлены данные Сюиты '%s' в БД.", suitesName)
-	} else {
-		log.Debugf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Обновить данные о Сюите в БД
+		log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
+		_, err = db.Query("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
+			suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
+		if err == nil {
+			log.Debugf("Успешно обновлены данные Сюиты '%s' в БД.", suitesName)
+		} else {
+			log.Debugf("Ошибка обновления данных Сюиты '%s' в БД.", suitesName)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }

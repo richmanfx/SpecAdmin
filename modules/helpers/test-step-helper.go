@@ -17,35 +17,44 @@ func AddTestStep(
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для создания
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "create_permission")
 
-	// Добавление Шага в БД
-	log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
-		newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
+	if err == nil {
 
-	// Получить ID Сценария в Сюите
-	requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-	log.Debugf("requestResult: %v", requestResult)
-
-	// Получить значение ID Сценария
-	var id int
-	err = requestResult.Scan(&id)
-	log.Debugf("ID Сценария: '%d'", id)
-	if id == 0 {
-		log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-		err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-	} else {
-		// В таблицу с Шагами
-		_, err := db.Exec(
-			"INSERT INTO tests_steps (name, serial_number, description, expected_result, screen_shot_file_name, script_id) VALUES (?,?,?,?,?,?)",
-								newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
+		// Подключиться к БД
+		err = dbConnect()
 		if err != nil {
-			log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps'", newStepName)
+			return err
 		}
+
+		// Добавление Шага в БД
+		log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
+			newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
+
+		// Получить ID Сценария в Сюите
+		requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+		log.Debugf("requestResult: %v", requestResult)
+
+		// Получить значение ID Сценария
+		var id int
+		err = requestResult.Scan(&id)
+		log.Debugf("ID Сценария: '%d'", id)
+		if id == 0 {
+			log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+			err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+		} else {
+			// В таблицу с Шагами
+			_, err := db.Exec(
+				"INSERT INTO tests_steps (name, serial_number, description, expected_result, screen_shot_file_name, script_id) VALUES (?,?,?,?,?,?)",
+				newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
+			if err != nil {
+				log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps'", newStepName)
+			}
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
@@ -279,26 +288,35 @@ func UpdateTestStep(
 	var err error
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err != nil {	return err }
+	// Проверить пермишен пользователя для редактирования
+	log.Infof("Проверка пермишена для пользователя '%s'", UserLogin)
+	err = CheckOneUserPermission(UserLogin, "edit_permission")
 
-	// Обновить данные о Шаге в БД
-	log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
-
-	if screenShotsFileName == "" {
-		_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=? LIMIT 1",
-			stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsId)
-	} else {
-		_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
-			stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
-	}
 	if err == nil {
-		log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
-	} else {
-		log.Debugf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
+
+		// Подключиться к БД
+		err = dbConnect()
+		if err != nil {
+			return err
+		}
+
+		// Обновить данные о Шаге в БД
+		log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
+
+		if screenShotsFileName == "" {
+			_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=? LIMIT 1",
+				stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsId)
+		} else {
+			_, err = db.Query("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
+				stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
+		}
+		if err == nil {
+			log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
+		} else {
+			log.Debugf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
+		}
+		db.Close()
 	}
-	db.Close()
 	return err
 }
 
