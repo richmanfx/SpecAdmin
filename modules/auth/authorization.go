@@ -80,7 +80,6 @@ func Login(context *gin.Context)  {
 func Authorization(context *gin.Context)  {
 	userName := context.PostForm("user_name")
 	userPassword := context.PostForm("user_password")
-	log.Debugf("Пользователь: %s, Пароль: %s", userName, userPassword)
 
 	// Проверить существование пользователя в базе
 	err := helpers.CheckUserInDB(userName)
@@ -91,6 +90,9 @@ func Authorization(context *gin.Context)  {
 	}
 
 	if err == nil {
+
+		log.Infof("Пользователь '%s' вошёл в приложение.", userName)
+
 		// Логин пользователя в заголовок
 		helpers.UserLogin = userName
 
@@ -155,11 +157,10 @@ func Logout(context *gin.Context)  {
 
 	// Пользователь из формы
 	userName := context.PostForm("name")
-	log.Debugf("Пользователь в Logout-e: '%s'", userName)
-
 
 	// Удалить сессию из БД
 	err := helpers.DeleteSession(userName)
+	log.Infof("Пользователь '%s' вышел из приложения.", userName)
 
 	if err == nil {
 		// На страницу Логина
