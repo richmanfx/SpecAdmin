@@ -14,20 +14,19 @@
         <br><br>
 
         <label for="id_steps_serial_number">Порядковый номер шага</label><br>
-        <input id="id_steps_serial_number" name="steps_serial_number" value="{{ .step.SerialNumber }}"
-               required="required" type="text">
+        <input id="id_steps_serial_number" name="steps_serial_number" value="{{ .step.SerialNumber }}">
         <br><br>
 
         <div class="auto_width">
             <label for="id_steps_description">Описание действий в шаге</label><br>
-            <textarea id="id_steps_description" name="steps_description" required="required"
+            <textarea id="id_steps_description" name="steps_description"
                       rows="5">{{ .step.Description }}</textarea>
         </div>
         <br>
 
         <div class="auto_width">
             <label for="id_steps_expected_result">Ожидаемый результат от действий в шаге</label><br>
-            <textarea id="id_steps_expected_result" name="steps_expected_result" required="required"
+            <textarea id="id_steps_expected_result" name="steps_expected_result"
                       rows="7">{{ .step.ExpectedResult }}</textarea>
         </div>
         <br>
@@ -85,7 +84,7 @@
         });
     </script>
 
-    <button type="submit"
+    <button
             class="btn btn-success btn-lg"
             form="id_after_edit_step_form">
         Сохранить

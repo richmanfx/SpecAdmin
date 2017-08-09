@@ -133,7 +133,7 @@ $('#delStep').on('show.bs.modal', function (event) {
             scripsSuiteName = answerFromServer.scripsSuiteName;
         },
         error: function(){
-            alert("Ошибка при ответе на AJAX POST запрос");
+            alert("Ошибка при ответе на AJAX POST запрос удаления Шага");
         }
 
     });
@@ -143,3 +143,60 @@ $('#delStep').on('show.bs.modal', function (event) {
     modal.find('#id_script').val(stepsScriptName);        // В input с именем Сценария
     modal.find('#id_suite').val(scripsSuiteName);       // В input с именем Сюиты
 });
+
+
+/// Печать на принтер
+// Распечатать список шагов сценария
+$('a#id_print_steps').on('click', function () {
+    var scriptName = $(this).attr("data-name");    // Извлечь информацию из "data-name" у кнопки
+    var suiteName = $(this).attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
+
+    // alert(scriptName + " и " + suiteName);
+
+    var scriptId = "";
+
+    // Получить 'id' сценария по его имени и его сюите
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/get-scripts-id',
+        data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
+        success: function(answerFromServer){
+            scriptId = answerFromServer.scriptId;
+            // alert(scriptId);
+        },
+        error: function(){
+            alert("Ошибка при ответе на AJAX POST запрос получения Id сценария");
+        }
+    });
+
+    // Получить список шагов сценария по его 'script_id'
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/get-steps-from-script',
+        data: 'scriptId=' + scriptId,
+        success: function(answerFromServer){
+            alert(answerFromServer)
+        },
+        error: function(){
+            alert("Ошибка при ответе на AJAX POST запрос получения всех шагов сценария");
+        }
+    });
+
+    return false;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -19,13 +19,14 @@ func InitRoutes(router *gin.Engine) {
 		router.Handle("POST", "/spec-admin/add-suite", auth.AuthRequired(), handlers.AddSuite)
 		router.Handle("POST", "/spec-admin/del-suite", auth.AuthRequired(), handlers.DelSuite)
 		router.Handle("POST", "/spec-admin/edit-suite", auth.AuthRequired(), handlers.EditSuite)
-	router.Handle("POST", "/spec-admin/rename-suite", auth.AuthRequired(), handlers.RenameSuite)
+		router.Handle("POST", "/spec-admin/rename-suite", auth.AuthRequired(), handlers.RenameSuite)
 		router.Handle("POST", "/spec-admin/update-after-edit-suite", auth.AuthRequired(), handlers.UpdateAfterEditSuite)
 
 		router.Handle("POST", "/spec-admin/add-script", auth.AuthRequired(), handlers.AddScript)
 		router.Handle("POST", "/spec-admin/del-script", auth.AuthRequired(), handlers.DelScript)
 		router.Handle("POST", "/spec-admin/edit-script", auth.AuthRequired(), handlers.EditScript)
 		router.Handle("POST", "/spec-admin/update-after-edit-script", auth.AuthRequired(), handlers.UpdateAfterEditScript)
+		router.Handle("POST", "/spec-admin/get-scripts-id", auth.AuthRequired(), handlers.GetScriptsId) 		  		// for AJAX
 
 		router.Handle("POST", "/spec-admin/add-step", auth.AuthRequired(), handlers.AddStep)
 		router.Handle("POST", "/spec-admin/del-step", auth.AuthRequired(), handlers.DelStep)
@@ -33,6 +34,7 @@ func InitRoutes(router *gin.Engine) {
 		router.Handle("POST", "/spec-admin/update-after-edit-step", auth.AuthRequired(), handlers.UpdateAfterEditStep)
 		router.Handle("POST", "/spec-admin/get-steps-options", auth.AuthRequired(), handlers.GetStepsOptions)     // for AJAX
 		router.Handle("POST", "/spec-admin/del-screen-shot", auth.AuthRequired(), handlers.DelScreenShotFromStep) // for AJAX
+		router.Handle("POST", "/spec-admin/get-steps-from-script", auth.AuthRequired(), handlers.GetStepsFromScript) 	// for AJAX
 
 		router.Handle("GET", "/spec-admin/edit-config", auth.AuthRequired(), handlers.EditConfig)
 		router.Handle("POST", "/spec-admin/save-config", auth.AuthRequired(), handlers.SaveConfig)

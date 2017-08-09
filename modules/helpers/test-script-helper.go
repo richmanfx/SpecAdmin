@@ -42,6 +42,8 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	return err
 }
 
+
+// Удаляет сценарий из БД
 func DelTestScript(scriptName, scriptsSuiteName string) error {
 	var err error
 	SetLogFormat()
@@ -78,7 +80,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 	return err
 }
 
-// Возвращает Сценарий из БД
+// Возвращает Сценарий из БД по имени Сценария и имени его Сюиты
 func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error) {
 	var err error
 	var script models.Script

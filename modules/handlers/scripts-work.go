@@ -173,6 +173,48 @@ func UpdateAfterEditScript(context *gin.Context) {
 }
 
 
+// Возвращает 'Id' Сценария из БД по имени Сценария и имени его Сюиты
+func GetScriptsId(context *gin.Context)  {
+
+	helpers.SetLogFormat()
+
+	// Данные из AJAX запроса
+	scriptName := context.PostForm("scriptName")
+	scriptsSuite := context.PostForm("suiteName")
+	log.Infof("Данные из POST запроса AJAX: '%v' и '%v'", scriptName, scriptsSuite)
+
+	// Получить из базы id сценария по имени Сценария и имени его Сюиты
+	_, id, err := helpers.GetScript(scriptName, scriptsSuite)
+
+	if err == nil {
+		result := gin.H{"scriptId": id}
+		context.JSON(http.StatusOK, result)
+	} else {
+		log.Errorf("Ошибка получения id сценария из БД: %v", err)
+		result := gin.H{"scriptId": err}
+		context.JSON(http.StatusOK, result)
+	}
+
+}
+
+// Получить все шаги для заданного по id сценария		(Сразу в PDF-е возвращать в JS???)
+func GetStepsFromScript(context *gin.Context)  {
+
+	helpers.SetLogFormat()
+	log.Infoln("Пришёл запрос в GetStepsFromScript")
+
+	// Данные из AJAX запроса
+	scriptId := context.PostForm("scriptId")
+	log.Infof("Данные из POST запроса AJAX: '%v' и '%v'", scriptId)
+
+	// Получить Шаги из БД только для заданных по ID Сценариев
+	scriptIdInt, _ := strconv.Atoi(scriptId)
+	scriptsIdList := append(make([]int, 1, 0), scriptIdInt)		// Слайс только из одного Id
+
+	stepsList, err := helpers.GetStepsListForSpecifiedScripts(scriptsIdList)
+	log.Debugf("%v - %v", stepsList, err)
+
+}
 
 
 
