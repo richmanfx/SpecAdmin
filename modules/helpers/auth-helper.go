@@ -312,7 +312,7 @@ func CheckPasswordInDB(login, password string) error {
 
 		if err == nil {
 			if newHash == oldHash {
-				log.Infoln("Хеш пароля совпадает с Хешем из БД.")
+				log.Debugln("Хеш пароля совпадает с Хешем из БД.")
 			} else {
 				log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
 				err = fmt.Errorf("Не верный логин/пароль.")
