@@ -6,13 +6,13 @@ import (
 	"fmt"
 	"../../models"
 	"os"
+	"database/sql"
 )
 
 // Добавить Шаг в БД
 func AddTestStep(
-	newStepName string, stepSerialNumber string, stepsDescription string,
-	stepsExpectedResult string, stepsScreenShotFileName string,
-	stepsScriptName string, scriptsSuiteName string) error {
+	newStepName string, stepSerialNumber string, stepsDescription string,stepsExpectedResult string,
+	stepsScreenShotFileName string,	stepsScriptName string, scriptsSuiteName string) error {
 
 	var err error
 	SetLogFormat()
@@ -25,32 +25,31 @@ func AddTestStep(
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
+		if err == nil {
 
-		// Добавление Шага в БД
-		log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
-			newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
+			// Добавление Шага в БД
+			log.Debugf("Добавление Шага '%s', Порядковый номер '%s', Сценарий '%s', Сюита: '%s'.",
+				newStepName, stepSerialNumber, stepsScriptName, scriptsSuiteName)
 
-		// Получить ID Сценария в Сюите
-		requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-		log.Debugf("requestResult: %v", requestResult)
+			// Получить ID Сценария в Сюите
+			requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+			log.Debugf("requestResult: %v", requestResult)
 
-		// Получить значение ID Сценария
-		var id int
-		err = requestResult.Scan(&id)
-		log.Debugf("ID Сценария: '%d'", id)
-		if id == 0 {
-			log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-			err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-		} else {
-			// В таблицу с Шагами
-			_, err := db.Exec(
-				"INSERT INTO tests_steps (name, serial_number, description, expected_result, screen_shot_file_name, script_id) VALUES (?,?,?,?,?,?)",
-				newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
-			if err != nil {
-				log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps'", newStepName)
+			// Получить значение ID Сценария
+			var id int
+			err = requestResult.Scan(&id)
+			log.Debugf("ID Сценария: '%d'", id)
+			if id == 0 {
+				log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+				err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+			} else {
+				// В таблицу с Шагами
+				_, err = db.Exec(
+					"INSERT INTO tests_steps (name, serial_number, description, expected_result, screen_shot_file_name, script_id) VALUES (?,?,?,?,?,?)",
+					newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
+				if err != nil {
+					log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps'", newStepName)
+				}
 			}
 		}
 		db.Close()
@@ -62,6 +61,7 @@ func AddTestStep(
 // Удалить Шаг из БД
 func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) error {
 	var err error
+	var screenShotsFileName string // Имя файла скриншота - удалим после удаления Шага из БД
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
@@ -72,50 +72,48 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
+		if err == nil {
 
-		// Удаление Шага из БД
-		log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
-		var screenShotsFileName string // Имя файла скриншота - удалим после удаления Шага из БД
-
-		// Получить ID Сценария в Сюите
-		requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
-		log.Debugf("requestResult: %v", requestResult)
-
-		// Получить значение ID Сценария
-		var scriptId int
-		err = requestResult.Scan(&scriptId)
-		log.Debugf("ID Сценария: '%d'", scriptId)
-		if scriptId == 0 {
-			log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-			err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
-		} else {
-
-			// Получить имя файла скриншота Шага
-			screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
-			if err != nil {
-				panic(err)
-			}
-
+			// Удаление Шага из БД
 			log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
-			result, err := db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
-			if err != nil {
-				log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
-				return err
-			} else {
-				var affected int64
-				affected, err = result.RowsAffected()
 
-				if err == nil {
-					if affected == 0 {
-						log.Debugf("Ошибка удаления Шага '%s'", deletedStepName)
-						return err
+
+			// Получить ID Сценария в Сюите
+			requestResult := db.QueryRow("SELECT id FROM tests_scripts WHERE name=? AND name_suite=?", stepsScriptName, scriptsSuiteName)
+			log.Debugf("requestResult: %v", requestResult)
+
+			// Получить значение ID Сценария
+			var scriptId int
+			err = requestResult.Scan(&scriptId)
+			log.Debugf("ID Сценария: '%d'", scriptId)
+			if scriptId == 0 {
+				log.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+				err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
+			} else {
+
+				// Получить имя файла скриншота Шага
+				var result sql.Result
+				screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
+				if err != nil {
+
+					log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.", deletedStepName, stepsScriptName, scriptsSuiteName)
+					result, err = db.Exec("DELETE FROM tests_steps WHERE name=? AND script_id=?", deletedStepName, scriptId)
+					if err == nil {
+
+						var affected int64
+						affected, err = result.RowsAffected()
+
+						if err == nil {
+							if affected != 0 {
+								log.Debugf("Удалено строк в БД: %d", affected)
+							} else {
+								log.Errorf("Ошибка удаления Шага '%s'", deletedStepName)
+							}
+						}
 					}
-					log.Debugf("Удалено строк в БД: %d", affected)
 				}
 			}
+			return err
 		}
 		db.Close()
 
@@ -376,12 +374,15 @@ func DeleteStepsScreenShot(stepsId int) error {
 // Удаление файла скриншота по имени файла
 func DelScreenShotsFile(screenShotsFileName string) error {
 
-	// Получить путь до хранилища скриншотов
+	var fullScreenShotsPath string
 	var screenShotsPath string
-	screenShotsPath = GetScreenShotsPath()
+	var err error
+
+	// Получить путь до хранилища скриншотов
+	screenShotsPath, err = GetScreenShotsPath()
 	lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
 	log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
-	var fullScreenShotsPath string
+
 	if lastSymbolOfPath != string(os.PathSeparator) {
 		fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotsFileName
 	} else {
@@ -389,7 +390,7 @@ func DelScreenShotsFile(screenShotsFileName string) error {
 	}
 
 	// Удалить файл
-	err := os.Remove(fullScreenShotsPath)
+	err = os.Remove(fullScreenShotsPath)
 
 	return err
 }

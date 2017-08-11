@@ -349,8 +349,6 @@ func DeleteUser(context *gin.Context)  {
 
 	if err == nil {
 
-
-
 		// Данные из формы
 		deletedUser.Login = context.PostForm("login")
 		deletedUser.FullName = context.PostForm("full_name")
@@ -386,29 +384,3 @@ func DeleteUser(context *gin.Context)  {
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

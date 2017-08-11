@@ -54,26 +54,29 @@ func AddStep(context *gin.Context)  {
 
 			// Получить путь до хранилища скриншотов
 			var screenShotsPath string
-			screenShotsPath = helpers.GetScreenShotsPath()
+			screenShotsPath, err = helpers.GetScreenShotsPath()
 
-			lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
-			log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
-			var fullScreenShotsPath string
-			if lastSymbolOfPath != string(os.PathSeparator) {
-				fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
-			} else {
-				fullScreenShotsPath = screenShotsPath + screenShotFileName
-			}
+			if err == nil {
 
-			log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
-			out, err := os.Create(fullScreenShotsPath)
-			if err != nil {
-				panic(err)
-			}
-			defer out.Close() // Файл закроется после работы с ним, даже при панике
-			_, err = io.Copy(out, screenShotFile)
-			if err != nil {
-				panic(err)
+				lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+				log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+				var fullScreenShotsPath string
+				if lastSymbolOfPath != string(os.PathSeparator) {
+					fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+				} else {
+					fullScreenShotsPath = screenShotsPath + screenShotFileName
+				}
+
+				log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
+				out, err := os.Create(fullScreenShotsPath)
+				if err != nil {
+					panic(err)
+				}
+				defer out.Close() // Файл закроется после работы с ним, даже при панике
+				_, err = io.Copy(out, screenShotFile)
+				if err != nil {
+					panic(err)
+				}
 			}
 		}
 	}
@@ -241,7 +244,7 @@ func UpdateAfterEditStep(context *gin.Context)  {
 
 			// Получить путь до хранилища скриншотов
 			var screenShotsPath string
-			screenShotsPath = helpers.GetScreenShotsPath()
+			screenShotsPath, err = helpers.GetScreenShotsPath()
 
 			lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
 			log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)

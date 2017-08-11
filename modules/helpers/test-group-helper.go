@@ -5,6 +5,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"../../models"
+	"database/sql"
 )
 
 // Возвращает список Групп из БД
@@ -14,22 +15,23 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return groupList, err }
+	if err == nil {
 
-	// Считать группы из БД
-	rows, err := db.Query("SELECT name FROM tests_groups ORDER BY name")
-	if err != nil {panic(err)}
-	// Данные получить из результата запроса
-	for rows.Next() {
-		var name string
-		err = rows.Scan(&name)
-		if err != nil {panic(err)}
-		log.Debugf("rows.Next из таблицы tests_groups: %s", name)
+		// Считать группы из БД
+		rows, err := db.Query("SELECT name FROM tests_groups ORDER BY name")
+		if err == nil {
 
-		// Заполнить Группами список Групп
-		var group models.Group
-		group.Name = name
-		groupList = append(groupList, group)
+			// Данные получить из результата запроса
+			for rows.Next() {
+				var group models.Group
+				err = rows.Scan(&group.Name)
+				if err == nil {
+					log.Debugf("rows.Next из таблицы tests_groups: %s", group.Name)
+					groupList = append(groupList, group)
+				}
+			}
+
+		}
 	}
 	db.Close()
 	return groupList, err
@@ -40,6 +42,8 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 func AddTestGroup(groupName string) error {
 
 	var err error
+	var result sql.Result
+	var affected int64
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для создания
@@ -50,18 +54,16 @@ func AddTestGroup(groupName string) error {
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
-
-		// Добавление Группы в базу, используем плейсхолдер
-		result, err := db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
 		if err == nil {
-			affected, err := result.RowsAffected()
-			if err != nil {
-				panic(err)
+
+			// Добавление Группы в базу, используем плейсхолдер
+			result, err = db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
+			if err == nil {
+				affected, err = result.RowsAffected()
+				if err == nil {
+					log.Debugf("Вставлено %d строк в таблицу 'tests_groups'.", affected)
+				}
 			}
-			log.Debugf("Вставлено %d строк в таблицу 'tests_groups'.", affected)
 		}
 		db.Close()
 	}
@@ -72,6 +74,8 @@ func AddTestGroup(groupName string) error {
 // Получает имя удаляемой группы
 func DelTestGroup(groupName string) error {
 	var err error
+	var result sql.Result
+	var affected int64
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
@@ -82,22 +86,20 @@ func DelTestGroup(groupName string) error {
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
-
-		// Удаление Группы из базы
-		log.Debugf("Удаление Группы: %s", groupName)
-		result, err := db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
 		if err == nil {
-			var affected int64
-			affected, err = result.RowsAffected()
+
+			// Удаление Группы из базы
+			log.Debugf("Удаление Группы: %s", groupName)
+			result, err = db.Exec("DELETE FROM tests_groups WHERE name=?", groupName)
 			if err == nil {
-				if affected == 0 {
-					err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
-					log.Debugf("Ошибка удаления Группы '%s'", groupName)
+				affected, err = result.RowsAffected()
+				if err == nil {
+					if affected == 0 {
+						err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
+						log.Errorf("Ошибка удаления Группы '%s'", groupName)
+					}
+					log.Debugf("Удалено строк в БД: %v", affected)
 				}
-				log.Debugf("Удалено строк в БД: %v", affected)
 			}
 		}
 		db.Close()
@@ -110,6 +112,8 @@ func DelTestGroup(groupName string) error {
 func EditTestGroup(oldName string, newName string) error {
 
 	var err error
+	var result sql.Result
+	var affected int64
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для редактирования
@@ -120,27 +124,23 @@ func EditTestGroup(oldName string, newName string) error {
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
+		if err == nil {
 
-		// Изменение имени Группы
-		result, err := db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
-		if err != nil {
-			panic(err)
-		}
+			// Изменение имени Группы
+			result, err = db.Exec("UPDATE tests_groups SET name=? WHERE name=?", newName, oldName)
+			if err == nil {
 
-		affected, err := result.RowsAffected()
-		if err != nil {
-			panic(err)
-		}
-		log.Debugf("Изменено строк: %v", affected)
+				affected, err = result.RowsAffected()
+				if err == nil {
+					log.Debugf("Изменено строк: %v", affected)
+				}
 
-		if affected == 0 {
-			err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
-			log.Debugf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+				if affected == 0 {
+					err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+					log.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+				}
+			}
 		}
-
 		db.Close()
 	}
 	return err

@@ -5,11 +5,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"runtime"
 	"../../models"
+	"database/sql"
 )
 
 // Добавляет сценарий в БД
 func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite string) error {
 	var err error
+	var result sql.Result
+	var affected int64
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для создания
@@ -17,25 +20,19 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 	err = CheckOneUserPermission(UserLogin, "create_permission")
 
 	if err == nil {
-
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
-
-		// Добавление Скрипта в БД
-		log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",
-			newScriptName, scriptSerialNumber, scriptSuite)
-
-		result, err := db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)",
-			newScriptName, scriptSerialNumber, scriptSuite)
 		if err == nil {
-			affected, err := result.RowsAffected()
-			if err != nil {
-				panic(err)
+			// Добавление Скрипта в БД
+			log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",newScriptName, scriptSerialNumber, scriptSuite)
+
+			result, err = db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)", newScriptName, scriptSerialNumber, scriptSuite)
+			if err == nil {
+				affected, err = result.RowsAffected()
+				if err == nil {
+					log.Debugf("Вставлено %d строк в таблицу 'tests_scripts'.", affected)
+				}
 			}
-			log.Debugf("Вставлено %d строк в таблицу 'tests_scripts'.", affected)
 		}
 		db.Close()
 	}
@@ -46,6 +43,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 // Удаляет сценарий из БД
 func DelTestScript(scriptName, scriptsSuiteName string) error {
 	var err error
+	var result sql.Result
 	SetLogFormat()
 
 	// Проверить пермишен пользователя для удалений
@@ -56,23 +54,22 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
-
-		// Удаление скрипта из БД
-		log.Debugf("Удаление Скрипта '%s'.", scriptName)
-		result, err := db.Exec("DELETE FROM tests_scripts WHERE name=? AND name_suite=?", scriptName, scriptsSuiteName)
 		if err == nil {
-			var affected int64
-			affected, err = result.RowsAffected()
+
+			// Удаление скрипта из БД
+			log.Debugf("Удаление Скрипта '%s'.", scriptName)
+			result, err = db.Exec("DELETE FROM tests_scripts WHERE name=? AND name_suite=?", scriptName, scriptsSuiteName)
 			if err == nil {
-				if affected == 0 {
-					_, goModuleName, lineNumber, _ := runtime.Caller(1)
-					log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
-						scriptName, goModuleName, lineNumber)
+				var affected int64
+				affected, err = result.RowsAffected()
+				if err == nil {
+					if affected == 0 {
+						_, goModuleName, lineNumber, _ := runtime.Caller(1)
+						log.Debugf("Ошибка удаления Скрипта '%s'. goModuleName=%v, lineNumber=%v",
+							scriptName, goModuleName, lineNumber)
+					}
+					log.Debugf("Удалено строк в БД: %v.", affected)
 				}
-				log.Debugf("Удалено строк в БД: %v.", affected)
 			}
 		}
 		db.Close()
@@ -84,33 +81,30 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error) {
 	var err error
 	var script models.Script
+	var id int
 	SetLogFormat()
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return script, 0, err }
+	if err == nil {
 
-	// Получить данные о Сценарии и его ключ 'id'
-	log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
-	rows := db.QueryRow("SELECT id,serial_number FROM tests_scripts WHERE name=? AND name_suite=?",
-		scriptsName, scriptsSuiteName)
+		// Получить данные о Сценарии и его ключ 'id'
+		log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
+		rows := db.QueryRow("SELECT id,serial_number FROM tests_scripts WHERE name=? AND name_suite=?",	scriptsName, scriptsSuiteName)
 
-	// Получить данные из результата запроса
-	var id int
-	var serialNumber string
+		// Получить данные из результата запроса
 
-	err = rows.Scan(&id, &serialNumber)
-	if err != nil {
-		log.Errorf("Ошибка при получении данных по Сценарию '%s' Сюиты '%s' из БД.", scriptsName, scriptsSuiteName)
-	} else {
-		log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, scriptsSuiteName)
+		err = rows.Scan(&id, &script.SerialNumber)
+		if err != nil {
+			log.Errorf("Ошибка при получении данных по Сценарию '%s' Сюиты '%s' из БД.", scriptsName, scriptsSuiteName)
+		} else {
+			log.Debugf("rows.Next из таблицы tests_scripts: %d, %s", id, script.SerialNumber)
 
-		// Заполнить данными Сценарий
-		script.Name = scriptsName
-		script.SerialNumber = serialNumber
-		script.Suite = scriptsSuiteName
+			// Заполнить данными Сценарий
+			script.Name = scriptsName
+			script.Suite = scriptsSuiteName
+		}
 	}
-
 	db.Close()
 	log.Debugf("Получение данных Сценария из БД => ошибка '%v'.", err)
 	return script, id, err
@@ -129,18 +123,17 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
-			return err
-		}
-
-		// Обновить данные о Сценарии в БД
-		log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
-		_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
-			scriptName, scriptSerialNumber, scriptsSuite, scriptId)
 		if err == nil {
-			log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
-		} else {
-			log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+
+			// Обновить данные о Сценарии в БД
+			log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
+			_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
+				scriptName, scriptSerialNumber, scriptsSuite, scriptId)
+			if err == nil {
+				log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
+			} else {
+				log.Debugf("Ошибка обновления данных Сценария '%s' в БД.", scriptName)
+			}
 		}
 		db.Close()
 	}
@@ -152,21 +145,25 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	var err error
 	suitsNameList := make([]string, 0, 0)
+	var name string
 	SetLogFormat()
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return suitsNameList, err }
+	if err == nil {
 
-	// Запрос имён Сюит
-	rows, err := db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY serial_number", groupName)
-	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
-	for rows.Next() {
-		var name string
-		err = rows.Scan(&name)
-		if err != nil {	panic(err) }	// TODO: Обработать и вывести в браузер
-		log.Debugf("rows.Next из таблицы tests_suits: %s",name)
-		suitsNameList = append(suitsNameList, name)		// Добавить в список
+		// Запрос имён Сюит
+		rows, _ := db.Query("")
+		rows, err = db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY serial_number", groupName)
+		if err == nil {
+			for rows.Next() {
+				err = rows.Scan(&name)
+				if err == nil {
+					log.Debugf("rows.Next из таблицы tests_suits: %s", name)
+					suitsNameList = append(suitsNameList, name) // Добавить в список
+				}
+			}
+		}
 	}
 	db.Close()
 	return suitsNameList, err
@@ -176,6 +173,7 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 
 	var err error
+	var id int
 	scriptsIdList := make([]int, 0, 0)
 
 	// Подключиться к БД
@@ -189,18 +187,14 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 
 				// Данные получить из результата запроса
 				for rows.Next() {
-					var id int
 					err = rows.Scan(&id)
 					if err == nil {
 						log.Debugf("rows.Next из таблицы tests_scripts: %d", id)
-
-						// Добавить в список имён
-						scriptsIdList = append(scriptsIdList, id)
+						scriptsIdList = append(scriptsIdList, id)		// Добавить в список имён
 					}
 				}
 			}
 		}
-
 	}
 	return scriptsIdList, err
 }
@@ -210,6 +204,7 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
 	var err error
 	var stepsList []models.Step
+	var script models.Script
 	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить только ID Сценариев для заданных Сюит
@@ -228,7 +223,6 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 				if err == nil {
 					// Данные получить из результата запроса
 					for rows.Next() {
-						var script models.Script
 						err = rows.Scan(&script.Id, &script.Name, &script.SerialNumber, &script.Suite)
 						if err == nil {
 
@@ -259,36 +253,28 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 // Получить список ВСЕХ сценариев
 func GetScriptList() ([]models.Script, error)  {
 
+	var script models.Script
+	var err error
 	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить все Шаги из БД
 	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
-	stepsList, err := GetStepsList(stepsList)
+	stepsList, err = GetStepsList(stepsList)
 
 	// Запрос всех Сценариев из БД
-	rows, err := db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
-	if err != nil {panic(err)}		// TODO: Обработать и вывести в браузер
+	rows, _ := db.Query("")
+	rows, err = db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
+	if err != nil {
 
-	// Данные получить из результата запроса
-	for rows.Next() {
-		var id int
-		var name string
-		var serial_number string
-		var name_suite string
-		err = rows.Scan(&id, &name, &serial_number, &name_suite)
-		if err != nil {
-			panic(err)			// TODO: Обработать и вывести в браузер
+		// Данные получить из результата запроса
+		for rows.Next() {
+			err = rows.Scan(&script.Id, &script.Name, &script.SerialNumber, &script.Suite)
+			if err == nil {
+				log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", script.Id, script.Name, script.SerialNumber, script.Suite)
+				scriptsList = append(scriptsList, script)
+				log.Debugf("Список сценариев: %v", scriptsList)
+			}
 		}
-		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", id, name, serial_number, name_suite)
-
-		// Заполнить Сценариями список Сценариев
-		var script models.Script
-		script.Id = id
-		script.Name = name
-		script.SerialNumber = serial_number
-		script.Suite = name_suite
-		scriptsList = append(scriptsList, script)
-		log.Debugf("Список сценариев: %v", scriptsList)
 	}
 	return scriptsList, err
 }
@@ -303,18 +289,17 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	return stepsScriptName, scripsSuiteName, err }
-
-	// Данные по Сценарию из БД
-	log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
-	rows := db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId)
-
-	// Получить данные из результата запроса
-	err = rows.Scan(&stepsScriptName, &scripsSuiteName)
 	if err != nil {
-		log.Debugf("Ошибка при получении данных из БД по Сценарию с Id='%s'.", ScriptId)
-	} else {
-		log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
+
+		// Данные по Сценарию из БД
+		log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
+		err = db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId).Scan(&stepsScriptName, &scripsSuiteName)
+
+		if err != nil {
+			log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s'.", ScriptId)
+		} else {
+			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
+		}
 	}
 	return stepsScriptName, scripsSuiteName, err
 }

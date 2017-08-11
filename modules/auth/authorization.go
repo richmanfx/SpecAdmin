@@ -142,7 +142,7 @@ func Authorization(context *gin.Context)  {
 				"title": 		"Ошибка",
 				"message1": 	"",
 				"message2": 	"Ошибка авторизации - неверный логин/пароль.",
-				"message3": 	"",
+				"message3": 	err,
 				"Version":		handlers.Version,
 			},
 		)

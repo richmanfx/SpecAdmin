@@ -90,7 +90,7 @@ func ShowSuitesIndex(context *gin.Context)  {
 
 	if err == nil {
 		// Путь к сриншотам
-		screenShotsPath = helpers.GetScreenShotsPath()
+		screenShotsPath, err = helpers.GetScreenShotsPath()
 	}
 
 	if err == nil {
