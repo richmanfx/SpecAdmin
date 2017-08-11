@@ -21,21 +21,26 @@ func dbConnect() error {
 
 	SetLogFormat()
 
+
+	// Проверка соединения с БД
+	log.Debugf("Состояние соединения с БД перед подключением => db: '%v'", db)
+
 	// Соединение с БД
-	log.Debugf("Соединение с БД")
+	log.Debugf("Подключение к БД")
 	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8&parseTime=true")
 	if err != nil {
-		log.Errorf("Ошибка соединение с БД", err)
+		log.Errorf("Ошибка подключения к БД: '%v'", err)
 		return err
 	}
 
 	// Проверка соединения с БД
-	log.Debugf("Проверка соединения с БД")
+	log.Debugf("Проверка соединения с БД после ")
 	err = db.Ping()
 	if err != nil {
-		log.Errorf("Ошибка проверки соединения с БД", err)
+		log.Errorf("Ошибка проверки соединения с БД после подключения (db.Ping): '%v'", err)
 		return err
 	}
+
 	return nil
 }
 
@@ -145,6 +150,17 @@ func GetSaltFromDb(userName string) (string, error) {
 	db.Close()
 	return salt, err
 }
+
+
+func ConnectToDB() error {
+	return dbConnect()
+}
+
+func CloseConnectToDB() error {
+	return db.Close()
+}
+
+
 
 
 // Получить хеш из БД для заданного пользователя

@@ -101,7 +101,7 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 
 	err = rows.Scan(&id, &serialNumber)
 	if err != nil {
-		log.Debugf("Ошибка при получении данных по Сценарию '%s' Сюиты '%s' из БД.", scriptsName, scriptsSuiteName)
+		log.Errorf("Ошибка при получении данных по Сценарию '%s' Сюиты '%s' из БД.", scriptsName, scriptsSuiteName)
 	} else {
 		log.Debugf("rows.Next из таблицы tests_scripts: %d, %s, %s", id, serialNumber, scriptsSuiteName)
 
@@ -168,83 +168,89 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 		log.Debugf("rows.Next из таблицы tests_suits: %s",name)
 		suitsNameList = append(suitsNameList, name)		// Добавить в список
 	}
-
+	db.Close()
 	return suitsNameList, err
 }
 
 // Получить только ID Сценариев для заданных Сюит
-func GetScriptIdList(suitsNameFromGroup []string) ([]int) {
+func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
+
+	var err error
 	scriptsIdList := make([]int, 0, 0)
 
-	for _, suiteName := range suitsNameFromGroup {
+	// Подключиться к БД
+	err = dbConnect()
+	if err == nil {
 
-		rows, err := db.Query("SELECT id FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
-		if err != nil {	panic(err) } // TODO: Обработать и вывести в браузер
+		for _, suiteName := range suitsNameFromGroup {
+			rows, _ := db.Query("") // Костыль - пока не понял как объявить отдельно
+			rows, err = db.Query("SELECT id FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
+			if err == nil {
 
-		// Данные получить из результата запроса
-		for rows.Next() {
-			var id int
-			err = rows.Scan(&id)
-			if err != nil {	panic(err) }	// TODO: Обработать и вывести в браузер
-			log.Debugf("rows.Next из таблицы tests_scripts: %d", id)
+				// Данные получить из результата запроса
+				for rows.Next() {
+					var id int
+					err = rows.Scan(&id)
+					if err == nil {
+						log.Debugf("rows.Next из таблицы tests_scripts: %d", id)
 
-			// Добавить в список имён
-			scriptsIdList = append(scriptsIdList, id)
+						// Добавить в список имён
+						scriptsIdList = append(scriptsIdList, id)
+					}
+				}
+			}
 		}
+
 	}
-	return scriptsIdList
+	return scriptsIdList, err
 }
 
 
 // Получить Сценарии только для заданных Сюит
 func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
 	var err error
+	var stepsList []models.Step
 	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить только ID Сценариев для заданных Сюит
-	scriptsIdList := GetScriptIdList(suitsNameFromGroup) // TODO: Возвращать ещё и err?
+	scriptsIdList, err := GetScriptIdList(suitsNameFromGroup)
+	if err == nil {
 
-	// Получить Шаги из БД только для заданных по ID Сценариев
-	stepsList, err := GetStepsListForSpecifiedScripts(scriptsIdList)
+		// Получить Шаги из БД только для заданных по ID Сценариев
+		stepsList, err = GetStepsListForSpecifiedScripts(scriptsIdList)
+		if err == nil {
 
-	// Запрос Сценариев заданных Сюит из БД
-	for _, suiteName := range suitsNameFromGroup {
-		rows, err := db.Query(
-			"SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number",
-			suiteName)
-		if err != nil {	panic(err) } // TODO: Обработать и вывести в браузер
+			// Запрос Сценариев заданных Сюит из БД
+			for _, suiteName := range suitsNameFromGroup {
+				rows, _ := db.Query("")		// Костыль - пока не понял как обявить отдельно
+				rows, err = db.Query(
+					"SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
+				if err == nil {
+					// Данные получить из результата запроса
+					for rows.Next() {
+						var script models.Script
+						err = rows.Scan(&script.Id, &script.Name, &script.SerialNumber, &script.Suite)
+						if err == nil {
 
-		// Данные получить из результата запроса
-		for rows.Next() {
-			var id int
-			var name string
-			var serial_number string
-			var name_suite string
-			err = rows.Scan(&id, &name, &serial_number, &name_suite)
-			if err != nil {
-				panic(err)			// TODO: Обработать и вывести в браузер
-			}
-			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", id, name, serial_number, name_suite)
+							log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", script.Id, script.Name, script.SerialNumber, script.Suite)
 
-			var script models.Script
-			script.Id = id
-			script.Name = name
-			script.SerialNumber = serial_number
-			script.Suite = name_suite
+							// Закинуть Шаги в Сценарий
+							for _, step := range stepsList {
+								if step.ScriptsId == script.Id { // Если Шаг принадлежит Сценарию, то добавляем его
+									script.Steps = append(script.Steps, step)
+									log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+								} else {
+									log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+								}
+							}
 
-			// Закинуть Шаги в Сценарий
-				for _, step := range stepsList {
-					if step.ScriptsId == script.Id {	// Если Шаг принадлежит Сценарию, то добавляем его
-						script.Steps = append(script.Steps, step)
-						log.Debugf("Добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
-					} else {
-						log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
+							scriptsList = append(scriptsList, script) // Добавить сценарий в список
+						}
+						log.Debugf("Список сценариев: %v", scriptsList)
 					}
 				}
-
-			scriptsList = append(scriptsList, script)	// Добавить сценарий в список
+			}
 		}
-		log.Debugf("Список сценариев: %v", scriptsList)
 	}
 	return scriptsList, err
 }

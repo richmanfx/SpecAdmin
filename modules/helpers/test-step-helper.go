@@ -186,6 +186,10 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 	var err error
 	stepsList := make([]models.Step, 0, 0) // Слайс из Шагов
 
+	// Подключиться к БД
+	err = dbConnect()
+	if err != nil {	return stepsList, err }
+
 	for _, scriptsId := range scriptsIdList {
 		rows, err := db.Query(
 			"SELECT id,name,serial_number,description,expected_result,screen_shot_file_name,script_id FROM tests_steps WHERE script_id=? ORDER BY serial_number",
@@ -194,32 +198,16 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 
 		// Получить данные из результата запроса
 		for rows.Next() {
-			var stepsId int
-			var stepsName string
-			var stepsSerialNumber int
-			var stepsDescription string
-			var stepsExpectedResult string
-			var stepsScreenShotsFileName string
-			var stepsScriptId int
-			err = rows.Scan(&stepsId, &stepsName, &stepsSerialNumber, &stepsDescription, &stepsExpectedResult, &stepsScreenShotsFileName, &stepsScriptId)
+			var step models.Step
+			err = rows.Scan(&step.Id, &step.Name, &step.SerialNumber, &step.Description, &step.ExpectedResult, &step.ScreenShotFileName, &step.ScriptsId)
 			if err != nil {panic(err)}
 			log.Debugf("rows.Next из таблицы tests_steps: %d, %s, %d, %s, %s, %s, %d",
-				stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotsFileName, stepsScriptId)
-
-			// Заполнить Шагами список Шагов
-			var step models.Step
-			step.Id = stepsId
-			step.Name = stepsName
-			step.SerialNumber = stepsSerialNumber
-			step.Description = stepsDescription
-			step.ExpectedResult = stepsExpectedResult
-			step.ScreenShotFileName = stepsScreenShotsFileName
-			step.ScriptsId = stepsScriptId
-			stepsList = append(stepsList, step)
+				step.Id, step.Name, step.SerialNumber, step.Description, step.ExpectedResult, step.ScreenShotFileName, step.ScriptsId)
+			stepsList = append(stepsList, step)		// Добавить шаг в список
 		}
 		log.Debugf("Список Шагов: %v", stepsList)
 	}
-
+	//db.Close()
 	return stepsList, err
 }
 

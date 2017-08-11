@@ -38,37 +38,30 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 
 		// Получить данные из результата запроса
 		for rows.Next() {
-			var name string
-			var description string
-			var serial_number string
-			err = rows.Scan(&name, &description, &serial_number)
-			if err != nil {
-				panic(err)
-			}
-			log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", name, description, serial_number)
+			var innerSuite models.Suite
+			err = rows.Scan(&innerSuite.Name, &innerSuite.Description, &innerSuite.SerialNumber)
+			if err == nil {
+				log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", innerSuite.Name, innerSuite.Description, innerSuite.SerialNumber)
 
-			// Заполнить Сюитами список Сюит
-			var suite models.Suite
-			suite.Name = name
-			suite.Description = description
-			suite.SerialNumber = serial_number
-			suite.Group = groupName
+				// Заполнить Сюитами список Сюит
+				innerSuite.Group = groupName
 
-			// Закинуть Сценарии в соответствующие Сюиты
-			for _, script := range scriptsList { // Бежать по всем сценариям
-				if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-					suite.Scripts = append(suite.Scripts, script)
-					log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-				} else {
-					log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+				// Закинуть Сценарии в соответствующие Сюиты
+				for _, script := range scriptsList { // Бежать по всем сценариям
+					if script.Suite == innerSuite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
+						innerSuite.Scripts = append(innerSuite.Scripts, script)
+						log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, innerSuite.Name)
+					} else {
+						log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, innerSuite.Name)
+					}
 				}
-			}
 
-			// Добавить Сюиту в список
-			suitesList = append(suitesList, suite)
+				// Добавить Сюиту в список
+				suitesList = append(suitesList, innerSuite)
+			}
 		}
 	}
-	db.Close()
+	//db.Close()
 	log.Debugf("Список Сюит: '%v'", suitesList)
 	return suitesList, err
 }

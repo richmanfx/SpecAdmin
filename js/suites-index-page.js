@@ -159,7 +159,7 @@ $('a#id_print_steps').on('click', function () {
     $.ajax({
         async: false,
         type: 'POST',
-        url: '/spec-admin/get-scripts-id',
+        url: '/spec-admin/print-scripts-steps',
         data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
         success: function(answerFromServer){
             scriptId = answerFromServer.scriptId;
@@ -170,19 +170,19 @@ $('a#id_print_steps').on('click', function () {
         }
     });
 
-    // Получить список шагов сценария по его 'script_id'
-    $.ajax({
-        async: false,
-        type: 'POST',
-        url: '/spec-admin/get-steps-from-script',
-        data: 'scriptId=' + scriptId,
-        success: function(answerFromServer){
-            alert(answerFromServer)
-        },
-        error: function(){
-            alert("Ошибка при ответе на AJAX POST запрос получения всех шагов сценария");
-        }
-    });
+    // // Получить список шагов сценария по его 'script_id'
+    // $.ajax({
+    //     async: false,
+    //     type: 'POST',
+    //     url: '/spec-admin/get-steps-from-script',
+    //     data: 'scriptId=' + scriptId,
+    //     success: function(answerFromServer){
+    //         alert(answerFromServer)
+    //     },
+    //     error: function(){
+    //         alert("Ошибка при ответе на AJAX POST запрос получения всех шагов сценария");
+    //     }
+    // });
 
     return false;
 });
