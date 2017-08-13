@@ -24,12 +24,16 @@ func AuthRequired() gin.HandlerFunc {
 
 		// Получить отдельные куки
 		var splitCookie map[string]string
-		splitCookie = GetSplitCookie(cookies.(string))
-		log.Debugf("Разделённые Куки из браузера: '%v'", splitCookie)
+		var sessidExist bool
 
-		// Если Кук нет или если 'sessid' в БД не нашёлся, то на страницу авторизации
-		sessidValue := splitCookie["sessid"]
-		sessidExist := helpers.SessionIdExistInBD(sessidValue)
+		if cookies != nil {		// Если кук совсем нет
+			splitCookie = GetSplitCookie(cookies.(string))
+			log.Debugf("Разделённые Куки из браузера: '%v'", splitCookie)
+
+			// Если Кук нет или если 'sessid' в БД не нашёлся, то на страницу авторизации
+			sessidValue := splitCookie["sessid"]
+			sessidExist = helpers.SessionIdExistInBD(sessidValue)
+		}
 
 		if len(splitCookie) == 0 {
 			log.Debugln("Кук из браузера нет.")
