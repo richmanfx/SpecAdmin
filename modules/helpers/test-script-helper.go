@@ -217,7 +217,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 
 			// Запрос Сценариев заданных Сюит из БД
 			for _, suiteName := range suitsNameFromGroup {
-				rows, _ := db.Query("")		// Костыль - пока не понял как обявить отдельно
+				rows, _ := db.Query("")		// Костыль - пока не понял как объявить отдельно
 				rows, err = db.Query(
 					"SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
 				if err == nil {

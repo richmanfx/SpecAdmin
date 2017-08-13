@@ -38,27 +38,27 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 			suiteName)
 
 		// Получить данные из результата запроса
+		var suite models.Suite
 		for rows.Next() {
-			var innerSuite models.Suite
-			err = rows.Scan(&innerSuite.Name, &innerSuite.Description, &innerSuite.SerialNumber)
+			err = rows.Scan(&suite.Name, &suite.Description, &suite.SerialNumber)
 			if err == nil {
-				log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", innerSuite.Name, innerSuite.Description, innerSuite.SerialNumber)
+				log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", suite.Name, suite.Description, suite.SerialNumber)
 
 				// Заполнить Сюитами список Сюит
-				innerSuite.Group = groupName
+				suite.Group = groupName
 
 				// Закинуть Сценарии в соответствующие Сюиты
 				for _, script := range scriptsList { // Бежать по всем сценариям
-					if script.Suite == innerSuite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-						innerSuite.Scripts = append(innerSuite.Scripts, script)
-						log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, innerSuite.Name)
+					if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
+						suite.Scripts = append(suite.Scripts, script)
+						log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
 					} else {
-						log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, innerSuite.Name)
+						log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
 					}
 				}
 
 				// Добавить Сюиту в список
-				suitesList = append(suitesList, innerSuite)
+				suitesList = append(suitesList, suite)
 			}
 		}
 	}

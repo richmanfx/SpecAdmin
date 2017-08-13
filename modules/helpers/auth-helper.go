@@ -213,17 +213,14 @@ func GetUsers() ([]models.User, error) {
 		}
 
 		// Данные получить из результата запроса
+		var user models.User
 		for rows.Next() {
-			var user models.User
 			err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit,
 				&user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
-			if err != nil {
-				panic(err)
+			if err == nil {
+				log.Debugf("User из таблицы user: %v", user)
+				usersList = append(usersList, user)		// Заполнить пользователями список пользователей
 			}
-			log.Debugf("User из таблицы user: %v", user)
-
-			// Заполнить пользователями список пользователей
-			usersList = append(usersList, user)
 		}
 	}
 	db.Close()

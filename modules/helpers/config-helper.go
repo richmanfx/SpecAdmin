@@ -31,7 +31,6 @@ func GetConfig() ([]models.Option, error) {
 			for rows.Next() {
 				err = rows.Scan(&option.Id, &option.Name, &option.Value)
 				log.Debugf("rows.Next из таблицы configuration: %d %s %s", option.Id, option.Name, option.Value)
-
 				config = append(config, option)
 			}
 		}

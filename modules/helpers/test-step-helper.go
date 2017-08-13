@@ -154,24 +154,12 @@ func GetStepsList(stepsList []models.Step) ([]models.Step, error)  {
 	if err != nil {panic(err)}
 
 	// Получить данные из результата запроса
+	var step models.Step
 	for rows.Next() {
-		var stepsId int
-		var stepsName string
-		var stepsSerialNumber int
-		var stepsDescription string
-		var stepsExpectedResult string
-		err = rows.Scan(&stepsId, &stepsName, &stepsSerialNumber, &stepsDescription, &stepsExpectedResult)
+		err = rows.Scan(&step.Id, &step.Name, &step.SerialNumber, &step.Description, &step.ExpectedResult)
 		if err != nil {panic(err)}
 		log.Debugf("rows.Next из таблицы tests_steps: %s, %s, %d, %s, %s",
-			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
-
-		// Заполнить Шагами список Шагов
-		var step models.Step
-		step.Id = stepsId
-		step.Name = stepsName
-		step.SerialNumber = stepsSerialNumber
-		step.Description = stepsDescription
-		step.ExpectedResult = stepsExpectedResult
+			step.Id, step.Name, step.SerialNumber, step.Description, step.ExpectedResult)
 		stepsList = append(stepsList, step)
 	}
 	log.Debugf("Список Шагов: %v", stepsList)
@@ -192,18 +180,21 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 		rows, err := db.Query(
 			"SELECT id,name,serial_number,description,expected_result,screen_shot_file_name,script_id FROM tests_steps WHERE script_id=? ORDER BY serial_number",
 			scriptsId)
-		if err != nil {	panic(err) }	// TODO: Выводить в браузер ошибку
+		if err == nil {
 
-		// Получить данные из результата запроса
-		for rows.Next() {
+			// Получить данные из результата запроса
 			var step models.Step
-			err = rows.Scan(&step.Id, &step.Name, &step.SerialNumber, &step.Description, &step.ExpectedResult, &step.ScreenShotFileName, &step.ScriptsId)
-			if err != nil {panic(err)}
-			log.Debugf("rows.Next из таблицы tests_steps: %d, %s, %d, %s, %s, %s, %d",
-				step.Id, step.Name, step.SerialNumber, step.Description, step.ExpectedResult, step.ScreenShotFileName, step.ScriptsId)
-			stepsList = append(stepsList, step)		// Добавить шаг в список
+			for rows.Next() {
+				err = rows.Scan(&step.Id, &step.Name, &step.SerialNumber, &step.Description, &step.ExpectedResult, &step.ScreenShotFileName, &step.ScriptsId)
+				if err != nil {
+					panic(err)
+				}
+				log.Debugf("rows.Next из таблицы tests_steps: %d, %s, %d, %s, %s, %s, %d",
+					step.Id, step.Name, step.SerialNumber, step.Description, step.ExpectedResult, step.ScreenShotFileName, step.ScriptsId)
+				stepsList = append(stepsList, step) // Добавить шаг в список
+			}
+			log.Debugf("Список Шагов: %v", stepsList)
 		}
-		log.Debugf("Список Шагов: %v", stepsList)
 	}
 	//db.Close()
 	return stepsList, err

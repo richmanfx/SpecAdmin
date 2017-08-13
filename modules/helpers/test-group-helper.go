@@ -22,15 +22,14 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 		if err == nil {
 
 			// Данные получить из результата запроса
+			var group models.Group
 			for rows.Next() {
-				var group models.Group
 				err = rows.Scan(&group.Name)
 				if err == nil {
 					log.Debugf("rows.Next из таблицы tests_groups: %s", group.Name)
 					groupList = append(groupList, group)
 				}
 			}
-
 		}
 	}
 	db.Close()
