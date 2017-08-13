@@ -300,16 +300,16 @@ func UpdateAfterEditStep(context *gin.Context)  {
 // Вернуть параметры Шага (AJAX)
 func GetStepsOptions(context *gin.Context)  {
 	helpers.SetLogFormat()
-	log.Debugln("Пришёл запрос в GetStepsOptions")
+	log.Infoln("Пришёл запрос в GetStepsOptions")
 
 	// Данные из AJAX запроса
 	stepsScriptsId, err := strconv.Atoi(context.PostForm("ScriptsId"))
-	log.Debugf("Данные из POST запроса AJAX: stepsScriptsId='%d'", stepsScriptsId)
+	log.Infof("Данные из POST запроса AJAX: stepsScriptsId='%d'", stepsScriptsId)
 	if err != nil { panic(err) }
 
 	// Данные о Шаге из БД
 	stepsScriptName, scripsSuiteName, err := helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
-	log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
+	log.Infof("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
 
 	if err == nil {
 		result := gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName}

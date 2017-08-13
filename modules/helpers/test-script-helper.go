@@ -289,7 +289,7 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
+	if err == nil {
 
 		// Данные по Сценарию из БД
 		log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
