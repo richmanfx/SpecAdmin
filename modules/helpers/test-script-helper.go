@@ -144,8 +144,9 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 // Получить список имён Сюит в заданной Группе
 func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	var err error
-	suitsNameList := make([]string, 0, 0)
 	var name string
+	var rows *sql.Rows
+	suitsNameList := make([]string, 0, 0)
 	SetLogFormat()
 
 	// Подключиться к БД
@@ -153,7 +154,6 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 	if err == nil {
 
 		// Запрос имён Сюит
-		rows, _ := db.Query("")
 		rows, err = db.Query("SELECT name FROM tests_suits WHERE name_group=? ORDER BY serial_number", groupName)
 		if err == nil {
 			for rows.Next() {
@@ -174,6 +174,7 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 
 	var err error
 	var id int
+	var rows *sql.Rows
 	scriptsIdList := make([]int, 0, 0)
 
 	// Подключиться к БД
@@ -181,7 +182,6 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 	if err == nil {
 
 		for _, suiteName := range suitsNameFromGroup {
-			rows, _ := db.Query("") // Костыль - пока не понял как объявить отдельно
 			rows, err = db.Query("SELECT id FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
 			if err == nil {
 
@@ -205,6 +205,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 	var err error
 	var stepsList []models.Step
 	var script models.Script
+	var rows *sql.Rows
 	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить только ID Сценариев для заданных Сюит
@@ -217,7 +218,6 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 
 			// Запрос Сценариев заданных Сюит из БД
 			for _, suiteName := range suitsNameFromGroup {
-				rows, _ := db.Query("")		// Костыль - пока не понял как объявить отдельно
 				rows, err = db.Query(
 					"SELECT id, name, serial_number, name_suite FROM tests_scripts WHERE name_suite=? ORDER BY serial_number", suiteName)
 				if err == nil {
@@ -255,6 +255,7 @@ func GetScriptList() ([]models.Script, error)  {
 
 	var script models.Script
 	var err error
+	var rows *sql.Rows
 	scriptsList := make([]models.Script, 0, 0)
 
 	// Получить все Шаги из БД
@@ -262,7 +263,6 @@ func GetScriptList() ([]models.Script, error)  {
 	stepsList, err = GetStepsList(stepsList)
 
 	// Запрос всех Сценариев из БД
-	rows, _ := db.Query("")
 	rows, err = db.Query("SELECT id, name, serial_number, name_suite FROM tests_scripts ORDER BY serial_number")
 	if err != nil {
 

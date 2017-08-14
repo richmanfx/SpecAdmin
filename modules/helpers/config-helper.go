@@ -7,11 +7,13 @@ import (
 	"io/ioutil"
 	"fmt"
 	"os"
+	"database/sql"
 )
 
 // Получить из БД конфигурационные данные
 func GetConfig() ([]models.Option, error) {
 	var err error
+	var rows *sql.Rows
 	var option models.Option
 	config := make([]models.Option, 0, 0)
 	SetLogFormat()
@@ -22,7 +24,6 @@ func GetConfig() ([]models.Option, error) {
 
 		// Получить из БД конфигурационные параметры
 		log.Debugln("Получение конфигурационных параметров из БД.")
-		rows, _ := db.Query("")		// Костыль
 		rows, err = db.Query("SELECT * FROM configuration ORDER BY id")
 
 		if err == nil {
@@ -125,13 +126,13 @@ func GetUnusedScreenShotsFileName() ([]string, error) {
 // Получить все используемые имена файлов скриншотов
 func GetScreenShotsFileName() ([]string, error) {
 	var err error
+	var rows *sql.Rows
 	usedScreenShotsFileNameList := make([]string, 0, 0)
 	SetLogFormat()
 
 	// Подключиться к БД
 	err = dbConnect()
 	if err == nil {
-		rows, _ := db.Query("")		// Накостылил
 		rows, err = db.Query("SELECT screen_shot_file_name FROM tests_steps ORDER BY screen_shot_file_name")
 
 		if err == nil {

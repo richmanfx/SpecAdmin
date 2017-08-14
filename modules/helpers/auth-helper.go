@@ -62,7 +62,6 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 		}
 	}
 	db.Close()
-
 	return sessidExist
 }
 
@@ -90,6 +89,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при сохранении Сессии в БД: '%v'", err)}
 	return err
 }
 
@@ -120,6 +120,7 @@ func CreateUserInDb(user models.User) error {
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при создании пользователя в БД: '%v'", err)}
 	return err
 }
 
@@ -148,6 +149,7 @@ func SaveUserInDb(user models.User) error {
 	}
 
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)}
 	return err
 }
 
@@ -177,18 +179,18 @@ func DeleteUserInDb(user models.User) error {
 				affected, err = result.RowsAffected()
 
 				if err == nil {
-					if affected == 0 {
-						log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
-						return err
+					if affected > 0 {
+						log.Debugf("Удалено строк в БД: %d", affected)
+					} else {
+						err = fmt.Errorf("Ошибка удаления пользователя '%s' - не удалено ни одной строки в БД.", user.Login)
 					}
-					log.Debugf("Удалено строк в БД: %d", affected)
+
 				}
-			} else {
-				log.Errorf("Ошибка удаления пользователя '%s'", user.Login)
 			}
 		}
 		db.Close()
 	}
+	if err != nil {log.Errorf("Ошибка при удалении пользователя '%s' в БД: '%v'", user.Login, err)}
 	return err
 }
 
@@ -198,6 +200,7 @@ func DeleteUserInDb(user models.User) error {
 func GetUsers() ([]models.User, error) {
 
 	var err error
+	var rows *sql.Rows
 	usersList := make([]models.User, 0, 0)
 
 	// Подключиться к БД
@@ -205,7 +208,6 @@ func GetUsers() ([]models.User, error) {
 	if err != nil {
 
 		// Считать
-		rows, _ := db.Query("")		// Накостылил пока
 		rows, err = db.Query(
 			"SELECT login, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission FROM user ORDER BY login")
 		if err != nil {
@@ -224,6 +226,7 @@ func GetUsers() ([]models.User, error) {
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при считывании из БД всех пользователей: '%v'", err)}
 	return usersList, err
 }
 
@@ -246,12 +249,6 @@ func ValidatePassword(userName, oldPassword string) error {
 		newHash := CreateHash(oldPassword, salt)
 		log.Debugf("Хеш с Солью: '%s'", newHash)
 
-		//// Подключиться к БД
-		//err = dbConnect()
-		//if err != nil {
-		//	panic(err)
-		//}
-
 		// Получить старый Хеш из БД
 		oldHash, err = GetHashFromDb(userName)
 		log.Debugf("Хеш из БД: '%s'", oldHash)
@@ -264,8 +261,8 @@ func ValidatePassword(userName, oldPassword string) error {
 			}
 		}
 	}
-
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при проверке пароля: '%v'", err)}
 	return err
 }
 
@@ -300,11 +297,12 @@ func SavePassword(userName, newPassword string) error {
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка записи в БД нового пароля пользователя: '%v'", err)}
 	return err
 }
 
 
-// Проверить пароль по Хешу в БД
+// Проверить пароль по Хешу из БД
 func CheckPasswordInDB(login, password string) error {
 
 	// Получить Соль из БД
@@ -330,6 +328,7 @@ func CheckPasswordInDB(login, password string) error {
 			}
 		}
 	}
+	if err != nil {log.Errorf("Ошибка при проверке пароля по Хешу из БД: '%v'", err)}
 	return err
 }
 
@@ -352,11 +351,11 @@ func CheckUserInDB(login string) error {
 		if err == nil {
 			log.Debugf("Пользователь '%s' существует", login)
 		} else {
-			log.Errorf("Пользователь '%s' в БД не существует", login)
 			err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)}
 	return err
 }
 
@@ -374,31 +373,30 @@ func DeleteSession(userName string) error {
 		// Удалить сессию в БД
 		result, err = db.Exec("DELETE FROM sessions WHERE user=?", userName)
 
-		if err != nil {
-			log.Errorf("Ошибка удаления сессии пользователя '%s'", userName)
-			return err
-		} else {
+		if err == nil {
 			var affected int64
 			affected, err = result.RowsAffected()
 
 			if err == nil {
-				if affected == 0 {
-					log.Errorf("Ошибка удаления сессии пользователя '%s'", userName)
-					return err
+				if affected > 0 {
+					log.Debugf("Удалено %d строк из таблицы 'sessions'", affected)
+				} else {
+					err = fmt.Errorf("Ошибка удаления сессии пользователя '%s' - не удалено ни одной строки из БД.", userName)
 				}
-				log.Debugf("Удалено %d строк из таблицы 'sessions'", affected)
+
 			}
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка удаления сессии пользователя '%s' из БД: '%v'", userName, err)}
 	return err
 }
 
 
 // Проверить заданный пермишен у пользователя
 func CheckOneUserPermission(login string, permission string) error {
-
 	var err error
+	var stmt *sql.Stmt
 
 	// А существует ли пользователь?
 	err = CheckUserInDB(login)
@@ -410,7 +408,6 @@ func CheckOneUserPermission(login string, permission string) error {
 		if err == nil {
 
 			// Считать из БД
-			stmt, _ := db.Prepare("")	// Накостылил - По другому не с мог определить переменную :-)
 			requestString := fmt.Sprintf("SELECT %s FROM user WHERE login=?", permission)
 			stmt, err = db.Prepare(requestString)
 			requestResult := stmt.QueryRow(login)
@@ -422,7 +419,7 @@ func CheckOneUserPermission(login string, permission string) error {
 			if err == nil {
 				if permissionFromDB == "0" {
 					err = fmt.Errorf("У пользователя '%s' недостаточно прав", login)
-					log.Debugf("У пользователя '%s' недостаточно прав", login)
+					log.Errorf("У пользователя '%s' недостаточно прав", login)
 				} else {
 					log.Debugf("У пользователя '%s' есть права '%s'", login, permission)
 				}
@@ -430,6 +427,7 @@ func CheckOneUserPermission(login string, permission string) error {
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)}
 	return err
 }
 
