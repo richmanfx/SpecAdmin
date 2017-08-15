@@ -31,12 +31,15 @@ func GetConfig() ([]models.Option, error) {
 
 			for rows.Next() {
 				err = rows.Scan(&option.Id, &option.Name, &option.Value)
-				log.Debugf("rows.Next из таблицы configuration: %d %s %s", option.Id, option.Name, option.Value)
-				config = append(config, option)
+				if err == nil {
+					log.Debugf("rows.Next из таблицы configuration: %d %s %s", option.Id, option.Name, option.Value)
+					config = append(config, option)
+				}
 			}
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)}
 	return config, err
 }
 
@@ -59,11 +62,10 @@ func SaveConfig(screenShotPath string) error {
 
 		if err == nil {
 			log.Debugln("Конфигурационные параметры успешно сохранены в БД.")
-		} else {
-			log.Errorln("Ошибка при сохранении конфигурационных параметров в БД.")
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)}
 	return err
 }
 
@@ -83,6 +85,7 @@ func GetScreenShotsPath() (string, error) {
 			}
 		}
 	}
+	if err != nil {log.Errorf("Ошибка при получении пути к скриншотам: '%v'", err)}
 	return screenShotsPath, err
 }
 
@@ -94,16 +97,11 @@ func GetUnusedScreenShotsFileName() ([]string, error) {
 
 	// Получить все используемые имена файлов скриншотов
 	usedScreenShotsFileNameList, err := GetScreenShotsFileName()
-	if err != nil {
-		log.Errorln("Ошибка при получении списка используемых имён файлов скриншотов из БД.")
-	} else {
-
+	if err == nil {
 		// Получить список имён файлов из хранилища
 		var screenShotsFileNameInRepositoryList []string
 		screenShotsFileNameInRepositoryList, err = GetScreenShotsFileNameInRepositoryList()
-		if err != nil {
-			log.Errorln("Ошибка при получении списка имён файлов скриншотов в хранилище.")
-		} else {
+		if err == nil {
 			// Скрыжить имена файлов из хранилища и из БД
 			for _, inRepoFileName := range screenShotsFileNameInRepositoryList {
 				var matchesFlag bool = false
@@ -119,6 +117,7 @@ func GetUnusedScreenShotsFileName() ([]string, error) {
 			}
 		}
 	}
+	if err != nil {log.Errorf("Ошибка при получении списка имён файлов скриншотов в хранилище: '%v'", err)}
 	return  unusedScreenShotsFileNameList, err
 }
 
@@ -140,14 +139,17 @@ func GetScreenShotsFileName() ([]string, error) {
 			var usedScreenShotsFileName string
 			for rows.Next() {
 				err = rows.Scan(&usedScreenShotsFileName)
-				log.Debugf("rows.Next из таблицы tests_steps: %s", usedScreenShotsFileName)
+				if err == nil {
+					log.Debugf("rows.Next из таблицы tests_steps: %s", usedScreenShotsFileName)
 
-				// Дополнить список файлов
-				usedScreenShotsFileNameList = append(usedScreenShotsFileNameList, usedScreenShotsFileName)
+					// Дополнить список файлов
+					usedScreenShotsFileNameList = append(usedScreenShotsFileNameList, usedScreenShotsFileName)
+				}
 			}
 		}
 	}
 	db.Close()
+	if err != nil {log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)}
 	return usedScreenShotsFileNameList, err
 }
 
@@ -163,18 +165,17 @@ func GetScreenShotsFileNameInRepositoryList() ([]string, error) {
 
 	// Получить Путь к скриншотам
 	screenShotsPath, err = GetScreenShotsPath()
-
-	// Получить список файлов
-	files, err = ioutil.ReadDir(screenShotsPath)
 	if err == nil {
-		for _, file := range files {
-			fmt.Println(file.Name())
-			inRepositoryScreenShotsFileNameList = append(inRepositoryScreenShotsFileNameList, file.Name())
+		// Получить список файлов
+		files, err = ioutil.ReadDir(screenShotsPath)
+		if err == nil {
+			for _, file := range files {
+				fmt.Println(file.Name())
+				inRepositoryScreenShotsFileNameList = append(inRepositoryScreenShotsFileNameList, file.Name())
+			}
+			log.Debugf("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
 		}
-	} else {
-		log.Errorf("Ошибка при получении списка имён файлов из директории '%s'.", screenShotsPath)
 	}
-
-	log.Debugf("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
+	if err != nil {log.Errorf("Ошибка при получении списка имён файлов из директории '%s': '%v'", screenShotsPath, err)}
 	return inRepositoryScreenShotsFileNameList, err
 }

@@ -25,20 +25,13 @@ func dbConnect() error {
 	// Соединение с БД
 	log.Debugf("Подключение к БД")
 	db, err = sql.Open("mysql", "specuser:Ghashiz7@tcp(localhost:3306)/specadmin?charset=utf8&parseTime=true")
-	if err != nil {
-		log.Errorf("Ошибка подключения к БД: '%v'", err)
-		return err
+	if err == nil {
+		// Проверка соединения с БД
+		log.Debugf("Проверка соединения с БД после ")
+		err = db.Ping()
 	}
-
-	// Проверка соединения с БД
-	log.Debugf("Проверка соединения с БД после ")
-	err = db.Ping()
-	if err != nil {
-		log.Errorf("Ошибка проверки соединения с БД после подключения (db.Ping): '%v'", err)
-		return err
-	}
-
-	return nil
+	if err != nil { log.Errorf("Ошибка подключения к БД: '%v'", err) }
+	return err
 }
 
 
@@ -68,36 +61,45 @@ func GetStatistic() (models.Statistic, error) {
 		// Количество Групп тестов
 		requestResult := db.QueryRow("SELECT COUNT(*) FROM tests_groups")
 		err = requestResult.Scan(&statistic.GroupsQuantity)
-		log.Debugf("Количество Групп: '%d'", statistic.GroupsQuantity)
-		if statistic.GroupsQuantity == 0 {
-			log.Errorln("Нет Групп в таблице 'tests_groups'")
-		}
+		if err == nil {
+			log.Debugf("Количество Групп: '%d'", statistic.GroupsQuantity)
+			if statistic.GroupsQuantity == 0 {
+				log.Errorln("Нет Групп в таблице 'tests_groups'")
+			}
 
-		// Количество Сюит тестов
-		requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_suits")
-		err = requestResult.Scan(&statistic.SuitesQuantity)
-		log.Debugf("Количество Сюит: '%d'", statistic.SuitesQuantity)
-		if statistic.SuitesQuantity == 0 {
-			log.Errorln("Нет Сюит в таблице 'tests_suits'")
-		}
+			// Количество Сюит тестов
+			requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_suits")
+			err = requestResult.Scan(&statistic.SuitesQuantity)
+			if err == nil {
+				log.Debugf("Количество Сюит: '%d'", statistic.SuitesQuantity)
+				if statistic.SuitesQuantity == 0 {
+					log.Errorln("Нет Сюит в таблице 'tests_suits'")
+				}
 
-		// Количество Сценариев
-		requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_scripts")
-		err = requestResult.Scan(&statistic.ScriptsQuantity)
-		log.Debugf("Количество Сценариев: '%d'", statistic.ScriptsQuantity)
-		if statistic.ScriptsQuantity == 0 {
-			log.Errorln("Нет Сценариев в таблице 'tests_scripts'")
-		}
+				// Количество Сценариев
+				requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_scripts")
+				err = requestResult.Scan(&statistic.ScriptsQuantity)
+				if err == nil {
+					log.Debugf("Количество Сценариев: '%d'", statistic.ScriptsQuantity)
+					if statistic.ScriptsQuantity == 0 {
+						log.Errorln("Нет Сценариев в таблице 'tests_scripts'")
+					}
 
-		// Количество Шагов
-		requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_steps")
-		err = requestResult.Scan(&statistic.StepsQuantity)
-		log.Debugf("Количество Шагов: '%d'", statistic.StepsQuantity)
-		if statistic.StepsQuantity == 0 {
-			log.Errorln("Нет Шагов в таблице 'tests_steps'")
+					// Количество Шагов
+					requestResult = db.QueryRow("SELECT COUNT(*) FROM tests_steps")
+					err = requestResult.Scan(&statistic.StepsQuantity)
+					if err == nil {
+						log.Debugf("Количество Шагов: '%d'", statistic.StepsQuantity)
+						if statistic.StepsQuantity == 0 {
+							log.Errorln("Нет Шагов в таблице 'tests_steps'")
+						}
+					}
+				}
+			}
 		}
 	}
 	db.Close()
+	if err != nil { log.Errorf("Ошибка при получении статистики: '%v'", err) }
 	return statistic, err
 }
 
@@ -134,15 +136,11 @@ func GetSaltFromDb(userName string) (string, error) {
 	// Подключиться к БД
 	err = dbConnect()
 	if err == nil {
-
 		// Получить "соль"
 		err = db.QueryRow("SELECT salt FROM user WHERE login=?", userName).Scan(&salt)
-
-		if err != nil {
-			log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err)
-		}
 	}
 	db.Close()
+	if err != nil { log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err) }
 	return salt, err
 }
 
@@ -167,15 +165,11 @@ func GetHashFromDb(userName string) (string, error) {
 	// Подключиться к БД
 	err = dbConnect()
 	if err == nil {
-
 		// Получить "Хеш"
 		requestResult := db.QueryRow("SELECT passwd FROM user WHERE login=?", userName)
 		err = requestResult.Scan(&hash)
-
-		if err != nil {
-			log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err)
-		}
 	}
 	db.Close()
+	if err != nil { log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err) }
 	return hash, err
 }

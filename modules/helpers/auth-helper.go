@@ -62,6 +62,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 		}
 	}
 	db.Close()
+	if err != nil { log.Errorf("Ошибка при проверке наличия сессии в БД: %v", err) }
 	return sessidExist
 }
 
