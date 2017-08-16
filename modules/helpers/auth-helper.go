@@ -206,23 +206,22 @@ func GetUsers() ([]models.User, error) {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
+	if err == nil {
 
 		// Считать
 		rows, err = db.Query(
 			"SELECT login, full_name, create_permission, edit_permission, delete_permission, config_permission, users_permission FROM user ORDER BY login")
-		if err != nil {
-			panic(err)
-		}
+		if err == nil {
 
-		// Данные получить из результата запроса
-		var user models.User
-		for rows.Next() {
-			err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit,
-				&user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
-			if err == nil {
-				log.Debugf("User из таблицы user: %v", user)
-				usersList = append(usersList, user)		// Заполнить пользователями список пользователей
+			// Данные получить из результата запроса
+			var user models.User
+			for rows.Next() {
+				err = rows.Scan(&user.Login, &user.FullName, &user.Permissions.Create, &user.Permissions.Edit,
+					&user.Permissions.Delete, &user.Permissions.Config, &user.Permissions.Users)
+				if err == nil {
+					log.Debugf("User из таблицы user: %v", user)
+					usersList = append(usersList, user) // Заполнить пользователями список пользователей
+				}
 			}
 		}
 	}
