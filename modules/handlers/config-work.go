@@ -13,11 +13,17 @@ import (
 func EditConfig(context *gin.Context)  {
 	var err error
 	var config []models.Option
+	var statistic models.Statistic
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для работы с конфигурацией
 	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err = helpers.CheckOneUserPermission(helpers.UserLogin, "config_permission")
+
+	if err == nil {
+		// Сбор статистики
+		statistic, err = helpers.GetStatistic()
+	}
 
 	if err == nil {
 		// Получить конфигурационные данные из БД
@@ -46,6 +52,7 @@ func EditConfig(context *gin.Context)  {
 				"config":	 	config,
 				"Version":	Version,
 				"UserLogin":	helpers.UserLogin,
+				"statistic":	statistic,
 			},
 		)
 	}
@@ -142,11 +149,17 @@ func UsersConfig(context *gin.Context)  {
 
 	var err error
 	var users []models.User
+	var statistic models.Statistic
 	helpers.SetLogFormat()
 
 	// Проверить пермишен пользователя для работы с пользователями
 	log.Debugf("Проверка пермишена для пользователя '%s'", helpers.UserLogin)
 	err = helpers.CheckOneUserPermission(helpers.UserLogin, "users_permission")
+
+	if err == nil {
+		// Сбор статистики
+		statistic, err = helpers.GetStatistic()
+	}
 
 	if err == nil {
 		// Считать из БД пользователей и их пермишены
@@ -174,6 +187,7 @@ func UsersConfig(context *gin.Context)  {
 				"users":	users,
 				"Version": Version,
 				"UserLogin":	helpers.UserLogin,
+				"statistic":	statistic,
 			},
 		)
 	}
