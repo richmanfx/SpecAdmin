@@ -133,19 +133,19 @@ func SaveUserInDb(user models.User) error {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {	panic(err) }
-
-	// Занести пользователя в БД
-	result, err = db.Exec("UPDATE user SET full_name=?, create_permission=?, edit_permission=?, delete_permission=?, config_permission=?, users_permission=? WHERE login=? LIMIT 1",
-		user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users, user.Login)
-
 	if err == nil {
-		affected, err = result.RowsAffected()
+
+		// Занести пользователя в БД
+		result, err = db.Exec("UPDATE user SET full_name=?, create_permission=?, edit_permission=?, delete_permission=?, config_permission=?, users_permission=? WHERE login=? LIMIT 1",
+			user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users, user.Login)
+
 		if err == nil {
-			log.Debugf("Изменено %d строк в таблице 'user'.", affected)
+			affected, err = result.RowsAffected()
+			if err == nil {
+				log.Debugf("Изменено %d строк в таблице 'user'.", affected)
+			}
 		}
 	}
-
 	if err != nil {log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)}
 	return err
 }

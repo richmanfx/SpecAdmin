@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"os"
 	"io"
+	"mime/multipart"
 )
 
 // Добавить новый Шаг
@@ -69,21 +70,21 @@ func AddStep(context *gin.Context)  {
 
 				log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
 				out, err := os.Create(fullScreenShotsPath)
-				if err != nil {
-					panic(err)
-				}
-				defer out.Close() // Файл закроется после работы с ним, даже при панике
-				_, err = io.Copy(out, screenShotFile)
-				if err != nil {
-					panic(err)
+				if err == nil {
+					defer out.Close() // Файл закроется после работы с ним, даже при панике
+					_, err = io.Copy(out, screenShotFile)
 				}
 			}
 		}
 	}
 
-	// Группа Сюиты
-	suite, err := helpers.GetSuite(scriptsSuite)
-	suitesGroup := suite.Group
+	var suitesGroup string
+	var suite models.Suite
+	if err == nil {
+		// Группа Сюиты
+		suite, err = helpers.GetSuite(scriptsSuite)
+		suitesGroup = suite.Group
+	}
 
 	if err == nil {
 		// Добавить Шаг в БД
@@ -209,75 +210,79 @@ func EditStep(context *gin.Context)  {
 
 
 // Обновить в БД Шаг после редактирования
-func UpdateAfterEditStep(context *gin.Context)  {
+func UpdateAfterEditStep(context *gin.Context) {
 	helpers.SetLogFormat()
+	var stepsId, stepsSerialNumber int
+	var stepsName, stepsDescription, stepsExpectedResult string
+	var err error
+	var screenShotFile multipart.File
+	var header *multipart.FileHeader
+	var screenShotFileName string
 
 	//Данные из формы
-	stepsId, err := strconv.Atoi(context.PostForm("hidden_id"))
-	if err != nil { panic(err) }
-	stepsName := context.PostForm("step")
-	stepsSerialNumber, err := strconv.Atoi(context.PostForm("steps_serial_number"))
-	if err != nil { panic(err) }
-	stepsDescription := context.PostForm("steps_description")
-	stepsExpectedResult := context.PostForm("steps_expected_result")
+	stepsId, err = strconv.Atoi(context.PostForm("hidden_id"))
+	if err != nil {
+		stepsName = context.PostForm("step")
+		stepsSerialNumber, err = strconv.Atoi(context.PostForm("steps_serial_number"))
+		if err != nil {
+			stepsDescription = context.PostForm("steps_description")
+			stepsExpectedResult = context.PostForm("steps_expected_result")
 
-	// Скриншот
-	var screenShotFileName string
-	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
-	if err != nil {		// Если в форме не указан файл скриншота, то оставить прежний файл
-		log.Debugln("Не указан файл скриншота.")
-		screenShotFileName = ""
-	} else {
-
-		screenShotFileName = header.Filename
-		log.Debugf("Загружается файл '%s'.", screenShotFileName)
-
-		// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
-		screenShotFileName = helpers.GetUnique32SymbolsString() + ".png"
-
-		// Проверяем размер файла и если он превышает заданный размер
-		// завершаем выполнение скрипта и выводим ошибку
-		ScreenShotsSize, _ := strconv.Atoi(context.Request.Header.Get("Content-Length"))
-		log.Debugf("Размер скриншота '%d' байт.", ScreenShotsSize)
-
-		maxScreenShotsSize := 1000000 // Максимальный размер файла скриншота
-		if ScreenShotsSize > maxScreenShotsSize {
-			err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
-				ScreenShotsSize, maxScreenShotsSize)
-		} else {
-			log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
-				stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
-
-			// Получить путь до хранилища скриншотов
-			var screenShotsPath string
-			screenShotsPath, err = helpers.GetScreenShotsPath()
-
-			lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
-			log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
-			var fullScreenShotsPath string
-			if lastSymbolOfPath != string(os.PathSeparator) {
-				fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+			// Скриншот
+			screenShotFile, header, err = context.Request.FormFile("screen_shot") // TODO: Переделать на простой FormFile !!!
+			if err != nil { // Если в форме не указан файл скриншота, то оставить прежний файл
+				log.Debugln("Не указан файл скриншота.")
+				screenShotFileName = ""
 			} else {
-				fullScreenShotsPath = screenShotsPath + screenShotFileName
-			}
 
-			log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
-			out, err := os.Create(fullScreenShotsPath)
-			if err != nil {
-				panic(err)
-			}
-			defer out.Close() // Файл закроется после работы с ним, даже при панике
-			_, err = io.Copy(out, screenShotFile)
-			if err != nil {
-				panic(err)
+				screenShotFileName = header.Filename
+				log.Debugf("Загружается файл '%s'.", screenShotFileName)
+
+				// Генерируем новое имя для изображения - скриншоты могут иметь одинаковое имя, храним уникальное
+				screenShotFileName = helpers.GetUnique32SymbolsString() + ".png"
+
+				// Проверяем размер файла и если он превышает заданный размер
+				// завершаем выполнение скрипта и выводим ошибку
+				ScreenShotsSize, _ := strconv.Atoi(context.Request.Header.Get("Content-Length"))
+				log.Debugf("Размер скриншота '%d' байт.", ScreenShotsSize)
+
+				maxScreenShotsSize := 1000000 // Максимальный размер файла скриншота
+				if ScreenShotsSize > maxScreenShotsSize {
+					err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
+						ScreenShotsSize, maxScreenShotsSize)
+				} else {
+					log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
+						stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
+
+					// Получить путь до хранилища скриншотов
+					var screenShotsPath string
+					screenShotsPath, err = helpers.GetScreenShotsPath()
+
+					lastSymbolOfPath := screenShotsPath[len(screenShotsPath)-1:]
+					log.Debugf("Последний символ в пути: '%s'", lastSymbolOfPath)
+					var fullScreenShotsPath string
+					if lastSymbolOfPath != string(os.PathSeparator) {
+						fullScreenShotsPath = screenShotsPath + string(os.PathSeparator) + screenShotFileName
+					} else {
+						fullScreenShotsPath = screenShotsPath + screenShotFileName
+					}
+
+					log.Debugf("Полный путь к файлу скриншота: '%s'", fullScreenShotsPath)
+					out, err := os.Create(fullScreenShotsPath)
+					if err == nil {
+						defer out.Close() // Файл закроется после работы с ним, даже при панике
+						_, err = io.Copy(out, screenShotFile)
+					}
+				}
 			}
 		}
 	}
 
-	// Обновить в БД
-	err = helpers.UpdateTestStep(
-		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
-
+	if err == nil {
+		// Обновить в БД
+		err = helpers.UpdateTestStep(
+			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
+	}
 	helpers.CloseConnectToDB()
 
 	if err != nil {
@@ -309,15 +314,16 @@ func UpdateAfterEditStep(context *gin.Context)  {
 func GetStepsOptions(context *gin.Context)  {
 	helpers.SetLogFormat()
 	log.Debugln("Пришёл запрос в GetStepsOptions")
+	var stepsScriptName, scripsSuiteName string
 
 	// Данные из AJAX запроса
 	stepsScriptsId, err := strconv.Atoi(context.PostForm("ScriptsId"))
 	log.Debugf("Данные из POST запроса AJAX: stepsScriptsId='%d'", stepsScriptsId)
-	if err != nil { panic(err) }
-
-	// Данные о Шаге из БД
-	stepsScriptName, scripsSuiteName, err := helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
-	log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
+	if err != nil {
+		// Данные о Шаге из БД
+		stepsScriptName, scripsSuiteName, err = helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
+		log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
+	}
 
 	helpers.CloseConnectToDB()
 
@@ -347,12 +353,11 @@ func DelScreenShotFromStep(context *gin.Context)  {
 	// Данные из AJAX запроса
 	stepsId, err := strconv.Atoi(context.PostForm("StepsId"))
 	log.Debugf("Данные из POST запроса AJAX: stepsId='%d'", stepsId)
-	if err != nil { panic(err) }
-
-	// Удалить скриншот
-	err = helpers.DeleteStepsScreenShot(stepsId)
-
-	helpers.CloseConnectToDB()
+	if err != nil {
+		// Удалить скриншот
+		err = helpers.DeleteStepsScreenShot(stepsId)
+	}
+		helpers.CloseConnectToDB()
 
 	if err == nil {
 		result := gin.H{"deleteStatus": "OK"}
@@ -362,5 +367,4 @@ func DelScreenShotFromStep(context *gin.Context)  {
 		result := gin.H{"deleteStatus": err}
 		context.JSON(http.StatusOK, result)
 	}
-
 }

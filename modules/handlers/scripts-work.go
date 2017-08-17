@@ -138,21 +138,28 @@ func EditScript(context *gin.Context)  {
 // Обновить в БД скрипт после редактирования
 func UpdateAfterEditScript(context *gin.Context) {
 	helpers.SetLogFormat()
+	var err error
+	var suite models.Suite
+	var suitesGroup string
+	var scriptName string
+	var scriptSerialNumber string
+	var scriptsSuite string
 
 	//Данные из формы
 	scriptId, err := strconv.Atoi(context.PostForm("hidden_id"))
-	if err != nil { panic(err) }
+	if err == nil {
 
-	scriptName := context.PostForm("script")
-	scriptSerialNumber := context.PostForm("scripts_serial_number")
-	scriptsSuite := context.PostForm("scripts_suite")
+		scriptName = context.PostForm("script")
+		scriptSerialNumber = context.PostForm("scripts_serial_number")
+		scriptsSuite = context.PostForm("scripts_suite")
 
-	// Группа Сюиты
-	suite, err := helpers.GetSuite(scriptsSuite)
-	suitesGroup := suite.Group
+		// Группа Сюиты
+		suite, err = helpers.GetSuite(scriptsSuite)
+		suitesGroup = suite.Group
 
-	// Обновить в БД
-	err = helpers.UpdateTestScript(scriptId, scriptName, scriptSerialNumber, scriptsSuite)
+		// Обновить в БД
+		err = helpers.UpdateTestScript(scriptId, scriptName, scriptSerialNumber, scriptsSuite)
+	}
 
 	helpers.CloseConnectToDB()
 
