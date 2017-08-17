@@ -19,6 +19,10 @@ img#id_img_del_screen_shot {
     height: 30px;
 }
 
+a.menu-font {
+    font-size: 3vh;
+}
+
 div#menu {
     background: #aaddff none repeat scroll 0 0;
     font-family: Verdana, serif;
