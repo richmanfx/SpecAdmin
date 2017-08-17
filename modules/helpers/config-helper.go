@@ -38,7 +38,6 @@ func GetConfig() ([]models.Option, error) {
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)}
 	return config, err
 }
@@ -64,7 +63,6 @@ func SaveConfig(screenShotPath string) error {
 			log.Debugln("Конфигурационные параметры успешно сохранены в БД.")
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)}
 	return err
 }
@@ -148,7 +146,6 @@ func GetScreenShotsFileName() ([]string, error) {
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)}
 	return usedScreenShotsFileNameList, err
 }

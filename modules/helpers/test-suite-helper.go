@@ -65,7 +65,6 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 			}
 		}
 	}
-	//db.Close()
 	log.Debugf("Список Сюит: '%v'", suitesList)
 	if err != nil {log.Errorf("Ошибка формировании списка Сюит для Группы '%s': '%v'", groupName, err)}
 	return suitesList, err
@@ -102,7 +101,6 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 				}
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении новой Сюиты: '%v'", err)}
 	return err
@@ -142,7 +140,6 @@ func DelTestSuite(suitesName string) error {
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при удалении из базы сюиты '%s': '%v'", suitesName, err)}
 	return err
 }
@@ -170,7 +167,6 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных Сюиты '%s' из БД: '%v'", suitesName, err)}
 	return suite, err
 }
@@ -211,7 +207,6 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 
 			}
 		}
-		db.Close()
 	}
 	if err != nil { log.Errorf("Ошибка обновления данных Сюиты '%s' в БД: '%м'", suitesName, err) }
 	return err
@@ -251,8 +246,6 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 				}
 			}
 		}
-		db.Close()
-
 	}
 	if err != nil { log.Errorf("Ошибка переименования Сюиты '%s' в '%s': %v", oldSuiteName, newSuiteName, err) }
 	return err

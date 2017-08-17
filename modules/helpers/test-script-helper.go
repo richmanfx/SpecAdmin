@@ -34,7 +34,6 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 				}
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)}
 	return err
@@ -73,7 +72,6 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 				}
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)}
 	return err
@@ -105,7 +103,6 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 			script.Suite = scriptsSuiteName
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных Сценария '%s' Сюиты '%s' из БД: %v", scriptsName, scriptsSuiteName, err)}
 	return script, id, err
 }
@@ -132,7 +129,6 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 				log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка обновления данных Сценария '%s' в БД: %v", scriptName, err)}
 	return err
@@ -163,7 +159,6 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении списока имён Сюит в Группе '%s': %v", groupName, err)}
 	return suitsNameList, err
 }

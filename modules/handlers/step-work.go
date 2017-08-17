@@ -91,6 +91,8 @@ func AddStep(context *gin.Context)  {
 			newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName, stepsScript, scriptsSuite)
 	}
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -135,6 +137,8 @@ func DelStep(context *gin.Context)  {
 
 	err = helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -176,6 +180,8 @@ func EditStep(context *gin.Context)  {
 	var err error
 	var step models.Step
 	step, err = helpers.GetStep(editedStepName, stepsScript, scriptsSuite)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -272,6 +278,8 @@ func UpdateAfterEditStep(context *gin.Context)  {
 	err = helpers.UpdateTestStep(
 		stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -311,6 +319,8 @@ func GetStepsOptions(context *gin.Context)  {
 	stepsScriptName, scripsSuiteName, err := helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
 	log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
 
+	helpers.CloseConnectToDB()
+
 	if err == nil {
 		result := gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName}
 		context.JSON(http.StatusOK, result)
@@ -341,6 +351,8 @@ func DelScreenShotFromStep(context *gin.Context)  {
 
 	// Удалить скриншот
 	err = helpers.DeleteStepsScreenShot(stepsId)
+
+	helpers.CloseConnectToDB()
 
 	if err == nil {
 		result := gin.H{"deleteStatus": "OK"}

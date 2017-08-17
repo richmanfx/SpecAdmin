@@ -98,7 +98,6 @@ func GetStatistic() (models.Statistic, error) {
 			}
 		}
 	}
-	db.Close()
 	if err != nil { log.Errorf("Ошибка при получении статистики: '%v'", err) }
 	return statistic, err
 }
@@ -139,7 +138,6 @@ func GetSaltFromDb(userName string) (string, error) {
 		// Получить "соль"
 		err = db.QueryRow("SELECT salt FROM user WHERE login=?", userName).Scan(&salt)
 	}
-	db.Close()
 	if err != nil { log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err) }
 	return salt, err
 }
@@ -169,7 +167,6 @@ func GetHashFromDb(userName string) (string, error) {
 		requestResult := db.QueryRow("SELECT passwd FROM user WHERE login=?", userName)
 		err = requestResult.Scan(&hash)
 	}
-	db.Close()
 	if err != nil { log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err) }
 	return hash, err
 }

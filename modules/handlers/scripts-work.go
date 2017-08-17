@@ -25,7 +25,9 @@ func AddScript(context *gin.Context)  {
 	suitesGroup := suite.Group
 
 	err = helpers.AddTestScript(newScript, scriptSerialNumber, scriptsSuite)
-	
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -62,6 +64,9 @@ func DelScript(context *gin.Context)  {
 	scriptsSuite := context.PostForm("scripts_suite")
 
 	err := helpers.DelTestScript(deletedScript, scriptsSuite)
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -102,6 +107,9 @@ func EditScript(context *gin.Context)  {
 	var scriptId int
 	var err error
 	script, scriptId, err = helpers.GetScript(editedScript, scriptsSuite)
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -145,6 +153,9 @@ func UpdateAfterEditScript(context *gin.Context) {
 
 	// Обновить в БД
 	err = helpers.UpdateTestScript(scriptId, scriptName, scriptSerialNumber, scriptsSuite)
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

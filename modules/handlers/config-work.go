@@ -33,6 +33,8 @@ func EditConfig(context *gin.Context)  {
 		}
 	}
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		log.Errorf("Ошибка при получении конфигурационных данных из БД: %v", err)
 		context.HTML(http.StatusOK, "message.html",
@@ -67,6 +69,8 @@ func SaveConfig(context *gin.Context)  {
 
 	// Записать в БД
 	err := helpers.SaveConfig(screenShotPath)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		// Ошибка при сохранении конфигурации
@@ -118,6 +122,8 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 		}
 	}
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -166,6 +172,8 @@ func UsersConfig(context *gin.Context)  {
 		users, err = helpers.GetUsers()
 		log.Debugf("Пользователи из БД: '%v'", users)
 	}
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -248,6 +256,8 @@ func CreateUser(context *gin.Context)  {
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -324,6 +334,8 @@ func SaveUser(context *gin.Context)  {
 	// Сохранить пользователя в БД
 	err = helpers.SaveUserInDb(savedUser)
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -372,6 +384,8 @@ func DeleteUser(context *gin.Context)  {
 		// Удалить из БД
 		err = helpers.DeleteUserInDb(deletedUser)
 	}
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "8.6"
+var Version string = "8.7"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -36,6 +36,8 @@ func ShowIndexPage(context *gin.Context)  {
 		// Закрыть соединение с БД
 		err = helpers.CloseConnectToDB()
 	}
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: '%v'", err)
@@ -97,6 +99,8 @@ func ShowSuitesIndex(context *gin.Context)  {
 		// Закрыть соединение с БД
 		err = helpers.CloseConnectToDB()
 	}
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)

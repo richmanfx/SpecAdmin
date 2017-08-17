@@ -46,7 +46,6 @@ func AddTestStep(newStepName string, stepSerialNumber string, stepsDescription s
 					newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps': '%v'", newStepName, err)}
 	return err
@@ -109,7 +108,6 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 				err = fmt.Errorf("Не найдено Сценария '%s' в Сюите '%s' в таблице 'tests_scripts'.", stepsScriptName, scriptsSuiteName)
 			}
 		}
-		db.Close()
 
 		// Удаление файла скриншота из хранилища
 		if err == nil && screenShotsFileName != "" { // Если из базы удалили без ошибок
@@ -228,7 +226,6 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 			}
 		}
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных шага '%s' из БД: '%v'", editedStepName, err)}
 	return step, err
 }
@@ -262,7 +259,6 @@ func UpdateTestStep(stepsId int, stepsName string, stepsSerialNumber int, stepsD
 				log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
 			}
 		}
-		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка обновления данных Шага '%s' в БД.", stepsName)}
 	return err
@@ -289,7 +285,6 @@ func DeleteStepsScreenShot(stepsId int) error {
 			// Получить имя файла скриншота
 			requestResult = db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE id=?", stepsId)
 		}
-		db.Close()
 
 		// Получить результаты запроса
 		var screenShotFileName string
@@ -317,7 +312,6 @@ func DeleteStepsScreenShot(stepsId int) error {
 		}
 		if err == nil {	log.Debugf("Скриншот успешно удалён из БД в Шаге с Id='%d'", stepsId) }
 	}
-	db.Close()
 	if err != nil {log.Errorf("Ошибка при удалении скриншота из БД в Шаге с Id='%d', %v", stepsId, err)}
 	return err
 }

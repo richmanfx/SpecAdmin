@@ -19,6 +19,9 @@ func AddSuite(context *gin.Context)  {
 	suitesSerialNumber := context.PostForm("suites_serial_number")	// Порядковый номер
 	suitesGroup := context.PostForm("suites_group")					// Группа Сюиты
 	err := helpers.AddTestSuite(newSuite, suitesDescription, suitesSerialNumber, suitesGroup)
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -51,6 +54,8 @@ func DelSuite(context *gin.Context)  {
 
 	deletedSuite := context.PostForm("suite")							// Сюита из формы
 	err := helpers.DelTestSuite(deletedSuite)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -87,6 +92,8 @@ func EditSuite(context *gin.Context)  {
 	var suite models.Suite
 	var err error
 	suite, err = helpers.GetSuite(editedSuite)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -125,6 +132,9 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 
 	// Обновить в БД
 	err := helpers.UpdateTestSuite(suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
+
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -160,6 +170,8 @@ func RenameSuite(context *gin.Context)  {
 	oldSuite := context.PostForm("old_suite")
 	newSuite := context.PostForm("new_suite")
 	err := helpers.RenameTestSuite(oldSuite, newSuite)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

@@ -13,6 +13,8 @@ func AddGroup(context *gin.Context)  {
 	newGroup := context.PostForm("group")		// Группа из формы
 	err := helpers.AddTestGroup(newGroup)
 
+	helpers.CloseConnectToDB()
+
 	if err != nil {
 		// Ошибка при добавлении группы
 		context.HTML(http.StatusOK, "message.html",
@@ -39,6 +41,8 @@ func DelGroup(context *gin.Context)  {
 
 	deletedGroup := context.PostForm("group")		// Группа из формы
 	err := helpers.DelTestGroup(deletedGroup)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		// Ошибка при удалении группы
@@ -72,6 +76,8 @@ func EditGroup(context *gin.Context)  {
 	oldGroup := context.PostForm("old_group")
 	newGroup := context.PostForm("new_group")
 	err := helpers.EditTestGroup(oldGroup, newGroup)
+
+	helpers.CloseConnectToDB()
 
 	if err != nil {
 		// Ошибка при редактировании группы
