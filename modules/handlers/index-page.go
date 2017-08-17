@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "8.8"
+var Version string = "8.9"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -93,11 +93,6 @@ func ShowSuitesIndex(context *gin.Context)  {
 	if err == nil {
 		// Путь к сриншотам
 		screenShotsPath, err = helpers.GetScreenShotsPath()
-	}
-
-	if err == nil {
-		// Закрыть соединение с БД
-		err = helpers.CloseConnectToDB()
 	}
 
 	helpers.CloseConnectToDB()

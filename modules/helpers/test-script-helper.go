@@ -199,7 +199,6 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
 	var err error
 	var stepsList []models.Step
-	var script models.Script
 	var rows *sql.Rows
 	scriptsList := make([]models.Script, 0, 0)
 
@@ -218,6 +217,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 				if err == nil {
 					// Данные получить из результата запроса
 					for rows.Next() {
+						var script models.Script
 						err = rows.Scan(&script.Id, &script.Name, &script.SerialNumber, &script.Suite)
 						if err == nil {
 

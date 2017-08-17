@@ -221,10 +221,10 @@ func UpdateAfterEditStep(context *gin.Context) {
 
 	//Данные из формы
 	stepsId, err = strconv.Atoi(context.PostForm("hidden_id"))
-	if err != nil {
+	if err == nil {
 		stepsName = context.PostForm("step")
 		stepsSerialNumber, err = strconv.Atoi(context.PostForm("steps_serial_number"))
-		if err != nil {
+		if err == nil {
 			stepsDescription = context.PostForm("steps_description")
 			stepsExpectedResult = context.PostForm("steps_expected_result")
 
