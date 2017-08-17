@@ -199,7 +199,7 @@ func GetScriptsId(context *gin.Context)  {
 	// Данные из AJAX запроса
 	scriptName := context.PostForm("scriptName")
 	scriptsSuite := context.PostForm("suiteName")
-	log.Infof("Данные из POST запроса AJAX: '%v' и '%v'", scriptName, scriptsSuite)
+	log.Debugf("Данные из POST запроса AJAX: '%v' и '%v'", scriptName, scriptsSuite)
 
 	// Получить из базы id сценария по имени Сценария и имени его Сюиты
 	_, scriptId, err := helpers.GetScript(scriptName, scriptsSuite)

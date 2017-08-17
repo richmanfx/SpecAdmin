@@ -181,7 +181,7 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 						stepsList = append(stepsList, step) // Добавить шаг в список
 					}
 				}
-				log.Infof("Список Шагов: %v", stepsList)
+				log.Debugf("Список Шагов: %v", stepsList)
 			}
 		}
 	}
