@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"../../models"
 	"database/sql"
+	"github.com/jung-kurt/gofpdf"
 )
 
 // Добавляет сценарий в БД
@@ -268,3 +269,68 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 	if err != nil {log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s': %v", ScriptId, err)}
 	return stepsScriptName, scripsSuiteName, err
 }
+
+
+// Сгенерировать PDF файл со списком Шагов Сценария
+func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) error {
+
+	var pdf *gofpdf.Fpdf
+	var err error
+
+	pdf = gofpdf.New("L", "mm", "A4", "")
+
+
+	pdf.SetFontLocation("fonts")
+	pdf.AddFont("Helvetica-1251", "", "helvetica_1251.json")
+	fontSize := 16.0
+	pdf.SetFont("Helvetica-1251", "", fontSize)
+
+
+	ht := pdf.PointConvert(fontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
+
+	write := func(str string) {
+		// pdf.CellFormat(190, ht, tr(str), "", 1, "C", false, 0, "")
+		pdf.MultiCell(190, ht, tr(str), "", "C", false)
+		pdf.Ln(ht)
+	}
+	pdf.AddPage()
+
+
+	//pdf.Cell(40, 10, "Hello World! Привет, Мир!")
+
+
+
+	write("Съешь же ещё этих мягких французских булок, да выпей чаю.")
+
+	err = pdf.OutputFileAndClose("Test_PDF.pdf")
+	if err != nil {
+		log.Errorf("Ошибка: '%v'", err)
+	}
+
+	return err
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

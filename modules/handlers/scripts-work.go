@@ -209,16 +209,21 @@ func GetScriptsId(context *gin.Context)  {
 	stepsList, err := helpers.GetStepsListForSpecifiedScripts(scriptsIdList)
 	log.Debugf("%v - %v", stepsList, err)
 
+	// Закрыть соединение с БД
+	helpers.CloseConnectToDB()
+
+	// Сгенерировать PDF
+	err = helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
 
 
-	//if err == nil {
-	//	result := gin.H{"scriptId": scriptId}
-	//	context.JSON(http.StatusOK, result)
-	//} else {
-	//	log.Errorf("Ошибка получения id сценария из БД: %v", err)
-	//	result := gin.H{"scriptId": err}
-	//	context.JSON(http.StatusOK, result)
-	//}
+	if err == nil {
+		result := gin.H{"scriptId": scriptId}
+		context.JSON(http.StatusOK, result)
+	} else {
+		log.Errorf("Ошибка при генерации PDF: %v", err)
+		result := gin.H{"scriptId": err}
+		context.JSON(http.StatusOK, result)
+	}
 
 }
 
