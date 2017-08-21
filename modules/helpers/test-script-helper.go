@@ -273,17 +273,19 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 
 // Сгенерировать PDF файл со списком Шагов Сценария
-func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) error {
+func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) (string,error) {
 
 	var pdf *gofpdf.Fpdf
 	var err error
+	var pdfFileName string = "steps.pdf"
 
 	pdf = gofpdf.New("L", "mm", "A4", "")
 
 	pdf.SetFontLocation("fonts")
 	fontSize := 12.0
-	pdf.AddFont("Helvetica-1251", "", "helvetica_1251.json")
-	pdf.SetFont("Helvetica-1251", "", fontSize)
+	pdf.AddFont("Helvetica-1251", "B", "helvetica_1251.json")
+	pdf.SetFont("Helvetica-1251", "B", fontSize)
+
 
 	ht := pdf.PointConvert(fontSize)
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
@@ -305,16 +307,18 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	//write(header)
 	//pdf.CellFormat(40, 7, header, "1", 0, "", false, 0, "")
 
+
+
 	for _, step := range stepsList {
 		write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
 	}
 
-	err = pdf.OutputFileAndClose("Test_PDF.pdf")
+	err = pdf.OutputFileAndClose(pdfFileName)
 	if err != nil {
 		log.Errorf("Ошибка: '%v'", err)
 	}
 
-	return err
+	return pdfFileName, err
 
 }
 

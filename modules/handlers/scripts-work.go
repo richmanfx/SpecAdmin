@@ -8,6 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"../../models"
 	"strconv"
+	"path/filepath"
 )
 
 // Добавить в БД новый сценарий
@@ -213,12 +214,24 @@ func GetScriptsId(context *gin.Context)  {
 	helpers.CloseConnectToDB()
 
 	// Сгенерировать PDF
-	err = helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
-
+	pdfFileName, err := helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
+	rootDir := "C:\\Users\\Admin\\GoglandProjects\\SpecAdmin\\"		// TODO: В директорию к скриншотам оформить файл
+	//name := context.Param(pdfFileName)
+	filePath, err :=  filepath.Abs(rootDir + pdfFileName)
+	if err != nil {
+		context.AbortWithStatus(404)
+	}
 
 	if err == nil {
-		result := gin.H{"scriptId": scriptId}
-		context.JSON(http.StatusOK, result)
+		//result := gin.H{"scriptId": scriptId}
+		//context.JSON(http.StatusOK, result)
+		context.Header("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
+		context.Header("Content-Type", "application/pdf")
+		context.Header("Content-Transfer-Encoding", "binary")
+		context.Header("Content-Length", strconv.Itoa(len(filePath)))
+		context.Header("Content-Disposition", fmt.Sprintf("inline; filename='%s'", pdfFileName))
+
+		context.File(filePath)		// Отправить PDF-файл
 	} else {
 		log.Errorf("Ошибка при генерации PDF: %v", err)
 		result := gin.H{"scriptId": err}

@@ -162,11 +162,12 @@ $('a#id_print_steps').on('click', function () {
         url: '/spec-admin/print-scripts-steps',
         data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
         success: function(answerFromServer){
-            scriptId = answerFromServer.scriptId;
-            // alert(scriptId);
+            console.log("success");
+            alert(answerFromServer);
+
         },
         error: function(){
-            alert("Ошибка при ответе на AJAX POST запрос получения Id сценария");
+            alert("Ошибка при ответе на AJAX POST запрос для печати ПДФ");
         }
     });
 
