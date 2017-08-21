@@ -7,6 +7,7 @@ import (
 	"../../models"
 	"database/sql"
 	"github.com/jung-kurt/gofpdf"
+	"fmt"
 )
 
 // Добавляет сценарий в БД
@@ -279,29 +280,34 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	pdf = gofpdf.New("L", "mm", "A4", "")
 
-
 	pdf.SetFontLocation("fonts")
+	fontSize := 12.0
 	pdf.AddFont("Helvetica-1251", "", "helvetica_1251.json")
-	fontSize := 16.0
 	pdf.SetFont("Helvetica-1251", "", fontSize)
-
 
 	ht := pdf.PointConvert(fontSize)
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
 
 	write := func(str string) {
-		// pdf.CellFormat(190, ht, tr(str), "", 1, "C", false, 0, "")
-		pdf.MultiCell(190, ht, tr(str), "", "C", false)
-		pdf.Ln(ht)
+		width := 250.0
+		//pdf.CellFormat(width, ht, tr(str), "", 1, "L", false, 0, "")
+		pdf.MultiCell(width, ht, tr(str), "", "L", false)
+		pdf.Ln(ht) 	// Переход на новую строку
 	}
 	pdf.AddPage()
 
+	// Вывод контента в PDF-документ
+	write(fmt.Sprintf("Сюита: %s", scriptsSuite))
+	write(fmt.Sprintf("Сценарий: %s", scriptName))
+	pdf.Ln(ht)
 
-	//pdf.Cell(40, 10, "Hello World! Привет, Мир!")
+	//header := "N шага, Название шага, Описание Шага, Ожидаемый результат"
+	//write(header)
+	//pdf.CellFormat(40, 7, header, "1", 0, "", false, 0, "")
 
-
-
-	write("Съешь же ещё этих мягких французских булок, да выпей чаю.")
+	for _, step := range stepsList {
+		write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
+	}
 
 	err = pdf.OutputFileAndClose("Test_PDF.pdf")
 	if err != nil {
