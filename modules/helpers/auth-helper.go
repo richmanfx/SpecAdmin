@@ -277,7 +277,7 @@ func SavePassword(userName, newPassword string) error {
 
 	// Подключиться к БД
 	err = dbConnect()
-	if err != nil {
+	if err == nil {
 
 		// Занести новый хеш пароля в БД (соль не меняется)
 		result, err = db.Exec("UPDATE user SET passwd=? WHERE login=?", newHash, userName)
