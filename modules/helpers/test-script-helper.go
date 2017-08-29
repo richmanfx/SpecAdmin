@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"github.com/jung-kurt/gofpdf"
 	"fmt"
+	"os"
 )
 
 // Добавляет сценарий в БД
@@ -277,7 +278,8 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	var pdf *gofpdf.Fpdf
 	var err error
-	var pdfFileName string = "steps.pdf"
+	const pdfDirName string = "pdf"
+	const pdfFileName string = "steps.pdf"
 
 	pdf = gofpdf.New("L", "mm", "A4", "")
 
@@ -313,12 +315,13 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 		write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
 	}
 
-	err = pdf.OutputFileAndClose(pdfFileName)
+	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
+	err = pdf.OutputFileAndClose(fullPdfFileName)
 	if err != nil {
 		log.Errorf("Ошибка: '%v'", err)
 	}
 
-	return pdfFileName, err
+	return fullPdfFileName, err
 
 }
 
