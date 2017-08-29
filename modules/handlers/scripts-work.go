@@ -229,7 +229,7 @@ func GetScriptsId(context *gin.Context)  {
 		context.Header("Content-Type", "application/pdf")
 		context.Header("Content-Transfer-Encoding", "binary")
 		context.Header("Content-Length", strconv.Itoa(len(filePath)))
-		context.Header("Content-Disposition", fmt.Sprintf("inline; filename='%s'", pdfFileName))
+		context.Header("Content-Disposition", fmt.Sprintf("attachment; filename='%s'", pdfFileName))
 
 		context.File(filePath)		// Отправить PDF-файл
 	} else {

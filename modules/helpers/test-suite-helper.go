@@ -87,7 +87,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
+		if err == nil {
 
 			// Добавление Сюиты в базу, используем плейсхолдер
 			log.Debugf("Добавление Сюиты: %s, Описание: %s, Порядковый номер '%s' Группа: %s",
