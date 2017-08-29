@@ -30,6 +30,7 @@ func main() {
 	Router.Static("/css", "css")
 	Router.Static("/js", "js")
 	Router.Static("/images", "images")
+	Router.Static("/pdf", "pdf")
 
 	// Проинитить роуты
 	modules.InitRoutes(Router)

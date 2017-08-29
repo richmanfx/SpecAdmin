@@ -140,30 +140,32 @@ $('#delStep').on('show.bs.modal', function (event) {
 
     var modal = $(this);         // Обновить модальное окно
     modal.find('#id_step').val(recipientName);
-    modal.find('#id_script').val(stepsScriptName);        // В input с именем Сценария
+    modal.find('#id_script').val(stepsScriptName);      // В input с именем Сценария
     modal.find('#id_suite').val(scripsSuiteName);       // В input с именем Сюиты
 });
 
 
+
+
+
+
 /// Печать на принтер
-// Распечатать список шагов сценария
-$('a#id_print_steps').on('click', function () {
-    var scriptName = $(this).attr("data-name");    // Извлечь информацию из "data-name" у кнопки
-    var suiteName = $(this).attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
 
-    // alert(scriptName + " и " + suiteName);
+$('#printSteps').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);        // Кнопка, вызвавшая модальное окно
+    var scriptName = button.attr("data-name");    // Извлечь информацию из "data-name" у кнопки
+    var suiteName = button.attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
 
-    var scriptId = "";
-
-    // Получить 'id' сценария по его имени и его сюите
     $.ajax({
         async: false,
         type: 'POST',
         url: '/spec-admin/print-scripts-steps',
+        // contentType: "application/pdf",
         data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
         success: function(answerFromServer){
-            console.log("success");
-            alert(answerFromServer);
+            console.log("success: " + answerFromServer);
+
+            // alert(answerFromServer);
 
         },
         error: function(){
@@ -171,22 +173,67 @@ $('a#id_print_steps').on('click', function () {
         }
     });
 
-    // // Получить список шагов сценария по его 'script_id'
-    // $.ajax({
-    //     async: false,
-    //     type: 'POST',
-    //     url: '/spec-admin/get-steps-from-script',
-    //     data: 'scriptId=' + scriptId,
-    //     success: function(answerFromServer){
-    //         alert(answerFromServer)
-    //     },
-    //     error: function(){
-    //         alert("Ошибка при ответе на AJAX POST запрос получения всех шагов сценария");
-    //     }
-    // });
 
-    return false;
+    var modal = $(this);    // Обновить модальное окно
+
 });
+
+//
+// // Распечатать список шагов сценария
+// $('a#id_print_steps').on('click', function () {
+//     var scriptName = $(this).attr("data-name");    // Извлечь информацию из "data-name" у кнопки
+//     var suiteName = $(this).attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
+//
+//     // alert(scriptName + " и " + suiteName);
+//
+//     var scriptId = "";
+//
+//     // Получить 'id' сценария по его имени и его сюите
+//     $.ajax({
+//         async: false,
+//         type: 'POST',
+//         url: '/spec-admin/print-scripts-steps',
+//         // contentType: "application/pdf",
+//         data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
+//         success: function(answerFromServer){
+//             console.log("success");
+//             var link=document.createElement('a');
+//             // link.href=window.URL.createObjectURL(answerFromServer);
+//             // link.download="Dossier_" + new Date() + ".pdf";
+//             // link.click();
+//             // new Blob([answerFromServer]);
+//             // var fileURL = URL.createObjectURL(blob);
+//
+//
+//
+//             // document.write("<iframe src='" + fileURL + "'>PDF</iframe>");
+//
+//
+//             // window.open(fileURL, "_blank");
+//             alert(answerFromServer);
+//
+//         },
+//         error: function(){
+//             alert("Ошибка при ответе на AJAX POST запрос для печати ПДФ");
+//         }
+//     });
+//
+//     // // Получить список шагов сценария по его 'script_id'
+//     // $.ajax({
+//     //     async: false,
+//     //     type: 'POST',
+//     //     url: '/spec-admin/get-steps-from-script',
+//     //     data: 'scriptId=' + scriptId,
+//     //     success: function(answerFromServer){
+//     //         alert(answerFromServer)
+//     //     },
+//     //     error: function(){
+//     //         alert("Ошибка при ответе на AJAX POST запрос получения всех шагов сценария");
+//     //     }
+//     // });
+//
+//     return false;
+// });
 
 
 

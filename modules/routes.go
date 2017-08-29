@@ -26,7 +26,7 @@ func InitRoutes(router *gin.Engine) {
 		router.Handle("POST", "/spec-admin/del-script", auth.AuthRequired(), handlers.DelScript)
 		router.Handle("POST", "/spec-admin/edit-script", auth.AuthRequired(), handlers.EditScript)
 		router.Handle("POST", "/spec-admin/update-after-edit-script", auth.AuthRequired(), handlers.UpdateAfterEditScript)
-		router.Handle("POST", "/spec-admin/print-scripts-steps", auth.AuthRequired(), handlers.GetScriptsId) // for AJAX
+		router.Handle("POST", "/spec-admin/print-scripts-steps", auth.AuthRequired(), handlers.CreateStepsPdf) // for AJAX
 
 		router.Handle("POST", "/spec-admin/add-step", auth.AuthRequired(), handlers.AddStep)
 		router.Handle("POST", "/spec-admin/del-step", auth.AuthRequired(), handlers.DelStep)
