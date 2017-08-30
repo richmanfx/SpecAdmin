@@ -7,16 +7,16 @@
 
         <label for="id_script"> Имя сценария </label><br>
         <div class="auto_width">
-            <textarea id="id_script" name="script" required="required" rows="3" autofocus>{{ .script.Name }}</textarea>
+            <textarea id="id_script" name="script" rows="3" autofocus>{{ .script.Name }}</textarea>
         </div>
 
         <label for="id_scripts_serial_number">Порядковый номер сценария</label><br>
-        <input id="id_scripts_serial_number" name="scripts_serial_number" value="{{ .script.SerialNumber }}"
-               required="required" type="text"><br><br>
+        <input id="id_scripts_serial_number" name="scripts_serial_number" value="{{ .script.SerialNumber }}">
+        <br><br>
 
         <label for="id_scripts_suite"> Сюита тестового сценария</label><br>
-        <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}" required="required"
-               type="text"><br><br>
+        <input id="id_scripts_suite" name="scripts_suite" value="{{ .script.Suite }}">
+        <br><br>
 
     </form>
     <br><br>
@@ -28,14 +28,10 @@
         });
     </script>
 
-    <button type="submit"
-            class="btn btn-success btn-lg"
-            form="id_after_edit_script_form">
+    <button class="btn btn-success btn-lg" form="id_after_edit_script_form">
         Сохранить
     </button>
-    <a type="button"
-       class="btn btn-success btn-lg"
-       href="/spec-admin">
+    <a type="button" class="btn btn-success btn-lg" href="/spec-admin">
         Отмена
     </a>
 

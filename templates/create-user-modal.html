@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
                 Создать нового пользователя
             </div>
@@ -12,15 +12,15 @@
                 <form id="id_create_user_form" name="create_user_form" method="post" action="/spec-admin/create-user">
 
                     <label for="id_login"> Логин </label><br>
-                    <input id="id_login" name="login" placeholder=" Логин" required="required" type="text"><br>
+                    <input id="id_login" name="login" placeholder=" Логин"><br>
                     <br>
 
                     <label for="id_password"> Пароль </label><br>
-                    <input id="id_password" name="password" placeholder=" Пароль" required="required" type="password"><br>
+                    <input id="id_password" name="password" placeholder=" Пароль" type="password"><br>
                     <br>
 
                     <label for="id_full_name"> Полное имя (ФИО) </label><br>
-                    <input id="id_full_name" name="full_name" placeholder=" ФИО" required="required" type="text"><br>
+                    <input id="id_full_name" name="full_name" placeholder=" ФИО"><br>
                     <br>
 
                     <label> Права </label>
@@ -86,21 +86,15 @@
             </script>
 
             <div class="modal-footer">
-                <button type="submit"
-                        class="btn btn-success btn-lg"
-                        form="id_create_user_form">
+                <button class="btn btn-success btn-lg" form="id_create_user_form">
                     Создать
                 </button>
 
-                <button form="id_create_user_form"
-                        type="reset"
-                        class="btn btn-success btn-lg">
+                <button form="id_create_user_form" type="reset" class="btn btn-success btn-lg">
                     Очистить форму
                 </button>
 
-                <button type="button"
-                        class="btn btn-success btn-lg"
-                        data-dismiss="modal">
+                <button type="button" class="btn btn-success btn-lg" data-dismiss="modal">
                     Отмена
                 </button>
             </div>

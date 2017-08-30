@@ -4,7 +4,7 @@
 
 
 <p>
-<form method="post" class="form-horizontal" role="form" action="/spec-admin/login-processing">
+<form method="post" class="form-horizontal" action="/spec-admin/login-processing">
     <div class="form-group">
     <table class="login" border="0">
         <tr>
@@ -12,7 +12,7 @@
                 <label>Логин:</label>
             </td>
             <td class="login-user-name">
-                <input class="login" name="user_name" placeholder=" Имя пользователя" required="required" type="text">
+                <input class="login" name="user_name" placeholder=" Имя пользователя">
             </td>
         </tr>
 
@@ -21,13 +21,13 @@
                 <label>Пароль: </label>
             </td>
             <td class="login-user-password">
-                <input class="login" name="user_password" placeholder=" Пароль" required="required" type="password">
+                <input class="login" name="user_password" placeholder=" Пароль" type="password">
             </td>
         </tr>
 
         <tr>
             <td colspan="2" class="login-button">
-                <button type="submit" class="btn btn-success btn-lg">
+                <button class="btn btn-success btn-lg">
                     Войти
                 </button>
             </td>

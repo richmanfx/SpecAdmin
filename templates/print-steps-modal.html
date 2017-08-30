@@ -3,32 +3,11 @@
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
-                ПДФ с шагами сценария
-            </div>
-
-            <div class="modal-body">
-
-                <a href="/pdf/steps.pdf"> Просмотреть </a>
-                <button id="pdf_view_button"
-                        class="btn btn-success btn-lg"
-                        form="id_add_step_form">
-                    Просмотреть
-                </button>
-
-                <button form="id_add_step_form"
-                        type="reset"
-                        class="btn btn-success btn-lg">
-                    Сохранить
-                </button>
-
-                <button type="button"
-                        class="btn btn-success btn-lg"
-                        data-dismiss="modal">
-                    Отмена
-                </button>
-
+                <br>
+                    ПДФ с шагами сценария
+                <br>
             </div>
 
             <!-- Автофокус на кнопку в модальном окне -->
@@ -39,6 +18,12 @@
             </script>
 
             <div class="modal-footer">
+
+                <a id="pdf_view_button" class="btn btn-success btn-lg" href="/pdf/steps.pdf"> Просмотреть PDF </a>
+
+                <a download="" class="btn btn-success btn-lg" href="/pdf/steps.pdf"> Сохранить PDF </a>
+
+                <button type="button" class="btn btn-success btn-lg" data-dismiss="modal"> Отмена </button>
 
             </div>
         </div>

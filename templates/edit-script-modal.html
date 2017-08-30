@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
                 Редактирование сценария
             </div>
@@ -14,11 +14,11 @@
 
                         <label for="id_script"> Имя редактируемого сценария </label><br>
                         <textarea id="id_script" name="script" placeholder=" Имя редактируемого сценария"
-                                  required="required" rows="3"></textarea>
+                                  rows="3"></textarea>
                         <br><br>
 
                         <label for="id_scripts_suite"> Сюита сценария </label><br>
-                        <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария" required="required" type="text"><br>
+                        <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария"><br>
                         <br>
 
                     </div>
@@ -34,21 +34,15 @@
             </script>
 
             <div class="modal-footer">
-                <button type="submit"
-                        class="btn btn-success btn-lg"
-                        form="id_edit_script_form">
+                <button class="btn btn-success btn-lg" form="id_edit_script_form">
                     Редактировать сценарий
                 </button>
 
-                <button form="id_edit_script_form"
-                        type="reset"
-                        class="btn btn-success btn-lg">
+                <button form="id_edit_script_form" type="reset" class="btn btn-success btn-lg">
                     Очистить форму
                 </button>
 
-                <button type="button"
-                        class="btn btn-success btn-lg"
-                        data-dismiss="modal">
+                <button type="button" class="btn btn-success btn-lg" data-dismiss="modal">
                     Отмена
                 </button>
             </div>

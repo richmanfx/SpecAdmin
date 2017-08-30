@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
                 Редактирование шага
             </div>
@@ -13,22 +13,21 @@
 
                     <div class="auto_width">
                         <label for="id_step"> Имя редактируемого шага </label><br>
-                        <textarea id="id_step" name="step" required="required"
+                        <textarea id="id_step" name="step"
                                   placeholder=" Имя редактируемого шага" rows="2"></textarea>
                     </div>
                     <br>
 
                     <div class="auto_width">
                         <label for="id_steps_script"> Сценарий шага </label><br>
-                        <textarea id="id_steps_script" name="steps_script" required="required"
+                        <textarea id="id_steps_script" name="steps_script"
                                   placeholder=" Сценарий шага" rows="2"></textarea>
                     </div>
                     <br>
 
                     <label for="id_scripts_suite"> Сюита сценария </label><br>
-                    <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария"
-                           required="required" type="text"><br>
-                    <br>
+                    <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария">
+                    <br><br>
                 </form>
             </div>
 
@@ -40,21 +39,15 @@
             </script>
 
             <div class="modal-footer">
-                <button type="submit"
-                        class="btn btn-success btn-lg"
-                        form="id_edit_step_form">
+                <button class="btn btn-success btn-lg" form="id_edit_step_form">
                     Редактировать шаг
                 </button>
 
-                <button form="id_edit_step_form"
-                        type="reset"
-                        class="btn btn-success btn-lg">
+                <button form="id_edit_step_form" type="reset" class="btn btn-success btn-lg">
                     Очистить форму
                 </button>
 
-                <button type="button"
-                        class="btn btn-success btn-lg"
-                        data-dismiss="modal">
+                <button type="button" class="btn btn-success btn-lg" data-dismiss="modal">
                     Отмена
                 </button>
             </div>

@@ -152,29 +152,26 @@ $('#delStep').on('show.bs.modal', function (event) {
 /// Печать на принтер
 
 $('#printSteps').on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget);        // Кнопка, вызвавшая модальное окно
-    var scriptName = button.attr("data-name");    // Извлечь информацию из "data-name" у кнопки
-    var suiteName = button.attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
+        var button = $(event.relatedTarget);        // Кнопка, вызвавшая модальное окно
+        var scriptName = button.attr("data-name");    // Извлечь информацию из "data-name" у кнопки
+        var suiteName = button.attr("data-suite");    // Извлечь информацию из "data-suite" у кнопки
 
-    $.ajax({
-        async: false,
-        type: 'POST',
-        url: '/spec-admin/print-scripts-steps',
-        // contentType: "application/pdf",
-        data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
-        success: function(answerFromServer){
-            console.log("success: " + answerFromServer);
-
-            // alert(answerFromServer);
-
-        },
-        error: function(){
-            alert("Ошибка при ответе на AJAX POST запрос для печати ПДФ");
-        }
-    });
+        $.ajax({
+            async: false,
+            type: 'POST',
+            url: '/spec-admin/print-scripts-steps',
+            data: 'scriptName=' + scriptName + ';' + 'suiteName=' + suiteName,
+            success: function(answerFromServer){
+                console.log("success: " + answerFromServer);
+                // alert(answerFromServer);
+            },
+            error: function(){
+                // alert("Ошибка при ответе на AJAX POST запрос для печати ПДФ");
+            }
+        });
 
 
-    var modal = $(this);    // Обновить модальное окно
+        var modal = $(this);    // Обновить модальное окно
 
 });
 

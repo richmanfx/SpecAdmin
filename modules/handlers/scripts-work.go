@@ -8,7 +8,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"../../models"
 	"strconv"
-	"path/filepath"
+	"os"
 )
 
 // Добавить в БД новый сценарий
@@ -200,7 +200,7 @@ func CreateStepsPdf(context *gin.Context)  {
 	// Данные из AJAX запроса
 	scriptName := context.PostForm("scriptName")
 	scriptsSuite := context.PostForm("suiteName")
-	log.Infof("Данные из POST запроса AJAX: '%v' и '%v'", scriptName, scriptsSuite)
+	log.Debugf("Данные из POST запроса AJAX: '%v' и '%v'", scriptName, scriptsSuite)
 
 	// Получить из базы id сценария по имени Сценария и имени его Сюиты
 	_, scriptId, err := helpers.GetScript(scriptName, scriptsSuite)
@@ -215,23 +215,15 @@ func CreateStepsPdf(context *gin.Context)  {
 
 	// Сгенерировать PDF
 	pdfFileName, err := helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
-	rootDir := "C:\\Users\\Admin\\GoglandProjects\\SpecAdmin\\"		// TODO: В директорию к скриншотам оформить файл
 	//name := context.Param(pdfFileName)
-	filePath, err :=  filepath.Abs(rootDir + pdfFileName)
+	fullPdfFileName :=  string(os.PathSeparator) + pdfFileName
 	if err != nil {
 		context.AbortWithStatus(404)
 	}
 
 	if err == nil {
-		//result := gin.H{"scriptId": scriptId}
-		//context.JSON(http.StatusOK, result)
-		context.Header("Cache-Control", "must-revalidate, post-check=0, pre-check=0")
-		context.Header("Content-Type", "application/pdf")
-		context.Header("Content-Transfer-Encoding", "binary")
-		context.Header("Content-Length", strconv.Itoa(len(filePath)))
-		context.Header("Content-Disposition", fmt.Sprintf("attachment; filename='%s'", pdfFileName))
-
-		context.File(filePath)		// Отправить PDF-файл
+		context.Abort()
+		context.Redirect(http.StatusSeeOther, fullPdfFileName)
 	} else {
 		log.Errorf("Ошибка при генерации PDF: %v", err)
 		result := gin.H{"scriptId": err}
@@ -239,36 +231,3 @@ func CreateStepsPdf(context *gin.Context)  {
 	}
 
 }
-
-//// Получить все шаги для заданного по id сценария		(Сразу в PDF-е возвращать в JS???)
-//func GetStepsFromScript(context *gin.Context)  {
-//
-//	helpers.SetLogFormat()
-//	log.Infoln("Пришёл запрос в GetStepsFromScript")
-//
-//	// Данные из AJAX запроса
-//	scriptId := context.PostForm("scriptId")
-//	log.Infof("Данные из POST запроса AJAX: '%v' и '%v'", scriptId)
-//
-//	// Получить Шаги из БД только для заданных по ID Сценариев
-//	scriptIdInt, _ := strconv.Atoi(scriptId)
-//	scriptsIdList := append(make([]int, 1, 0), scriptIdInt)		// Слайс только из одного Id
-//
-//	stepsList, err := helpers.GetStepsListForSpecifiedScripts(scriptsIdList)
-//	log.Debugf("%v - %v", stepsList, err)
-//
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-

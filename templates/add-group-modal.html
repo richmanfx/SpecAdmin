@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div id="headerModal" class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span>&times;</span>
                 </button>
                 Добавить группу тестов
             </div>
@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <form id="id_add_group_form" name="add_group_form" method="post" action="/spec-admin/add-group">
                     <label for="id_group"> Имя новой группы </label><br>
-                    <input id="id_group" name="group" placeholder=" Имя новой группы" required="required" type="text">
+                    <input id="id_group" name="group" placeholder=" Имя новой группы">
                     <br>
                 </form>
             </div>
@@ -24,10 +24,7 @@
             </script>
 
             <div class="modal-footer">
-                <button type="submit"
-                        class="btn btn-success btn-lg"
-                        form="id_add_group_form">
-                        <!--data-dismiss="modal"-->
+                <button class="btn btn-success btn-lg" form="id_add_group_form">
                     Добавить
                 </button>
 
