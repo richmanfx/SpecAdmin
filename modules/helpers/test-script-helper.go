@@ -292,12 +292,11 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	ht := pdf.PointConvert(fontSize)
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
-	//pageWidth, pageHeight := pdf.GetPageSize()
-	pageWidth, _ := pdf.GetPageSize()
-	//leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
-	leftMargin, rightMargin, _, _ := pdf.GetMargins()
+	pageWidth, pageHeight := pdf.GetPageSize()
+	leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
 	columnWidths := []float64{10, 100, 100, pageWidth - leftMargin - rightMargin - (10 + 100 + 100)}
-	//columnWidths := []float64{10.0, 100.0, 120.0, 50.0}
+	marginCell := 2. // margin of top/bottom of cell
+	rows := [][]string{}
 
 	write := func(str string) {
 		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
@@ -322,15 +321,50 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	}
 	pdf.Ln(ht); pdf.Ln(ht)
 
-	// Тело таблицы
+	// Тело таблицы		// https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go
 	for _, step := range stepsList {
-		//write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
-		pdf.CellFormat(columnWidths[0], ht, tr(strconv.Itoa(step.SerialNumber)), "R", 0, "C", false, 0, "")
-		pdf.CellFormat(columnWidths[1], ht, tr(step.Name), "LR", 0, "L", false, 0, "")
-		pdf.CellFormat(columnWidths[2], ht, tr(step.Description), "LR", 0, "L", false, 0, "")
-		pdf.CellFormat(columnWidths[3], ht, tr(step.ExpectedResult), "L", 1, "L", false, 0, "")
+		//pdf.CellFormat(columnWidths[0], ht, tr(strconv.Itoa(step.SerialNumber)), "R", 0, "C", false, 0, "")
+		//pdf.CellFormat(columnWidths[1], ht, tr(step.Name), "LR", 0, "L", false, 0, "")
+		//pdf.CellFormat(columnWidths[2], ht, tr(step.Description), "LR", 0, "L", false, 0, "")
+		//pdf.CellFormat(columnWidths[3], ht, tr(step.ExpectedResult), "L", 1, "L", false, 0, "")
+
+		rows = append(rows, []string{tr(strconv.Itoa(step.SerialNumber)), tr(step.Name), tr(step.Description), tr(step.ExpectedResult)})
 	}
 
+
+	for _, row := range rows {
+		curx, y := pdf.GetXY()
+		x := curx
+
+		height := 0.
+		_, lineHt := pdf.GetFontSize()
+
+		for i, txt := range row {
+			lines := pdf.SplitLines([]byte(txt), columnWidths[i])
+			h := float64(len(lines))*lineHt + marginCell*float64(len(lines))
+			if h > height {
+				height = h
+			}
+		}
+		// Если высота строки не помещается на странице, то добавить новую страницу
+		if pdf.GetY()+height > pageHeight - bottomMargin {
+			pdf.AddPage()
+			y = pdf.GetY()
+		}
+		for i, txt := range row {
+			width := columnWidths[i]
+			pdf.Rect(x, y, width, height, "")
+			pdf.MultiCell(width, lineHt+marginCell, txt, "", "", false)
+			x += width
+			pdf.SetXY(x, y)
+		}
+		pdf.SetXY(curx, y+height)
+	}
+
+
+
+
+	// Записать файл
 	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
 	err = pdf.OutputFileAndClose(fullPdfFileName)
 	if err != nil {
