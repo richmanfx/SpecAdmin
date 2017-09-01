@@ -9,6 +9,7 @@ import (
 	"github.com/jung-kurt/gofpdf"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 // Добавляет сценарий в БД
@@ -291,11 +292,15 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	ht := pdf.PointConvert(fontSize)
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
+	//pageWidth, pageHeight := pdf.GetPageSize()
+	pageWidth, _ := pdf.GetPageSize()
+	//leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
+	leftMargin, rightMargin, _, _ := pdf.GetMargins()
+	columnWidths := []float64{10, 100, 100, pageWidth - leftMargin - rightMargin - (10 + 100 + 100)}
+	//columnWidths := []float64{10.0, 100.0, 120.0, 50.0}
 
 	write := func(str string) {
-		width := 250.0
-		//pdf.CellFormat(width, ht, tr(str), "", 1, "L", false, 0, "")
-		pdf.MultiCell(width, ht, tr(str), "", "L", false)
+		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
 		pdf.Ln(ht) 	// Переход на новую строку
 	}
 	pdf.AddPage()
@@ -305,14 +310,25 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	write(fmt.Sprintf("Сценарий: %s", scriptName))
 	pdf.Ln(ht)
 
-	//header := "N шага, Название шага, Описание Шага, Ожидаемый результат"
-	//write(header)
-	//pdf.CellFormat(40, 7, header, "1", 0, "", false, 0, "")
+	// Заголовок таблицы
+	header := []string{"N", "Название шага", "Описание шага", "Ожидаемый результат"}
+	for i, str := range header {
+		if i == 0 {
+			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1TB", 0, "C", false, 0, "")
+		} else {
+			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1LTB", 0, "C", false, 0, "")
+		}
 
+	}
+	pdf.Ln(ht); pdf.Ln(ht)
 
-
+	// Тело таблицы
 	for _, step := range stepsList {
-		write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
+		//write(fmt.Sprintf("%d. %s, %s, %s", step.SerialNumber, step.Name, step.Description, step.ExpectedResult))
+		pdf.CellFormat(columnWidths[0], ht, tr(strconv.Itoa(step.SerialNumber)), "R", 0, "C", false, 0, "")
+		pdf.CellFormat(columnWidths[1], ht, tr(step.Name), "LR", 0, "L", false, 0, "")
+		pdf.CellFormat(columnWidths[2], ht, tr(step.Description), "LR", 0, "L", false, 0, "")
+		pdf.CellFormat(columnWidths[3], ht, tr(step.ExpectedResult), "L", 1, "L", false, 0, "")
 	}
 
 	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
