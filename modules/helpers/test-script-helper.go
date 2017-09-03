@@ -318,19 +318,25 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	}
 	pdf.Ln(1.5 * ht)
 
-
-
-	// Тело таблицы		// https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go
+	// Тело таблицы
 	for _, step := range stepsList {
-		//pdf.CellFormat(columnWidths[0], ht, tr(strconv.Itoa(step.SerialNumber)), "R", 0, "C", false, 0, "")
-		//pdf.CellFormat(columnWidths[1], ht, tr(step.Name), "LR", 0, "L", false, 0, "")
-		//pdf.CellFormat(columnWidths[2], ht, tr(step.Description), "LR", 0, "L", false, 0, "")
-		//pdf.CellFormat(columnWidths[3], ht, tr(step.ExpectedResult), "L", 1, "L", false, 0, "")
-
 		rows = append(rows, []string{tr(strconv.Itoa(step.SerialNumber)), tr(step.Name), tr(step.Description), tr(step.ExpectedResult)})
 	}
+	splitAndWrapTextInCell(rows, pdf, columnWidths, marginCell, pageHeight, bottomMargin)
 
+	// Записать файл
+	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
+	err = pdf.OutputFileAndClose(fullPdfFileName)
+	if err != nil {
+		log.Errorf("Ошибка: '%v'", err)
+	}
 
+	return fullPdfFileName, err
+
+}
+
+// Разбивает текст для ячейки PDF-таблицы на слова, переносит слова и оборачивает в рамку ячейки.
+func splitAndWrapTextInCell(rows [][]string, pdf *gofpdf.Fpdf, columnWidths []float64, marginCell float64, pageHeight float64, bottomMargin float64) {
 	for _, row := range rows {
 		curx, y := pdf.GetXY()
 		x := curx
@@ -346,14 +352,14 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 			}
 		}
 		// Если высота строки не помещается на странице, то добавить новую страницу
-		if pdf.GetY()+height > pageHeight - bottomMargin {
+		if pdf.GetY()+height > pageHeight-bottomMargin {
 			pdf.AddPage()
 			y = pdf.GetY()
 		}
 		for i, txt := range row {
 			width := columnWidths[i]
 			pdf.Rect(x, y, width, height, "")
-			if i == 0 {		// Нумерация шагов в центре ячейки
+			if i == 0 { // Нумерация шагов в центре ячейки
 				pdf.MultiCell(width, lineHt+marginCell, txt, "", "C", false)
 			} else {
 				pdf.MultiCell(width, lineHt+marginCell, txt, "", "", false)
@@ -363,19 +369,6 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 		}
 		pdf.SetXY(curx, y+height)
 	}
-
-
-
-
-	// Записать файл
-	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
-	err = pdf.OutputFileAndClose(fullPdfFileName)
-	if err != nil {
-		log.Errorf("Ошибка: '%v'", err)
-	}
-
-	return fullPdfFileName, err
-
 }
 
 
