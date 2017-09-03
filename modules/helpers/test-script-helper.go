@@ -311,15 +311,14 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	// Заголовок таблицы
 	header := []string{"N", "Название шага", "Описание шага", "Ожидаемый результат"}
+	pdf.SetFillColor(200, 200, 200)
 	for i, str := range header {
-		if i == 0 {
-			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1TB", 0, "C", false, 0, "")
-		} else {
-			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1LTB", 0, "C", false, 0, "")
-		}
+			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1", 0, "C", true, 0, "")
 
 	}
-	pdf.Ln(ht); pdf.Ln(ht)
+	pdf.Ln(1.5 * ht)
+
+
 
 	// Тело таблицы		// https://github.com/jung-kurt/gofpdf/blob/master/fpdf_test.go
 	for _, step := range stepsList {
@@ -354,7 +353,11 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 		for i, txt := range row {
 			width := columnWidths[i]
 			pdf.Rect(x, y, width, height, "")
-			pdf.MultiCell(width, lineHt+marginCell, txt, "", "", false)
+			if i == 0 {		// Нумерация шагов в центре ячейки
+				pdf.MultiCell(width, lineHt+marginCell, txt, "", "C", false)
+			} else {
+				pdf.MultiCell(width, lineHt+marginCell, txt, "", "", false)
+			}
 			x += width
 			pdf.SetXY(x, y)
 		}
