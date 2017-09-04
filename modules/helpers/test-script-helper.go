@@ -275,7 +275,7 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 
 // Сгенерировать PDF файл со списком Шагов Сценария
-func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) (string,error) {
+func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) (string, error) {		// TODO: возвращать только ошибку без ПДФ-а
 
 	var pdf *gofpdf.Fpdf
 	var err error
@@ -313,8 +313,7 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	header := []string{"N", "Название шага", "Описание шага", "Ожидаемый результат"}
 	pdf.SetFillColor(200, 200, 200)
 	for i, str := range header {
-			pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1", 0, "C", true, 0, "")
-
+		pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1", 0, "C", true, 0, "")
 	}
 	pdf.Ln(1.5 * ht)
 
@@ -332,7 +331,6 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	}
 
 	return fullPdfFileName, err
-
 }
 
 // Разбивает текст для ячейки PDF-таблицы на слова, переносит слова и оборачивает в рамку ячейки.

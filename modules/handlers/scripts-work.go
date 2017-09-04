@@ -225,9 +225,10 @@ func CreateStepsPdf(context *gin.Context)  {
 		context.Abort()
 		context.Redirect(http.StatusSeeOther, fullPdfFileName)
 	} else {
-		log.Errorf("Ошибка при генерации PDF: %v", err)
+		log.Errorf("Ошибка при генерации PDF-файла с шагами сценария: %v", err)
 		result := gin.H{"scriptId": err}
 		context.JSON(http.StatusOK, result)
 	}
 
 }
+

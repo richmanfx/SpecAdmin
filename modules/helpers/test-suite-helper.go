@@ -7,6 +7,8 @@ import (
 	"../../models"
 	"runtime"
 	"database/sql"
+	"github.com/jung-kurt/gofpdf"
+	"os"
 )
 
 // Сформировать список Сюит для указанной Группы
@@ -248,6 +250,64 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 		}
 	}
 	if err != nil { log.Errorf("Ошибка переименования Сюиты '%s' в '%s': %v", oldSuiteName, newSuiteName, err) }
+	return err
+}
+
+// Сгенерировать PDF файл со списком Сценариев Сюиты
+func GetSuitesScriptsPdf(scriptsSuite string, scriptsList []models.Script) error {
+
+	var pdf *gofpdf.Fpdf
+	var err error
+	const pdfDirName string = "pdf"
+	const pdfFileName string = "scripts.pdf"
+
+	pdf = gofpdf.New("L", "mm", "A4", "")
+
+	pdf.SetFontLocation("fonts")
+	fontSize := 12.0
+	pdf.AddFont("Helvetica-1251", "B", "helvetica_1251.json")
+	pdf.SetFont("Helvetica-1251", "B", fontSize)
+
+
+	ht := pdf.PointConvert(fontSize)
+	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
+	pageWidth, pageHeight := pdf.GetPageSize()
+	leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
+	columnWidths := []float64{10, pageWidth - leftMargin - rightMargin - 10}
+	marginCell := 2. // margin of top/bottom of cell
+	rows := [][]string{}
+
+	write := func(str string) {
+		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
+		pdf.Ln(ht) 	// Переход на новую строку
+	}
+	pdf.AddPage()
+
+	// Вывод контента в PDF-документ
+	write(fmt.Sprintf("Сюита: %s", scriptsSuite))
+	pdf.Ln(ht)
+
+	// Заголовок таблицы
+	header := []string{"N", "Сценарий"}
+	pdf.SetFillColor(200, 200, 200)
+	for i, str := range header {
+		pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1", 0, "C", true, 0, "")
+	}
+	pdf.Ln(1.5 * ht)
+
+	// Тело таблицы
+	for _, script := range scriptsList {
+		rows = append(rows, []string{tr(script.SerialNumber), tr(script.Name)})
+	}
+	splitAndWrapTextInCell(rows, pdf, columnWidths, marginCell, pageHeight, bottomMargin)
+
+	// Записать файл
+	fullPdfFileName := pdfDirName + string(os.PathSeparator) + pdfFileName
+	err = pdf.OutputFileAndClose(fullPdfFileName)
+	if err != nil {
+		log.Errorf("Ошибка: '%v'", err)
+	}
+
 	return err
 }
 

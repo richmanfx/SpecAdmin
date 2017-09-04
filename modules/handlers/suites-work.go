@@ -197,3 +197,35 @@ func RenameSuite(context *gin.Context)  {
 		)
 	}
 }
+
+// Вывод для печати Сценариев заданной Сюиты
+func CreateScriptsPdf(context *gin.Context)  {
+	helpers.SetLogFormat()
+
+	// Данные из AJAX запроса
+	scriptsSuite := context.PostForm("suiteName")
+	log.Infof("Данные из POST запроса AJAX: '%v'",  scriptsSuite)
+
+	// В список одну сюиту только
+	suitsNameList := append(make([]string, 0, 0), scriptsSuite)
+
+	// Получить Сценарии для заданных Сюит
+	scriptsList, err := helpers.GetScriptListForSpecifiedSuits(suitsNameList)
+
+	// Закрыть соединение с БД
+	helpers.CloseConnectToDB()
+
+	if err == nil {
+		log.Infof("Список сценариев из сюиты %v: %#v", suitsNameList, scriptsList)
+
+		// Сгенерировать PDF
+		err = helpers.GetSuitesScriptsPdf(scriptsSuite, scriptsList)
+
+		context.Abort()
+		context.Redirect(http.StatusSeeOther, "OK")
+	} else {
+		log.Errorf("Ошибка при генерации PDF-файла со сценариями сюиты: %v", err)
+		result := gin.H{"result": err}
+		context.JSON(http.StatusOK, result)
+	}
+}

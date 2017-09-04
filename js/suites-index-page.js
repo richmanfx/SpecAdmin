@@ -168,6 +168,25 @@ $('#printSteps').on('show.bs.modal', function (event) {
         });
 });
 
+// Печатать Сценарии Сюиты
+$('#printScripts').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);        // Кнопка, вызвавшая модальное окно
+    var suiteName = button.attr("data-name");    // Извлечь информацию из "data-name" у кнопки
+
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/print-suites-scripts',
+        data: 'suiteName=' + suiteName,
+        success: function(answerFromServer){
+            console.log("success: " + answerFromServer);
+            // alert(answerFromServer);
+        },
+        error: function(){
+            // alert("Ошибка при ответе на AJAX POST запрос для печати ПДФ");
+        }
+    });
+});
 
 
 

@@ -1,0 +1,31 @@
+<div id="printScripts" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+                <br>
+                ПДФ со сценариями сюиты
+                <br>
+            </div>
+
+            <!-- Автофокус на кнопку в модальном окне -->
+            <script>
+                $('#printScripts').on('shown.bs.modal', function (e) {
+                    $('#pdf_view_button', e.target).focus();
+                });
+            </script>
+
+            <div class="modal-footer">
+
+                <a id="pdf_view_button" class="btn btn-success btn-lg" href="/pdf/scripts.pdf"> Просмотреть PDF </a>
+
+                <a download="" class="btn btn-success btn-lg" href="/pdf/scripts.pdf"> Сохранить PDF </a>
+
+                <button type="button" class="btn btn-success btn-lg" data-dismiss="modal"> Отмена </button>
+
+            </div>
+        </div>
+    </div>
+</div>
