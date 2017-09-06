@@ -266,12 +266,17 @@ func SavePassword(userName, newPassword string) error {
 	var err error
 	var result sql.Result
 	var affected int64
+	var salt string
 
 	// Получить Соль из БД
-	salt, err := GetSaltFromDb(userName)
-	log.Debugf("Соль из БД: '%s'", salt)
+	//salt, err = GetSaltFromDb(userName)
+	//log.Debugf("Соль из БД: '%s'", salt)
 
-	// Сгенерить Хеш пароля с Солью
+	// Сгенерировать новую соль
+	salt = CreateSalt()
+	log.Infof("Новая Соль: '%s'", salt)
+
+	// Сгенерить Хеш пароль с Солью
 	newHash := CreateHash(newPassword, salt)
 	log.Debugf("Хеш с Солью: '%s'", newHash)
 
@@ -280,7 +285,11 @@ func SavePassword(userName, newPassword string) error {
 	if err == nil {
 
 		// Занести новый хеш пароля в БД (соль не меняется)
-		result, err = db.Exec("UPDATE user SET passwd=? WHERE login=?", newHash, userName)
+		//result, err = db.Exec("UPDATE user SET passwd=? WHERE login=?", newHash, userName)
+		// Занести новый хеш пароля и новую соль в БД
+		result, err = db.Exec("UPDATE user Set passwd=?, salt=? WHERE login=?", newHash, salt, userName)
+
+
 
 		if err == nil {
 			affected, err = result.RowsAffected()

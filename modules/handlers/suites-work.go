@@ -204,7 +204,7 @@ func CreateScriptsPdf(context *gin.Context)  {
 
 	// Данные из AJAX запроса
 	scriptsSuite := context.PostForm("suiteName")
-	log.Infof("Данные из POST запроса AJAX: '%v'",  scriptsSuite)
+	log.Debugf("Данные из POST запроса AJAX: '%v'",  scriptsSuite)
 
 	// В список одну сюиту только
 	suitsNameList := append(make([]string, 0, 0), scriptsSuite)
@@ -216,7 +216,7 @@ func CreateScriptsPdf(context *gin.Context)  {
 	helpers.CloseConnectToDB()
 
 	if err == nil {
-		log.Infof("Список сценариев из сюиты %v: %#v", suitsNameList, scriptsList)
+		log.Debugf("Список сценариев из сюиты %v: %#v", suitsNameList, scriptsList)
 
 		// Сгенерировать PDF
 		err = helpers.GetSuitesScriptsPdf(scriptsSuite, scriptsList)
