@@ -31,6 +31,7 @@ func AddStep(context *gin.Context)  {
 	if err != nil {		// Если в форме не указан файл скриншота, то пустую строку - без скриншота
 		log.Debugln("Не указан файл скриншота в функции 'AddStep' - передаём пустую строку (\"\").")
 		screenShotFileName = ""
+		err = nil
 	} else {
 
 		screenShotFileName = header.Filename
