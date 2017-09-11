@@ -234,6 +234,7 @@ func UpdateAfterEditStep(context *gin.Context) {
 			if err != nil { // Если в форме не указан файл скриншота, то оставить прежний файл
 				log.Debugln("Не указан файл скриншота.")
 				screenShotFileName = ""
+				err = nil
 			} else {
 
 				screenShotFileName = header.Filename
@@ -284,6 +285,7 @@ func UpdateAfterEditStep(context *gin.Context) {
 		err = helpers.UpdateTestStep(
 			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
 	}
+
 	helpers.CloseConnectToDB()
 
 	if err != nil {

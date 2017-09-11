@@ -243,7 +243,7 @@ func UpdateTestStep(stepsId int, stepsName string, stepsSerialNumber int, stepsD
 	if err == nil {
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
+		if err == nil {
 
 			// Обновить данные о Шаге в БД
 			log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
