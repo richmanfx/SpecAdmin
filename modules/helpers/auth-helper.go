@@ -7,6 +7,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"../../models"
 	"database/sql"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var UserLogin string
@@ -268,13 +269,9 @@ func SavePassword(userName, newPassword string) error {
 	var affected int64
 	var salt string
 
-	// Получить Соль из БД
-	//salt, err = GetSaltFromDb(userName)
-	//log.Debugf("Соль из БД: '%s'", salt)
-
 	// Сгенерировать новую соль
 	salt = CreateSalt()
-	log.Infof("Новая Соль: '%s'", salt)
+	log.Debugf("Новая Соль: '%s'", salt)
 
 	// Сгенерить Хеш пароль с Солью
 	newHash := CreateHash(newPassword, salt)
@@ -284,8 +281,6 @@ func SavePassword(userName, newPassword string) error {
 	err = dbConnect()
 	if err == nil {
 
-		// Занести новый хеш пароля в БД (соль не меняется)
-		//result, err = db.Exec("UPDATE user SET passwd=? WHERE login=?", newHash, userName)
 		// Занести новый хеш пароля и новую соль в БД
 		result, err = db.Exec("UPDATE user Set passwd=?, salt=? WHERE login=?", newHash, salt, userName)
 
@@ -319,14 +314,15 @@ func CheckPasswordInDB(login, password string) error {
 		// Считать Хеш из БД
 		var oldHash string
 		oldHash, err = GetHashFromDb(login)
+		if err == nil {
+			err = bcrypt.CompareHashAndPassword([]byte(oldHash), []byte(password))
+		}
 
 		if err == nil {
-			if newHash == oldHash {
-				log.Debugln("Хеш пароля совпадает с Хешем из БД.")
-			} else {
+			log.Debugln("Хеш пароля совпадает с Хешем из БД.")
+		} else {
 				log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
 				err = fmt.Errorf("Неверный логин/пароль.")
-			}
 		}
 	}
 	if err != nil {log.Errorf("Ошибка при проверке пароля по Хешу из БД: '%v'", err)}

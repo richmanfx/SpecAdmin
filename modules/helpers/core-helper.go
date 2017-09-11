@@ -10,6 +10,8 @@ import (
 	"crypto/sha512"
 	"io"
 	"time"
+	"golang.org/x/crypto/bcrypt"
+	"strconv"
 )
 
 var db *sql.DB
@@ -113,16 +115,16 @@ func GetUnique32SymbolsString() string {
 // Сгенерировать "соль"
 func CreateSalt() string {
 	hash := sha512.New()
+
 	io.WriteString(hash, time.Now().String())
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
 // Получить Хеш пароля с заданной солью
 func CreateHash(password string, salt string) string {
-	hash := sha512.New()
-	io.WriteString(hash, salt)
-	return fmt.Sprintf("%x", hash.Sum([]byte(password)))
-
+	intSalt, _ := strconv.Atoi(salt)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), intSalt)
+	return string(hashedPassword)
 }
 
 // Получить "соль" из БД для заданного пользователя
