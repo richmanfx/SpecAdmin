@@ -250,7 +250,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 }
 
 
-// Вернуть Сценарий и Сюиту Шага по его ID
+// Вернуть Сценарий и Сюиту Шага по ID Сценария
 func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 	var err error
 	var stepsScriptName string
@@ -369,7 +369,27 @@ func splitAndWrapTextInCell(rows [][]string, pdf *gofpdf.Fpdf, columnWidths []fl
 	}
 }
 
+// Получить ID Сценария по ID Шага
+func GetScriptsIdByStepsId(stepsId int) (int, error) {
+	var err error
+	var scriptId int
+	SetLogFormat()
 
+	// Подключиться к БД
+	err = dbConnect()
+	if err == nil {
+
+		// Данные по Сценарию из БД
+		log.Debugf("Получение из БД ID Сценария по ID Шага '%s'.", stepsId)
+		err = db.QueryRow("SELECT script_id FROM tests_steps WHERE id=?", stepsId).Scan(&scriptId)
+
+		if err == nil {
+			log.Debugf("rows.Next из таблицы tests_steps: %s", scriptId)
+		}
+	}
+	if err != nil {log.Errorf("Ошибка при получении из БД шдентификатора Сценария по идентификатору Шага'%s': %v", stepsId, err)}
+	return scriptId, err
+}
 
 
 

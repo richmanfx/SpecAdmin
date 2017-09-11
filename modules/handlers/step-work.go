@@ -111,12 +111,12 @@ func AddStep(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
+				"message1": 	fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
 					newStepName, stepsScript, scriptsSuite),
-				"message2": "",
-				"message3": "",
+				"message2": 	"",
+				"message3": 	"",
 				"SuitesGroup":	suitesGroup,
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -189,10 +189,10 @@ func EditStep(context *gin.Context)  {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -200,9 +200,9 @@ func EditStep(context *gin.Context)  {
 		// Вывести данные для редактирования
 		context.HTML(http.StatusOK, "edit-step.html",
 			gin.H{
-				"title": 	"Редактирование шага",
-				"step": 	step,
-				"Version":	Version,
+				"title": 		"Редактирование шага",
+				"step": 		step,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -280,10 +280,27 @@ func UpdateAfterEditStep(context *gin.Context) {
 		}
 	}
 
+
+	ScriptId, err := helpers.GetScriptsIdByStepsId(stepsId)
+	var suitesGroup string
 	if err == nil {
-		// Обновить в БД
-		err = helpers.UpdateTestStep(
-			stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
+		_, scriptsSuite, err := helpers.GetScriptAndSuiteByScriptId(ScriptId)
+		if err == nil {
+
+
+			var suite models.Suite
+			if err == nil {
+				// Группа Сюиты
+				suite, err = helpers.GetSuite(scriptsSuite)
+				suitesGroup = suite.Group
+			}
+
+			if err == nil {
+				// Обновить в БД
+				err = helpers.UpdateTestStep(
+					stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName)
+			}
+		}
 	}
 
 	helpers.CloseConnectToDB()
@@ -302,11 +319,12 @@ func UpdateAfterEditStep(context *gin.Context) {
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
+				"message2": 	"",
+				"message3": 	"",
+				"SuitesGroup":	suitesGroup,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
