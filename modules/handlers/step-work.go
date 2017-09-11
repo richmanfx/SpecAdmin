@@ -320,7 +320,7 @@ func GetStepsOptions(context *gin.Context)  {
 	// Данные из AJAX запроса
 	stepsScriptsId, err := strconv.Atoi(context.PostForm("ScriptsId"))
 	log.Debugf("Данные из POST запроса AJAX: stepsScriptsId='%d'", stepsScriptsId)
-	if err != nil {
+	if err == nil {
 		// Данные о Шаге из БД
 		stepsScriptName, scripsSuiteName, err = helpers.GetScriptAndSuiteByScriptId(stepsScriptsId)
 		log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
