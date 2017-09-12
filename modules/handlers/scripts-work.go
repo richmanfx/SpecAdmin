@@ -65,8 +65,6 @@ func DelScript(context *gin.Context)  {
 
 	err := helpers.DelTestScript(deletedScript, scriptsSuite)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

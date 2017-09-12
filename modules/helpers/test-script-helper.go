@@ -77,6 +77,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 				}
 			}
 		}
+		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)}
 	return err
