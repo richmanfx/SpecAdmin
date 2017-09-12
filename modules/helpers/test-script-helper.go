@@ -38,6 +38,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 				}
 			}
 		}
+		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)}
 	return err

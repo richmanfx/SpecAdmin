@@ -27,7 +27,6 @@ func AddScript(context *gin.Context)  {
 
 	err = helpers.AddTestScript(newScript, scriptSerialNumber, scriptsSuite)
 
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

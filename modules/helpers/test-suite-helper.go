@@ -171,6 +171,7 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 			}
 		}
 	}
+	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных Сюиты '%s' из БД: '%v'", suitesName, err)}
 	return suite, err
 }
