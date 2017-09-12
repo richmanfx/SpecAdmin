@@ -351,6 +351,7 @@ func CheckUserInDB(login string) error {
 			err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
 		}
 	}
+	db.Close()
 	if err != nil {log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)}
 	return err
 }
@@ -420,6 +421,7 @@ func CheckOneUserPermission(login string, permission string) error {
 				}
 			}
 		}
+		db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)}
 	return err

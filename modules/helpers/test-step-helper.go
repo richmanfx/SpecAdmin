@@ -185,6 +185,7 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 			}
 		}
 	}
+	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении Шагов из БД только для заданных по ID Сценариев: '%v'", err)}
 	return stepsList, err
 }

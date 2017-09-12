@@ -77,8 +77,6 @@ func EditGroup(context *gin.Context)  {
 	newGroup := context.PostForm("new_group")
 	err := helpers.EditTestGroup(oldGroup, newGroup)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		// Ошибка при редактировании группы
 		context.HTML(http.StatusOK, "message.html",

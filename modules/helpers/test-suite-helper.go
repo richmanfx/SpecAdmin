@@ -18,9 +18,7 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
 	SetLogFormat()
 
-	// Подключиться к БД
-	err = dbConnect()
-	if err == nil {
+
 
 		// Получить только список имён Сюит в данной Группе
 		suitsNameFromGroup, err := GetSuitsNameFromSpecifiedGroup(groupName)
@@ -35,36 +33,40 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 				// Формировать список Сюит
 				for _, suiteName := range suitsNameFromGroup {
 
-					// Сюиты из БД по списку имён Сюит
-					rows, err = db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
+					// Подключиться к БД
+					err = dbConnect()
 					if err == nil {
-						// Получить данные из результата запроса
-						var suite models.Suite
-						for rows.Next() {
-							err = rows.Scan(&suite.Name, &suite.Description, &suite.SerialNumber)
-							if err == nil {
-								log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", suite.Name, suite.Description, suite.SerialNumber)
+						// Сюиты из БД по списку имён Сюит
+						rows, err = db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
+						if err == nil {
+							// Получить данные из результата запроса
+							var suite models.Suite
+							for rows.Next() {
+								err = rows.Scan(&suite.Name, &suite.Description, &suite.SerialNumber)
+								if err == nil {
+									log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", suite.Name, suite.Description, suite.SerialNumber)
 
-								// Заполнить Сюитами список Сюит
-								suite.Group = groupName
+									// Заполнить Сюитами список Сюит
+									suite.Group = groupName
 
-								// Закинуть Сценарии в соответствующие Сюиты
-								for _, script := range scriptsList { // Бежать по всем сценариям
-									if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-										suite.Scripts = append(suite.Scripts, script)
-										log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-									} else {
-										log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+									// Закинуть Сценарии в соответствующие Сюиты
+									for _, script := range scriptsList { // Бежать по всем сценариям
+										if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
+											suite.Scripts = append(suite.Scripts, script)
+											log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+										} else {
+											log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
+										}
 									}
-								}
 
-								// Добавить Сюиту в список
-								suitesList = append(suitesList, suite)
+									// Добавить Сюиту в список
+									suitesList = append(suitesList, suite)
+								}
 							}
 						}
 					}
+					db.Close()
 				}
-			}
 		}
 	}
 	log.Debugf("Список Сюит: '%v'", suitesList)
@@ -230,7 +232,7 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 
 		// Подключиться к БД
 		err = dbConnect()
-		if err != nil {
+		if err == nil {
 
 			// Обновить данные о Сюите в БД
 			log.Debugf("Переименование Сюиты '%s' в '%s'", oldSuiteName, newSuiteName)
@@ -248,6 +250,7 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 				}
 			}
 		}
+		db.Close()
 	}
 	if err != nil { log.Errorf("Ошибка переименования Сюиты '%s' в '%s': %v", oldSuiteName, newSuiteName, err) }
 	return err

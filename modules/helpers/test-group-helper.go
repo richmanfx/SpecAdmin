@@ -32,6 +32,7 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 			}
 		}
 	}
+	db.Close()
 	if err != nil { log.Errorf("Ошибка при получении списка Групп из БД: %v", err) }
 	return groupList, err
 }
@@ -140,6 +141,7 @@ func EditTestGroup(oldName string, newName string) error {
 				}
 			}
 		}
+		db.Close()
 	}
 	if err != nil { log.Errorf("Ошибка при изменении имени Группы в БД: %v", err) }
 	return err

@@ -171,8 +171,6 @@ func RenameSuite(context *gin.Context)  {
 	newSuite := context.PostForm("new_suite")
 	err := helpers.RenameTestSuite(oldSuite, newSuite)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{

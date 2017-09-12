@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "9.10"
+var Version string = "9.11"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -17,27 +17,27 @@ func ShowIndexPage(context *gin.Context)  {
 	helpers.SetLogFormat()
 
 	// Слайс из Групп
-	groupList := make([]models.Group, 0, 0)
+	groupList := make([]models.Group, 0, 40)
 
-	// Подключиться к БД
-	err = helpers.ConnectToDB()
-	if err == nil {
+	//// Подключиться к БД
+	//err = helpers.ConnectToDB()
+	//if err == nil {
 
 		// Сформировать список Групп на основе данных из БД
 		groupList, err = helpers.GetGroupsList(groupList)
-	}
+	//}
 
 	if err == nil {
 		// Сбор статистики
 		statistic, err = helpers.GetStatistic()
 	}
 
-	if err == nil {
-		// Закрыть соединение с БД
-		err = helpers.CloseConnectToDB()
-	}
+	//if err == nil {
+	//	// Закрыть соединение с БД
+	//	err = helpers.CloseConnectToDB()
+	//}
 
-	helpers.CloseConnectToDB()
+	//helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: '%v'", err)
@@ -78,12 +78,8 @@ func ShowSuitesIndex(context *gin.Context)  {
 	groupName := context.PostForm("group_name")
 	log.Debugf("Полученное из формы имя группы: '%s'", groupName)
 
-	// Подключиться к БД
-	err = helpers.ConnectToDB()
-	if err == nil {
-		// Сформировать список Сюит заданной Группы из БД
-		suitesList, err = helpers.GetSuitesListInGroup(groupName)
-	}
+	// Сформировать список Сюит заданной Группы из БД
+	suitesList, err = helpers.GetSuitesListInGroup(groupName)
 
 	if err == nil {
 		// Сбор статистики
@@ -94,8 +90,6 @@ func ShowSuitesIndex(context *gin.Context)  {
 		// Путь к сриншотам
 		screenShotsPath, err = helpers.GetScreenShotsPath()
 	}
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)

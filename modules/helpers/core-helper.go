@@ -100,6 +100,7 @@ func GetStatistic() (models.Statistic, error) {
 			}
 		}
 	}
+	CloseConnectToDB()
 	if err != nil { log.Errorf("Ошибка при получении статистики: '%v'", err) }
 	return statistic, err
 }

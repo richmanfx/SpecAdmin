@@ -38,6 +38,7 @@ func GetConfig() ([]models.Option, error) {
 			}
 		}
 	}
+	db.Close()
 	if err != nil {log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)}
 	return config, err
 }
