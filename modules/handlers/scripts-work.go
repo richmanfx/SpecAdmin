@@ -106,8 +106,6 @@ func EditScript(context *gin.Context)  {
 	var err error
 	script, scriptId, err = helpers.GetScript(editedScript, scriptsSuite)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -133,7 +131,7 @@ func EditScript(context *gin.Context)  {
 	}
 }
 
-// Обновить в БД скрипт после редактирования
+// Обновить в БД Сценарий после редактирования
 func UpdateAfterEditScript(context *gin.Context) {
 	helpers.SetLogFormat()
 	var err error
@@ -158,8 +156,6 @@ func UpdateAfterEditScript(context *gin.Context) {
 		// Обновить в БД
 		err = helpers.UpdateTestScript(scriptId, scriptName, scriptSerialNumber, scriptsSuite)
 	}
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

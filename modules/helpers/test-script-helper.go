@@ -38,7 +38,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 				}
 			}
 		}
-		db.Close()
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)}
 	return err
@@ -77,7 +77,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 				}
 			}
 		}
-		db.Close()
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)}
 	return err
@@ -109,6 +109,7 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 			script.Suite = scriptsSuiteName
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных Сценария '%s' Сюиты '%s' из БД: %v", scriptsName, scriptsSuiteName, err)}
 	return script, id, err
 }
@@ -129,12 +130,13 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 		if err == nil {
 			// Обновить данные о Сценарии в БД
 			log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
-			_, err = db.Query("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
+			_, err = db.Exec("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
 				scriptName, scriptSerialNumber, scriptsSuite, scriptId)
 			if err == nil {
 				log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
 			}
 		}
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка обновления данных Сценария '%s' в БД: %v", scriptName, err)}
 	return err
@@ -165,7 +167,7 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 			}
 		}
 	}
-	db.Close()
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении списока имён Сюит в Группе '%s': %v", groupName, err)}
 	return suitsNameList, err
 }
@@ -197,7 +199,7 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 			}
 		}
 	}
-	db.Close()
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении ID Сценариев для Сюит: %v", err)}
 	return scriptsIdList, err
 }
@@ -251,7 +253,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 					}
 				}
 			}
-			db.Close()
+			defer db.Close()
 		}
 	}
 	if err != nil {log.Errorf("Ошибка при получении Сценариев для заданных Сюит: %v", err)}
@@ -278,6 +280,7 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s': %v", ScriptId, err)}
 	return stepsScriptName, scripsSuiteName, err
 }
@@ -396,6 +399,7 @@ func GetScriptsIdByStepsId(stepsId int) (int, error) {
 			log.Debugf("rows.Next из таблицы tests_steps: %s", scriptId)
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении из БД шдентификатора Сценария по идентификатору Шага'%s': %v", stepsId, err)}
 	return scriptId, err
 }

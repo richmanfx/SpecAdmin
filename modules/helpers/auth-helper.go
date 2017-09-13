@@ -62,6 +62,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 			sessidExist = false
 		}
 	}
+	defer db.Close()
 	if err != nil { log.Errorf("Ошибка при проверке наличия сессии в БД: %v", err) }
 	return sessidExist
 }
@@ -89,6 +90,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при сохранении Сессии в БД: '%v'", err)}
 	return err
 }
@@ -119,6 +121,7 @@ func CreateUserInDb(user models.User) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при создании пользователя в БД: '%v'", err)}
 	return err
 }
@@ -147,6 +150,7 @@ func SaveUserInDb(user models.User) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)}
 	return err
 }
@@ -182,10 +186,10 @@ func DeleteUserInDb(user models.User) error {
 					} else {
 						err = fmt.Errorf("Ошибка удаления пользователя '%s' - не удалено ни одной строки в БД.", user.Login)
 					}
-
 				}
 			}
 		}
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при удалении пользователя '%s' в БД: '%v'", user.Login, err)}
 	return err
@@ -221,6 +225,7 @@ func GetUsers() ([]models.User, error) {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при считывании из БД всех пользователей: '%v'", err)}
 	return usersList, err
 }
@@ -256,6 +261,7 @@ func ValidatePassword(userName, oldPassword string) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при проверке пароля: '%v'", err)}
 	return err
 }
@@ -293,6 +299,7 @@ func SavePassword(userName, newPassword string) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка записи в БД нового пароля пользователя: '%v'", err)}
 	return err
 }
@@ -351,7 +358,7 @@ func CheckUserInDB(login string) error {
 			err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
 		}
 	}
-	db.Close()
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)}
 	return err
 }
@@ -384,6 +391,7 @@ func DeleteSession(userName string) error {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка удаления сессии пользователя '%s' из БД: '%v'", userName, err)}
 	return err
 }
@@ -421,7 +429,7 @@ func CheckOneUserPermission(login string, permission string) error {
 				}
 			}
 		}
-		db.Close()
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)}
 	return err

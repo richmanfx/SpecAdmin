@@ -183,7 +183,6 @@ func EditStep(context *gin.Context)  {
 	var step models.Step
 	step, err = helpers.GetStep(editedStepName, stepsScript, scriptsSuite)
 
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -302,8 +301,6 @@ func UpdateAfterEditStep(context *gin.Context) {
 			}
 		}
 	}
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

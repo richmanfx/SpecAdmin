@@ -30,12 +30,14 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 			if err == nil {
 				log.Debugf("Сценарии %v из Сюит %v", scriptsList, suitsNameFromGroup)
 
+
+				// Подключиться к БД
+				err = dbConnect()
+				if err == nil {
 				// Формировать список Сюит
 				for _, suiteName := range suitsNameFromGroup {
 
-					// Подключиться к БД
-					err = dbConnect()
-					if err == nil {
+
 						// Сюиты из БД по списку имён Сюит
 						rows, err = db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
 						if err == nil {
@@ -65,8 +67,8 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 							}
 						}
 					}
-					db.Close()
 				}
+				defer db.Close()
 		}
 	}
 	log.Debugf("Список Сюит: '%v'", suitesList)
@@ -105,6 +107,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 				}
 			}
 		}
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при добавлении новой Сюиты: '%v'", err)}
 	return err
@@ -143,6 +146,7 @@ func DelTestSuite(suitesName string) error {
 				}
 			}
 		}
+		defer db.Close()
 	}
 	if err != nil {log.Errorf("Ошибка при удалении из базы сюиты '%s': '%v'", suitesName, err)}
 	return err
@@ -171,7 +175,7 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 			}
 		}
 	}
-	db.Close()
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении данных Сюиты '%s' из БД: '%v'", suitesName, err)}
 	return suite, err
 }
@@ -212,6 +216,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 
 			}
 		}
+		defer db.Close()
 	}
 	if err != nil { log.Errorf("Ошибка обновления данных Сюиты '%s' в БД: '%м'", suitesName, err) }
 	return err
@@ -251,7 +256,7 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 				}
 			}
 		}
-		db.Close()
+		defer db.Close()
 	}
 	if err != nil { log.Errorf("Ошибка переименования Сюиты '%s' в '%s': %v", oldSuiteName, newSuiteName, err) }
 	return err

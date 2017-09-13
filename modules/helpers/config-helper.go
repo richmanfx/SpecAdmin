@@ -38,7 +38,7 @@ func GetConfig() ([]models.Option, error) {
 			}
 		}
 	}
-	db.Close()
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)}
 	return config, err
 }
@@ -55,7 +55,7 @@ func SaveConfig(screenShotPath string) error {
 
 		// Записать в БД
 		log.Debugln("Запись в БД пути к директории со скриншотами.")
-		_, err = db.Query("UPDATE configuration SET property_value=? WHERE property_name=? LIMIT 1", screenShotPath, "Путь к скриншотам")
+		_, err = db.Exec("UPDATE configuration SET property_value=? WHERE property_name=? LIMIT 1", screenShotPath, "Путь к скриншотам")
 
 		// Здесь будет запись других параметров
 		// ************************************
@@ -64,6 +64,7 @@ func SaveConfig(screenShotPath string) error {
 			log.Debugln("Конфигурационные параметры успешно сохранены в БД.")
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)}
 	return err
 }
@@ -147,6 +148,7 @@ func GetScreenShotsFileName() ([]string, error) {
 			}
 		}
 	}
+	defer db.Close()
 	if err != nil {log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)}
 	return usedScreenShotsFileNameList, err
 }
