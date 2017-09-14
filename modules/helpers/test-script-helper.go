@@ -110,7 +110,9 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении данных Сценария '%s' Сюиты '%s' из БД: %v", scriptsName, scriptsSuiteName, err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении данных Сценария '%s' Сюиты '%s' из БД: %v", scriptsName, scriptsSuiteName, err)
+	}
 	return script, id, err
 }
 
@@ -234,7 +236,12 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 							err = rows.Scan(&script.Id, &script.Name, &script.SerialNumber, &script.Suite)
 							if err == nil {
 
-								log.Debugf("rows.Next из таблицы tests_scripts: %s, %s, %s, %s", script.Id, script.Name, script.SerialNumber, script.Suite)
+								log.Debugf(
+									"rows.Next из таблицы tests_scripts: %s, %s, %s, %s",
+									script.Id,
+									script.Name,
+									script.SerialNumber,
+									script.Suite)
 
 								// Закинуть Шаги в Сценарий
 								for _, step := range stepsList {
@@ -245,7 +252,6 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 										log.Debugf("Не добавлен шаг '%v' в сценарий '%v'", step.Name, script.Name)
 									}
 								}
-
 								scriptsList = append(scriptsList, script) // Добавить сценарий в список
 							}
 							log.Debugf("Список сценариев: %v", scriptsList)
@@ -274,7 +280,8 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 		// Данные по Сценарию из БД
 		log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
-		err = db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId).Scan(&stepsScriptName, &scripsSuiteName)
+		err = db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId).
+			  Scan(&stepsScriptName, &scripsSuiteName)
 
 		if err == nil {
 			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
@@ -287,7 +294,7 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 
 
 // Сгенерировать PDF файл со списком Шагов Сценария
-func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) (string, error) {		// TODO: возвращать только ошибку без ПДФ-а
+func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) error {
 
 	var pdf *gofpdf.Fpdf
 	var err error
@@ -342,7 +349,7 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 		log.Errorf("Ошибка: '%v'", err)
 	}
 
-	return fullPdfFileName, err
+	return err
 }
 
 // Разбивает текст для ячейки PDF-таблицы на слова, переносит слова и оборачивает в рамку ячейки.

@@ -7,6 +7,7 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"fmt"
 	"net/http"
+	"errors"
 )
 
 // Отобразить страницу конфигурации для редактирования параметров
@@ -29,11 +30,9 @@ func EditConfig(context *gin.Context)  {
 		// Получить конфигурационные данные из БД
 		config, err = helpers.GetConfig()
 		if len(config) == 0 {
-			err = fmt.Errorf("Нет конфигурационных данных в БД")
+			err = errors.New(fmt.Sprintln("Нет конфигурационных данных в БД"))
 		}
 	}
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении конфигурационных данных из БД: %v", err)
@@ -52,7 +51,7 @@ func EditConfig(context *gin.Context)  {
 			gin.H{
 				"title":        "SpecAdmin",
 				"config":	 	config,
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 				"statistic":	statistic,
 			},
@@ -70,28 +69,26 @@ func SaveConfig(context *gin.Context)  {
 	// Записать в БД
 	err := helpers.SaveConfig(screenShotPath)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		// Ошибка при сохранении конфигурации
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintln("Ошибка при сохранении конфигурации"),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintln("Ошибка при сохранении конфигурации"),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintln("Конфигурация успешно сохранена"),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintln("Конфигурация успешно сохранена"),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -122,27 +119,25 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 		}
 	}
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
-				"message2": "",
-				"message3": fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
+				"message2": 	"",
+				"message3": 	fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -173,8 +168,6 @@ func UsersConfig(context *gin.Context)  {
 		log.Debugf("Пользователи из БД: '%v'", users)
 	}
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -191,9 +184,9 @@ func UsersConfig(context *gin.Context)  {
 			http.StatusOK,
 			"users-config.html",
 			gin.H{
-				"title":   "SpecAdmin",
-				"users":	users,
-				"Version": Version,
+				"title":   		"SpecAdmin",
+				"users":		users,
+				"Version": 		Version,
 				"UserLogin":	helpers.UserLogin,
 				"statistic":	statistic,
 			},
@@ -256,27 +249,25 @@ func CreateUser(context *gin.Context)  {
 	// Создать пользователя в БД
 	err = helpers.CreateUserInDb(user)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": "Ошибка при создании пользователя в БД.",
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка при создании пользователя в БД.",
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Пользователь '%s' успешно добавлен в БД.", user.Login),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Пользователь '%s' успешно добавлен в БД.", user.Login),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -334,12 +325,10 @@ func SaveUser(context *gin.Context)  {
 	// Сохранить пользователя в БД
 	err = helpers.SaveUserInDb(savedUser)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
+				"title": 		"Ошибка",
 				"message1": 	"",
 				"message2": 	"Ошибка при сохранении пользователя в БД.",
 				"message3": 	fmt.Sprintf("%s: ", err),
@@ -385,27 +374,25 @@ func DeleteUser(context *gin.Context)  {
 		err = helpers.DeleteUserInDb(deletedUser)
 	}
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": "Ошибка при удалении пользователя из БД.",
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	"Ошибка при удалении пользователя из БД.",
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", deletedUser.Login),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", deletedUser.Login),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)

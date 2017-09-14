@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"github.com/jung-kurt/gofpdf"
 	"os"
+	"errors"
 )
 
 // Сформировать список Сюит для указанной Группы
@@ -17,8 +18,6 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 	var rows *sql.Rows
 	suitesList := make([]models.Suite, 0, 0)	// Слайс из Сюит
 	SetLogFormat()
-
-
 
 		// Получить только список имён Сюит в данной Группе
 		suitsNameFromGroup, err := GetSuitsNameFromSpecifiedGroup(groupName)
@@ -37,38 +36,41 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 				// Формировать список Сюит
 				for _, suiteName := range suitsNameFromGroup {
 
+					// Сюиты из БД по списку имён Сюит
+					rows, err = db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number",
+										  suiteName)
+					if err == nil {
+						// Получить данные из результата запроса
+						var suite models.Suite
+						for rows.Next() {
+							err = rows.Scan(&suite.Name, &suite.Description, &suite.SerialNumber)
+							if err == nil {
+								log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s",
+											suite.Name, suite.Description, suite.SerialNumber)
 
-						// Сюиты из БД по списку имён Сюит
-						rows, err = db.Query("SELECT name,description,serial_number FROM tests_suits WHERE name=? ORDER BY serial_number", suiteName)
-						if err == nil {
-							// Получить данные из результата запроса
-							var suite models.Suite
-							for rows.Next() {
-								err = rows.Scan(&suite.Name, &suite.Description, &suite.SerialNumber)
-								if err == nil {
-									log.Debugf("Данные из таблицы 'tests_suits': %s, %s, %s, %s", suite.Name, suite.Description, suite.SerialNumber)
+								// Заполнить Сюитами список Сюит
+								suite.Group = groupName
 
-									// Заполнить Сюитами список Сюит
-									suite.Group = groupName
-
-									// Закинуть Сценарии в соответствующие Сюиты
-									for _, script := range scriptsList { // Бежать по всем сценариям
-										if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
-											suite.Scripts = append(suite.Scripts, script)
-											log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-										} else {
-											log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'", script.Name, script.Suite, suite.Name)
-										}
+								// Закинуть Сценарии в соответствующие Сюиты
+								for _, script := range scriptsList { // Бежать по всем сценариям
+									if script.Suite == suite.Name { // Если Сценарий принадлежит Сюите, то добавляем его
+										suite.Scripts = append(suite.Scripts, script)
+										log.Debugf("Добавлен сценарий '%v'('%v') в сюиту '%v'",
+												    script.Name, script.Suite, suite.Name)
+									} else {
+										log.Debugf("Не добавлен сценарий '%v'('%v') в сюиту '%v'",
+													script.Name, script.Suite, suite.Name)
 									}
-
-									// Добавить Сюиту в список
-									suitesList = append(suitesList, suite)
 								}
+
+								// Добавить Сюиту в список
+								suitesList = append(suitesList, suite)
 							}
 						}
 					}
 				}
-				defer db.Close()
+			}
+			defer db.Close()
 		}
 	}
 	log.Debugf("Список Сюит: '%v'", suitesList)
@@ -138,7 +140,7 @@ func DelTestSuite(suitesName string) error {
 				if err == nil {
 					if affected == 0 {
 						_, goModuleName, lineNumber, _ := runtime.Caller(1)
-						err = fmt.Errorf("Ошибка удаления Сюиты '%s'. Есть такая Сюита?", suitesName)
+						err = errors.New(fmt.Sprintf("Ошибка удаления Сюиты '%s'. Есть такая Сюита?", suitesName))
 						log.Debugf("Ошибка удаления Сюиты '%s'. goModuleName=%v, lineNumber=%v",
 							suitesName, goModuleName, lineNumber)
 					}
@@ -170,7 +172,8 @@ func GetSuite(suitesName string) (models.Suite, error)  {
 			// Данные получить из результата запроса
 			err = rows.Scan(&suite.SerialNumber, &suite.Description, &suite.Group)
 			if err == nil {
-				log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s", suite.Description, suite.SerialNumber, suite.Group)
+				log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s",
+							suite.Description, suite.SerialNumber, suite.Group)
 				suite.Name = suitesName
 			}
 		}
@@ -201,7 +204,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 			// Обновить данные о Сюите в БД
 			log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
 			result, err = db.Exec("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
-				suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
+								   suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
 
 			if err == nil {
 
@@ -211,9 +214,11 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 					log.Debugf("Успешно обновлены данные Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
 				} else {
 					log.Errorf("Ошибка обновления данных Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
-					err = fmt.Errorf("Ошибка обновления данных Сюиты '%s' в БД. Обновлено '%d' записей", suitesName, affected)
+					err = errors.New(
+						fmt.Sprintf("Ошибка обновления данных Сюиты '%s' в БД. Обновлено '%d' записей",
+									 suitesName,
+									 affected))
 				}
-
 			}
 		}
 		defer db.Close()
@@ -249,10 +254,14 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 				var affected int64
 				affected, err = result.RowsAffected()
 				if affected != 0 {
-					log.Debugf("Успешно переименована Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
+					log.Debugf("Успешно переименована Сюиты '%s' в '%s'. Обновлено '%d' записей",
+								oldSuiteName, newSuiteName, affected)
 				} else {
-					log.Errorf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
-					err = fmt.Errorf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей", oldSuiteName, newSuiteName, affected)
+					log.Errorf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей",
+								oldSuiteName, newSuiteName, affected)
+					err = errors.New(
+						fmt.Sprintf("Ошибка переименования Сюиты '%s' в '%s'. Обновлено '%d' записей",
+									 oldSuiteName, newSuiteName, affected))
 				}
 			}
 		}
@@ -298,7 +307,7 @@ func GetSuitesScriptsPdf(scriptsSuite string, scriptsList []models.Script) error
 
 	// Заголовок таблицы
 	header := []string{"N", "Сценарий"}
-	pdf.SetFillColor(200, 200, 200)
+	pdf.SetFillColor(200, 200, 200)		// Серый
 	for i, str := range header {
 		pdf.CellFormat(columnWidths[i], ht+2, tr(str), "1", 0, "C", true, 0, "")
 	}
@@ -316,7 +325,5 @@ func GetSuitesScriptsPdf(scriptsSuite string, scriptsList []models.Script) error
 	if err != nil {
 		log.Errorf("Ошибка: '%v'", err)
 	}
-
 	return err
 }
-

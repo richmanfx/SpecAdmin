@@ -8,7 +8,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"../../models"
 	"strconv"
-	"os"
 )
 
 // Добавить в БД новый сценарий
@@ -27,28 +26,27 @@ func AddScript(context *gin.Context)  {
 
 	err = helpers.AddTestScript(newScript, scriptSerialNumber, scriptsSuite)
 
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptsSuite),
-				"message3": fmt.Sprintf("%s: ", err),
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptsSuite),
+				"message3": 	fmt.Sprintf("%s: ", err),
 				"SuitesGroup":	suitesGroup,
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptsSuite),
-				"message2": "",
-				"message3": "",
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptsSuite),
+				"message2": 	"",
+				"message3": 	"",
 				"SuitesGroup":	suitesGroup,
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -68,21 +66,21 @@ func DelScript(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
-				"message2": "",	"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
+				"message2": 	"",	"message3": "",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -109,11 +107,11 @@ func EditScript(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка получения данных о сценарии '%s'.", editedScript),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка получения данных о сценарии '%s'.", editedScript),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -121,10 +119,10 @@ func EditScript(context *gin.Context)  {
 		// Вывести данные для редактирования
 		context.HTML(http.StatusOK, "edit-script.html",
 			gin.H{
-				"title": 	"Редактирование сценария",
-				"script": 	script,
-				"scriptId":	scriptId,
-				"Version":	Version,
+				"title": 		"Редактирование сценария",
+				"script": 		script,
+				"scriptId":		scriptId,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -203,25 +201,18 @@ func CreateStepsPdf(context *gin.Context)  {
 	stepsList, err := helpers.GetStepsListForSpecifiedScripts(scriptsIdList)
 	log.Debugf("%v - %v", stepsList, err)
 
-	// Закрыть соединение с БД
-	helpers.CloseConnectToDB()
-
 	// Сгенерировать PDF
-	pdfFileName, err := helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
-	//name := context.Param(pdfFileName)
-	fullPdfFileName :=  string(os.PathSeparator) + pdfFileName
+	err = helpers.GetScripsStepsPdf(scriptsSuite, scriptName, stepsList)
 	if err != nil {
 		context.AbortWithStatus(404)
 	}
 
 	if err == nil {
 		context.Abort()
-		context.Redirect(http.StatusSeeOther, fullPdfFileName)
+		context.Redirect(http.StatusSeeOther, "ok")
 	} else {
 		log.Errorf("Ошибка при генерации PDF-файла с шагами сценария: %v", err)
 		result := gin.H{"scriptId": err}
 		context.JSON(http.StatusOK, result)
 	}
-
 }
-

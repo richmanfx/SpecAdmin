@@ -11,6 +11,7 @@ import (
 	"os"
 	"io"
 	"mime/multipart"
+	"errors"
 )
 
 // Добавить новый Шаг
@@ -47,8 +48,8 @@ func AddStep(context *gin.Context)  {
 
 		maxScreenShotsSize := 1000000 // Максимальный размер файла скриншота
 		if ScreenShotsSize > maxScreenShotsSize {
-			err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
-				ScreenShotsSize, maxScreenShotsSize)
+			err = errors.New(fmt.Sprintf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
+				ScreenShotsSize, maxScreenShotsSize))
 		} else {
 			log.Debugf("Данные из формы: newStepName='%v', stepSerialNumber='%v', stepsDescription='%v', " +
 					   					"stepsExpectedResult='%v', stepsScript='%v', scriptsSuite='%v'",
@@ -93,17 +94,15 @@ func AddStep(context *gin.Context)  {
 			newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, screenShotFileName, stepsScript, scriptsSuite)
 	}
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
-					newStepName, stepsScript, scriptsSuite),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
+											 newStepName, stepsScript, scriptsSuite),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -112,7 +111,7 @@ func AddStep(context *gin.Context)  {
 			gin.H{
 				"title": "Информация",
 				"message1": 	fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
-					newStepName, stepsScript, scriptsSuite),
+											 newStepName, stepsScript, scriptsSuite),
 				"message2": 	"",
 				"message3": 	"",
 				"SuitesGroup":	suitesGroup,
@@ -139,27 +138,25 @@ func DelStep(context *gin.Context)  {
 
 	err = helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
 				"message2": "",	"message3": "",
 				"SuitesGroup":	suitesGroup,
-				"Version":	Version,
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -187,7 +184,7 @@ func EditStep(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
+				"title": 		"Ошибка",
 				"message1": 	"",
 				"message2": 	fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
 				"message3": 	fmt.Sprintf("%s: ", err),
@@ -249,8 +246,8 @@ func UpdateAfterEditStep(context *gin.Context) {
 
 				maxScreenShotsSize := 1000000 // Максимальный размер файла скриншота
 				if ScreenShotsSize > maxScreenShotsSize {
-					err = fmt.Errorf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
-						ScreenShotsSize, maxScreenShotsSize)
+					err = errors.New(fmt.Sprintf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
+						ScreenShotsSize, maxScreenShotsSize))
 				} else {
 					log.Debugf("Данные из формы: stepsId='%v', stepsName='%v', stepsSerialNumber='%v', stepsDescription='%v', stepsExpectedResult='%v'",
 						stepsId, stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult)
@@ -286,7 +283,6 @@ func UpdateAfterEditStep(context *gin.Context) {
 		_, scriptsSuite, err := helpers.GetScriptAndSuiteByScriptId(ScriptId)
 		if err == nil {
 
-
 			var suite models.Suite
 			if err == nil {
 				// Группа Сюиты
@@ -305,11 +301,11 @@ func UpdateAfterEditStep(context *gin.Context) {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -343,19 +339,17 @@ func GetStepsOptions(context *gin.Context)  {
 		log.Debugf("Имя Сценария Шага: '%s'. Имя Сюиты Шага: '%s'.", stepsScriptName, scripsSuiteName)
 	}
 
-	helpers.CloseConnectToDB()
-
 	if err == nil {
 		result := gin.H{"stepsScriptName": stepsScriptName, "scripsSuiteName": scripsSuiteName}
 		context.JSON(http.StatusOK, result)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -375,7 +369,6 @@ func DelScreenShotFromStep(context *gin.Context)  {
 		// Удалить скриншот
 		err = helpers.DeleteStepsScreenShot(stepsId)
 	}
-		helpers.CloseConnectToDB()
 
 	if err == nil {
 		result := gin.H{"deleteStatus": "OK"}

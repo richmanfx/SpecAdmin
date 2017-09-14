@@ -20,8 +20,6 @@ func AddSuite(context *gin.Context)  {
 	suitesGroup := context.PostForm("suites_group")					// Группа Сюиты
 	err := helpers.AddTestSuite(newSuite, suitesDescription, suitesSerialNumber, suitesGroup)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
@@ -54,8 +52,6 @@ func DelSuite(context *gin.Context)  {
 
 	deletedSuite := context.PostForm("suite")							// Сюита из формы
 	err := helpers.DelTestSuite(deletedSuite)
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -92,8 +88,6 @@ func EditSuite(context *gin.Context)  {
 	var suite models.Suite
 	var err error
 	suite, err = helpers.GetSuite(editedSuite)
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
@@ -133,27 +127,25 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 	// Обновить в БД
 	err := helpers.UpdateTestSuite(suitesName, suitesDescription, suitesSerialNumber, suitesGroup)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -209,9 +201,6 @@ func CreateScriptsPdf(context *gin.Context)  {
 
 	// Получить Сценарии для заданных Сюит
 	scriptsList, err := helpers.GetScriptListForSpecifiedSuits(suitsNameList)
-
-	// Закрыть соединение с БД
-	helpers.CloseConnectToDB()
 
 	if err == nil {
 		log.Debugf("Список сценариев из сюиты %v: %#v", suitsNameList, scriptsList)

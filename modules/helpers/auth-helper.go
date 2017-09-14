@@ -8,6 +8,7 @@ import (
 	"../../models"
 	"database/sql"
 	"golang.org/x/crypto/bcrypt"
+	"errors"
 )
 
 var UserLogin string
@@ -48,7 +49,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 					affected, err = result.RowsAffected()
 					if err == nil {
 						if affected == 0 {
-							err = fmt.Errorf("Ошибка при удалениии сессии '%s'.", sessidFromBrowser)
+							err = errors.New(fmt.Sprintf("Ошибка при удалениии сессии '%s'.", sessidFromBrowser))
 							log.Debugf("Сессия '%s' НЕ удалена.", sessidFromBrowser)
 						}
 						log.Debugf("Удалено '%d' строк в таблице 'sessions'.", affected)
@@ -184,7 +185,10 @@ func DeleteUserInDb(user models.User) error {
 					if affected > 0 {
 						log.Debugf("Удалено строк в БД: %d", affected)
 					} else {
-						err = fmt.Errorf("Ошибка удаления пользователя '%s' - не удалено ни одной строки в БД.", user.Login)
+						err = errors.New(
+							fmt.Sprintf(
+								"Ошибка удаления пользователя '%s' - не удалено ни одной строки в БД.",
+								user.Login))
 					}
 				}
 			}
@@ -257,7 +261,7 @@ func ValidatePassword(userName, oldPassword string) error {
 			// Сверить полученный Хеш с Хешем в БД
 			if newHash != oldHash {
 				log.Errorln("Хеш пароля не совпадает с хешем в БД")
-				err = fmt.Errorf("Неверный пароль")
+				err = errors.New(fmt.Sprintln("Неверный пароль"))
 			}
 		}
 	}
@@ -329,7 +333,7 @@ func CheckPasswordInDB(login, password string) error {
 			log.Debugln("Хеш пароля совпадает с Хешем из БД.")
 		} else {
 				log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
-				err = fmt.Errorf("Неверный логин/пароль.")
+				err = errors.New(fmt.Sprintln("Неверный логин/пароль."))
 		}
 	}
 	if err != nil {log.Errorf("Ошибка при проверке пароля по Хешу из БД: '%v'", err)}
@@ -355,7 +359,7 @@ func CheckUserInDB(login string) error {
 		if err == nil {
 			log.Debugf("Пользователь '%s' существует", login)
 		} else {
-			err = fmt.Errorf("Пользователь '%s' в БД не существует", login)
+			err = errors.New(fmt.Sprintf("Пользователь '%s' в БД не существует", login))
 		}
 	}
 	defer db.Close()
@@ -385,9 +389,11 @@ func DeleteSession(userName string) error {
 				if affected > 0 {
 					log.Debugf("Удалено %d строк из таблицы 'sessions'", affected)
 				} else {
-					err = fmt.Errorf("Ошибка удаления сессии пользователя '%s' - не удалено ни одной строки из БД.", userName)
+					err = errors.New(
+						fmt.Sprintf(
+							"Ошибка удаления сессии пользователя '%s' - не удалено ни одной строки из БД.",
+							userName))
 				}
-
 			}
 		}
 	}
@@ -434,6 +440,3 @@ func CheckOneUserPermission(login string, permission string) error {
 	if err != nil {log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)}
 	return err
 }
-
-
-

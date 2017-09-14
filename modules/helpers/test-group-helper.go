@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"../../models"
 	"database/sql"
+	"errors"
 )
 
 // Возвращает список Групп из БД
-func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
+func GetGroupsList(groupList *[]models.Group) (error) {
 	var err error
 	SetLogFormat()
 
@@ -27,14 +28,14 @@ func GetGroupsList(groupList []models.Group) ([]models.Group, error) {
 				err = rows.Scan(&group.Name)
 				if err == nil {
 					log.Debugf("rows.Next из таблицы tests_groups: %s", group.Name)
-					groupList = append(groupList, group)
+					*groupList = append(*groupList, group)
 				}
 			}
 		}
 	}
 	defer db.Close()
 	if err != nil { log.Errorf("Ошибка при получении списка Групп из БД: %v", err) }
-	return groupList, err
+	return err
 }
 
 // Добавляет в базу новую группу тестов
@@ -96,7 +97,7 @@ func DelTestGroup(groupName string) error {
 				affected, err = result.RowsAffected()
 				if err == nil {
 					if affected == 0 {
-						err = fmt.Errorf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName)
+						err = errors.New(fmt.Sprintf("Ошибка удаления Группы '%s'. Есть такая Группа?", groupName))
 						log.Errorf("Ошибка удаления Группы '%s'", groupName)
 					}
 					log.Debugf("Удалено строк в БД: %v", affected)
@@ -138,7 +139,8 @@ func EditTestGroup(oldName string, newName string) error {
 				}
 
 				if affected == 0 {
-					err = fmt.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
+					err = errors.New(
+						fmt.Sprintf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName))
 					log.Errorf("Ошибка изменения имени группы '%s' на новое имя '%s'", oldName, newName)
 				}
 			}
@@ -148,4 +150,3 @@ func EditTestGroup(oldName string, newName string) error {
 	if err != nil { log.Errorf("Ошибка при изменении имени Группы в БД: %v", err) }
 	return err
 }
-

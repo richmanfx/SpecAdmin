@@ -35,8 +35,6 @@ func AuthRequired() gin.HandlerFunc {
 			sessidExist = helpers.SessionIdExistInBD(sessidValue)
 		}
 
-		helpers.CloseConnectToDB()
-
 		if len(splitCookie) == 0 {
 			log.Debugln("Кук из браузера нет.")
 			context.Abort()
@@ -66,7 +64,6 @@ func GetSplitCookie(cookies string) map[string]string {
 		log.Debugf("Кука: %s", cookie)
 		splitCookie[strings.Split(cookie, "=")[0]] = strings.Split(cookie, "=")[1]
 	}
-
 	return splitCookie
 }
 
@@ -118,7 +115,6 @@ func Authorization(context *gin.Context)  {
 		// Сохранить сессию в БД
 		var expire time.Time = time.Now().Add(12 * time.Hour)	// Кука устаревает через 12 часов
 		err = helpers.SaveSessionInDB(sessid, expire, userName)
-		helpers.CloseConnectToDB()
 		if err != nil {
 			log.Errorf("Ошибка сохранения сессии в БД: %v", err)
 			context.HTML(http.StatusOK, "message.html",
@@ -169,8 +165,6 @@ func Logout(context *gin.Context)  {
 	err := helpers.DeleteSession(userName)
 	log.Infof("Пользователь '%s' вышел из приложения.", userName)
 
-	helpers.CloseConnectToDB()
-
 	if err == nil {
 		// На страницу Логина
 		context.Abort()
@@ -201,8 +195,6 @@ func ChangePassword(context *gin.Context)  {
 
 	// Записать в БД новый пароль
 	err := helpers.SavePassword(userName, newPassword)
-
-	helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка изменения пароля: %v", err)

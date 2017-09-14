@@ -9,7 +9,7 @@ import (
 	"../../models"
 )
 
-var Version string = "9.15"
+var Version string = "9.16"
 
 func ShowIndexPage(context *gin.Context)  {
 	var err error
@@ -19,25 +19,13 @@ func ShowIndexPage(context *gin.Context)  {
 	// Слайс из Групп
 	groupList := make([]models.Group, 0, 40)
 
-	//// Подключиться к БД
-	//err = helpers.ConnectToDB()
-	//if err == nil {
-
-		// Сформировать список Групп на основе данных из БД
-		groupList, err = helpers.GetGroupsList(groupList)
-	//}
+	// Сформировать список Групп на основе данных из БД
+	err = helpers.GetGroupsList(&groupList)
 
 	if err == nil {
 		// Сбор статистики
 		statistic, err = helpers.GetStatistic()
 	}
-
-	//if err == nil {
-	//	// Закрыть соединение с БД
-	//	err = helpers.CloseConnectToDB()
-	//}
-
-	//helpers.CloseConnectToDB()
 
 	if err != nil {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: '%v'", err)
@@ -108,12 +96,12 @@ func ShowSuitesIndex(context *gin.Context)  {
 			http.StatusOK,
 			"suites-index.html",
 			gin.H{
-				"title":        "SpecAdmin",
-				"Version":      Version,
-				"UserLogin":	helpers.UserLogin,
-				"groupName":	groupName,
-				"suitesList": 	suitesList,
-				"statistic":	statistic,
+				"title":        	"SpecAdmin",
+				"Version":      	Version,
+				"UserLogin":		helpers.UserLogin,
+				"groupName":		groupName,
+				"suitesList": 		suitesList,
+				"statistic":		statistic,
 				"screenShotsPath":	screenShotsPath,
 			},
 		)

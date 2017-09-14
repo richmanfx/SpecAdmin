@@ -28,7 +28,6 @@ func GetConfig() ([]models.Option, error) {
 
 		if err == nil {
 			// Данные получить из результата запроса
-
 			for rows.Next() {
 				err = rows.Scan(&option.Id, &option.Name, &option.Value)
 				if err == nil {

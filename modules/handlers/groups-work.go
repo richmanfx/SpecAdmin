@@ -13,13 +13,11 @@ func AddGroup(context *gin.Context)  {
 	newGroup := context.PostForm("group")		// Группа из формы
 	err := helpers.AddTestGroup(newGroup)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		// Ошибка при добавлении группы
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
+				"title": 	"Ошибка",
 				"message1": "",
 				"message2": fmt.Sprintf("Ошибка при добавлении группы тестов '%s'.", newGroup),
 				"message3": fmt.Sprintf("%s: ", err),
@@ -28,7 +26,7 @@ func AddGroup(context *gin.Context)  {
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
+				"title": 	"Информация",
 				"message1": fmt.Sprintf("Группа тестов '%s' добавлена успешно.", newGroup),
 				"message2": "",
 				"message3": "",
@@ -42,28 +40,26 @@ func DelGroup(context *gin.Context)  {
 	deletedGroup := context.PostForm("group")		// Группа из формы
 	err := helpers.DelTestGroup(deletedGroup)
 
-	helpers.CloseConnectToDB()
-
 	if err != nil {
 		// Ошибка при удалении группы
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при удалении группы тестов '%s'.", deletedGroup),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при удалении группы тестов '%s'.", deletedGroup),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf("Группа тестов '%s' удалена успешно.", deletedGroup),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Группа тестов '%s' удалена успешно.", deletedGroup),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
@@ -81,25 +77,22 @@ func EditGroup(context *gin.Context)  {
 		// Ошибка при редактировании группы
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Ошибка",
-				"message1": "",
-				"message2": fmt.Sprintf("Ошибка при редактировании группы тестов '%s'.", oldGroup),
-				"message3": fmt.Sprintf("%s: ", err),
-				"Version":	Version,
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintf("Ошибка при редактировании группы тестов '%s'.", oldGroup),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": "Информация",
-				"message1": fmt.Sprintf(
-					"Группа тестов '%s' успешно изменена на '%s'.",
-					oldGroup,
-					newGroup),
-				"message2": "",
-				"message3": "",
-				"Version":	Version,
+				"title": 		"Информация",
+				"message1": 	fmt.Sprintf("Группа тестов '%s' успешно изменена на '%s'.", oldGroup, newGroup),
+				"message2": 	"",
+				"message3": 	"",
+				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
 			},
 		)

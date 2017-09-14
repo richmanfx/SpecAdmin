@@ -116,7 +116,6 @@ func GetUnique32SymbolsString() string {
 // Сгенерировать "соль"
 func CreateSalt() string {
 	hash := sha512.New()
-
 	io.WriteString(hash, time.Now().String())
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
