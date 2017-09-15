@@ -284,6 +284,10 @@ textarea {
     width: 100%;
 }
 
+#content {
+    margin-bottom:70px;
+}
+
 footer {
     background-color: #cccccc;
     text-align: center;
