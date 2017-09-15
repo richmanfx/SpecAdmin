@@ -133,10 +133,12 @@ func DelStep(context *gin.Context)  {
 	scriptsSuite := context.PostForm("suite")
 
 	// Группа Сюиты
+	var suitesGroup string
 	suite, err := helpers.GetSuite(scriptsSuite)
-	suitesGroup := suite.Group
-
-	err = helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
+	if err == nil {
+		suitesGroup = suite.Group
+		err = helpers.DelTestStep(deletedStep, stepsScript, scriptsSuite)
+	}
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",

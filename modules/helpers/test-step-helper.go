@@ -92,7 +92,7 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 				// Получить имя файла скриншота Шага
 				var result sql.Result
 				screenShotsFileName, err = GetStepsScreenShotsFileName(deletedStepName, scriptId)
-				if err != nil {
+				if err == nil {
 
 					log.Debugf("Удаление Шага '%s' из Сценария '%s' Сюиты '%s'.",
 								deletedStepName, stepsScriptName, scriptsSuiteName)
