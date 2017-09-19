@@ -12,16 +12,18 @@
                 <form id="id_add_script_form" name="add_script_form" method="post" action="/spec-admin/add-script">
                     <div class="auto_width">
                         <label for="id_script"> Имя нового сценария </label><br>
-                        <textarea id="id_script" name="script" placeholder=" Имя нового сценария" rows="2"></textarea>
+                        <textarea id="id_script" name="script" placeholder=" Имя нового сценария"
+                                  rows="2" required></textarea>
                     </div>
                     <br>
 
                     <label for="id_scripts_serial_number"> Порядковый номер </label><br>
-                    <input id="id_scripts_serial_number" name="scripts_serial_number" placeholder=" Порядковый номер">
+                    <input id="id_scripts_serial_number" name="scripts_serial_number" placeholder=" Порядковый номер"
+                           required>
                     <br><br>
 
                     <label for="id_scripts_suite"> Сюита сценария </label><br>
-                    <input id="id_scripts_suite" name="script_suite" placeholder=" Сюита сценария">
+                    <input id="id_scripts_suite" name="script_suite" placeholder=" Сюита сценария"  required>
                     <br><br>
                 </form>
             </div>
