@@ -40,6 +40,7 @@ func AddSuite(context *gin.Context)  {
 				"message3": 	"",
 				"Version":		Version,
 				"UserLogin":	helpers.UserLogin,
+				"SuitesGroup":	suitesGroup,
 			},
 		)
 	}
