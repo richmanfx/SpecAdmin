@@ -21,6 +21,14 @@ $('#renameSuite').on('show.bs.modal', function (event) {
     modal.find('#id_old_suite').val(recipientName)      // Только в input со старым значением
 });
 
+// Для кнопки "Добавить Сюиту"
+$('#addSuite').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    var recipientName = button.data('name');
+    var modal = $(this);
+    modal.find('#id_suites_group').val(recipientName)
+});
+
 // Для кнопки "Редактировать Сюиту"
 $('#editSuite').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);
