@@ -87,7 +87,7 @@ $('#addStep').on('show.bs.modal', function (event) {
 
 
 // Подстановка имени Шага, его Сценария и Сюиты в поля в модальном окне
-// Для кнопки "Редактировать"
+// Для кнопки "Редактировать" Шага
 $('#editStep').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);            // Кнопка, вызвавшая модальное окно
     var recipientName = button.data('name');        // Извлечь информацию из "data-name" у кнопки
@@ -120,7 +120,30 @@ $('#editStep').on('show.bs.modal', function (event) {
 
 });
 
-// Для кнопки "Удалить"
+// Для кнопки "Копировать" Шага
+$('#copyStep').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);
+    // var name = button.data('name');
+    var stepId = button.data('stepid');
+
+    // Поместить шаг в буфер копирования
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/copy-step-in-clipboard',
+        data: 'StepId=' + stepId,
+        success: function(answerFromServer){
+            // alert(answerFromServer);
+        },
+        error: function(){
+            alert("Ошибка при ответе на AJAX POST запрос копирования Шага в буфер обмена");
+        }
+
+    });
+
+});
+
+// Для кнопки "Удалить" Шага
 $('#delStep').on('show.bs.modal', function (event) {
     var button = $(event.relatedTarget);         // Кнопка, вызвавшая модальное окно
     var recipientName = button.data('name');     // Извлечь информацию из "data-name" у кнопки

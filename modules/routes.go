@@ -36,6 +36,7 @@ func InitRoutes(router *gin.Engine) {
 		router.Handle("POST", "/spec-admin/update-after-edit-step", auth.AuthRequired(), handlers.UpdateAfterEditStep)
 		router.Handle("POST", "/spec-admin/get-steps-options", auth.AuthRequired(), handlers.GetStepsOptions)     // for AJAX
 		router.Handle("POST", "/spec-admin/del-screen-shot", auth.AuthRequired(), handlers.DelScreenShotFromStep) // for AJAX
+		router.Handle("POST", "/spec-admin/copy-step-in-clipboard", auth.AuthRequired(), handlers.CopyStepInClipboard) // for AJAX
 
 		router.Handle("GET", "/spec-admin/edit-config", auth.AuthRequired(), handlers.EditConfig)
 		router.Handle("POST", "/spec-admin/save-config", auth.AuthRequired(), handlers.SaveConfig)

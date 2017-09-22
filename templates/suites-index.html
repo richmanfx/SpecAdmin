@@ -112,6 +112,12 @@
                                            data-name="{{ .Name }}" data-script="{{ .ScriptsId }}">
                                             <img src="/images/icons/edit.png" alt="Rename" width="30" height="30">
                                         </a>
+
+                                        <a data-toggle="modal" data-target="#copyStep" href="#" title="Копировать Шаг"
+                                           data-stepid="{{ .Id }}">
+                                            <img src="/images/icons/copy.png" alt="Rename" width="30" height="30">
+                                        </a>
+
                                         <a data-toggle="modal" data-target="#delStep" href="#" title="Удалить Шаг"
                                            data-name="{{ .Name }}" data-script="{{ .ScriptsId }}">
                                             <img src="/images/icons/delete.png" alt="Delete" width="30" height="30">

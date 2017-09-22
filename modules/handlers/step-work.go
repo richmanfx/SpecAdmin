@@ -14,6 +14,8 @@ import (
 	"errors"
 )
 
+var stepBuffer int
+
 // Добавить новый Шаг
 func AddStep(context *gin.Context)  {
 
@@ -367,7 +369,7 @@ func DelScreenShotFromStep(context *gin.Context)  {
 	// Данные из AJAX запроса
 	stepsId, err := strconv.Atoi(context.PostForm("StepsId"))
 	log.Debugf("Данные из POST запроса AJAX: stepsId='%d'", stepsId)
-	if err != nil {
+	if err == nil {
 		// Удалить скриншот
 		err = helpers.DeleteStepsScreenShot(stepsId)
 	}
@@ -380,4 +382,27 @@ func DelScreenShotFromStep(context *gin.Context)  {
 		result := gin.H{"deleteStatus": err}
 		context.JSON(http.StatusOK, result)
 	}
+}
+
+// Поместить Шаг в буфер обмена
+func CopyStepInClipboard(context *gin.Context)  {
+	helpers.SetLogFormat()
+	log.Debugln("Пришёл запрос в CopyStepInClipboard для помещения Шага в буфер обмена.")
+
+	// Данные из AJAX запроса
+	stepId, err := strconv.Atoi(context.PostForm("StepId"))
+	log.Infof("Данные из POST запроса AJAX: stepId='%d'", stepId)
+
+	// Идентификатор Шага поместить в буфер
+	stepBuffer = stepId
+
+	if err == nil {
+		result := gin.H{"Status": "OK"}
+		context.JSON(http.StatusOK, result)
+	} else {
+	log.Errorf("Ошибка помещения Шага в буфер обмена: %v", err)
+	result := gin.H{"Status": err}
+	context.JSON(http.StatusOK, result)
+	}
+
 }
