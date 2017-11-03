@@ -1,5 +1,5 @@
 ﻿body {
-    font-size: 0.8vw;
+    font-size: 0.7vw;
     font-family: Verdana, serif;
 }
 
@@ -35,7 +35,7 @@ div.auto_width {
 }
 
 div.group_list {
-    font-size: 0.8vw;
+    font-size: 1vw;
     padding-left: 10vh;
 }
 
@@ -112,11 +112,11 @@ td.suite-name {
 }
 
 td.suite-icons {
-     width: 7vw;
+     width: 10vw;
  }
 
 td.script-icons {
-    width: 7vw;
+    width: 9vw;
 }
 
 td.script-name {
@@ -252,7 +252,7 @@ input.login {
 }
 
 input.group_name {
-    font-size: 0.8vw;
+    font-size: 1.4vw;
     text-align: left;
     color: #337ab7;
     background-color: white;
