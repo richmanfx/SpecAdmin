@@ -170,7 +170,7 @@ th,td.steps-exp-result {
 
 th,td.steps-screen-shot {
     padding: 5px;
-    width: 10em;
+    width: 12em;
 }
 
 td.statistic-header {
@@ -219,7 +219,7 @@ table.script-table {
 
 table.step-table {
     /*border: solid;*/
-    font-size: 0.8vw;
+    font-size: 1vw;
 }
 
 table.login {
