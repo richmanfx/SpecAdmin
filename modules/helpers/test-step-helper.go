@@ -373,3 +373,31 @@ func DelScreenShotsFile(screenShotsFileName string) error {
 	if err != nil {log.Errorf("Ошибка при удалении файла скриншота по имени файла: %v", err)}
 	return err
 }
+
+// Возвращает имя, описание и ожидаемый результат шага по его ID
+func GetStepsData(stepsId int) (string, string, string, error) {
+
+	var err error
+	var requestResult *sql.Row
+	SetLogFormat()
+
+	// Подключиться к БД
+	err = dbConnect()
+	if err == nil {
+		// Получить данные
+		requestResult = db.QueryRow("SELECT name, description, expected_result FROM tests_steps WHERE id=?", stepsId)
+	}
+	defer db.Close()
+
+	// Получить результаты запроса
+	var stepsName string
+	var stepsDescription string
+	var stepsExpectedResult string
+
+	err = requestResult.Scan(&stepsName, &stepsDescription, &stepsExpectedResult)
+
+	if err != nil {
+		log.Errorf("Ошибка получения данных Шага по ID '%s' из БД.", stepsId)
+		}
+	return stepsName, stepsDescription, stepsExpectedResult, err
+}

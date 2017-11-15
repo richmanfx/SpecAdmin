@@ -114,7 +114,7 @@ $('#editStep').on('show.bs.modal', function (event) {
     });
 
     var modal = $(this);         // Обновить модальное окно
-    modal.find('#id_step').val(recipientName);                      // В input с именем Шага
+    modal.find('#id_step').val(recipientName);                  // В input с именем Шага
     modal.find('#id_steps_script').val(stepsScriptName);        // В input с именем Сценария
     modal.find('#id_scripts_suite').val(scripsSuiteName);       // В input с именем Сюиты
 
@@ -141,6 +141,60 @@ $('#copyStep').on('show.bs.modal', function (event) {
 
     });
 
+});
+
+// Для кнопки "Вставить" Шага
+$('#insertStep').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget);                // Кнопка, вызвавшая модальное окно
+    var recipientsStepId = button.data('stepid');       // Извлечь информацию из "data-stepid" у кнопки
+    var recipientScriptsId = button.data('script');     // Извлечь из "data-script" у кнопки
+
+    // Получить параметры нового шага из буфера обмена - имя, описание и ожидаемый результат шага
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/get-step-from-buffer',
+        data: 'StepsId=' + recipientsStepId,
+        success: function(answerFromServer){
+            // alert(
+            //     answerFromServer.stepsName + " и " +
+            //     answerFromServer.stepsDescription + " и " +
+            //     answerFromServer.stepsExpectedResult
+            // );
+            stepsName = answerFromServer.stepsName;
+            stepsDescription = answerFromServer.stepsDescription;
+            stepsExpectedResult = answerFromServer.stepsExpectedResult;
+        },
+        error: function(answerFromServer){
+            alert("Ошибка при ответе на AJAX POST запрос параметров Шага из буфера обмена: " + answerFromServer.Status);
+        }
+    });
+
+
+    // Получить имя Сценария по его ScriptsId и имя Сюиты, которой принадлежит Сценарий
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/spec-admin/get-steps-options',
+        data: 'ScriptsId=' + recipientScriptsId,
+        success: function(answerFromServer){
+            // alert(answerFromServer.stepsScriptName + " и " + answerFromServer.scripsSuiteName);
+            stepsScriptName = answerFromServer.stepsScriptName;
+            scripsSuiteName = answerFromServer.scripsSuiteName;
+        },
+        error: function(){
+            alert("Ошибка при ответе на AJAX POST запрос имени Сценария и имени Сюиты Шага по ScriptsId Шага.");
+        }
+
+    });
+
+    var modal = $(this);         // Обновить модальное окно
+    // modal.find('#id_step').val(recipientName);                  // В input с именем Шага
+    modal.find('#id_steps_script').val(stepsScriptName);        // В input с именем Сценария
+    modal.find('#id_scripts_suite').val(scripsSuiteName);       // В input с именем Сюиты
+    modal.find('#id_step').val(stepsName);      // В textarea c именем Шага
+    modal.find('#id_steps_description').val(stepsDescription)       // В textarea c описанием Шага
+    modal.find('#id_steps_expected_result').val(stepsExpectedResult)    // В textarea с ожидаемым результатом Шага
 });
 
 // Для кнопки "Удалить" Шага

@@ -1,0 +1,89 @@
+<div id="insertStep" class="modal" tabindex="-1" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div id="headerModal" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+                Вставить шаг в сценарий из буфера обмена
+            </div>
+
+            <div class="modal-body">
+                <form id="id_insert_step_form"
+                      name="insert_step_form"
+                      method="post"
+                      enctype="multipart/form-data"
+                      action="/spec-admin/add-step">
+
+                    <div class="auto_width">
+                        <label for="id_step"> Имя вставляемого шага </label><br>
+                        <textarea id="id_step" name="step" placeholder=" Имя вставляемого шага"
+                                  rows="2" required></textarea>
+                    </div>
+                    <br>
+
+                    <label for="id_step_serial_number"> Порядковый номер шага </label><br>
+                    <input id="id_step_serial_number" name="step_serial_number"
+                           placeholder=" Порядковый номер шага" required><br>
+                    <br>
+
+                    <div class="auto_width">
+                        <label for="id_steps_description"> Описание действий в шаге </label><br>
+                        <textarea id="id_steps_description" name="steps_description"
+                                  placeholder=" Описание действий в шаге" rows="5" required></textarea>
+                    </div>
+                    <br>
+
+                    <div class="auto_width">
+                        <label for="id_steps_expected_result"> Ожидаемый результат от действий в шаге </label><br>
+                        <textarea id="id_steps_expected_result" name="steps_expected_result"
+                                  placeholder=" Ожидаемый результат от действий в шаге" rows="5" required></textarea>
+                    </div>
+                    <br>
+
+                    <label for="id_screen_shot"> Скриншот </label>
+                    <div class="edit-screen-shot-loading with-border">
+                        <input type="file" name="screen_shot" id="id_screen_shot">
+                    </div>
+                    <br>
+
+                    <div class="auto_width">
+                        <label for="id_steps_script"> Сценарий шага </label><br>
+                        <textarea id="id_steps_script" name="steps_script"
+                                  placeholder=" Сценарий шага" rows="2"></textarea>
+                    </div>
+                    <br>
+
+                    <label for="id_scripts_suite"> Сюита сценария </label><br>
+                    <input id="id_scripts_suite" name="scripts_suite" placeholder=" Сюита сценария">
+                    <br><br>
+                </form>
+            </div>
+
+            <!-- Автофокус в поле ввода в модальном окне -->
+            <script>
+                $('#addStep').on('shown.bs.modal', function (e) {
+                    $('#id_step', e.target).focus();
+                });
+            </script>
+
+            <div class="modal-footer">
+                <button class="btn btn-success btn-lg" form="id_insert_step_form">
+                    Вставить шаг
+                </button>
+
+                <button form="id_add_step_form"
+                        type="reset"
+                        class="btn btn-success btn-lg">
+                    Очистить форму
+                </button>
+
+                <button type="button"
+                        class="btn btn-success btn-lg"
+                        data-dismiss="modal">
+                    Отмена
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

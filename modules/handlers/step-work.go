@@ -387,7 +387,7 @@ func DelScreenShotFromStep(context *gin.Context)  {
 // Поместить Шаг в буфер обмена
 func CopyStepInClipboard(context *gin.Context)  {
 	helpers.SetLogFormat()
-	log.Debugln("Пришёл запрос в CopyStepInClipboard для помещения Шага в буфер обмена.")
+	log.Infoln("Пришёл запрос в CopyStepInClipboard для помещения Шага в буфер обмена.")
 
 	// Данные из AJAX запроса
 	stepId, err := strconv.Atoi(context.PostForm("StepId"))
@@ -405,4 +405,41 @@ func CopyStepInClipboard(context *gin.Context)  {
 	context.JSON(http.StatusOK, result)
 	}
 
+}
+
+// Получить имя, описание и ожидаемый результат Шага
+func GetStepFromBuffer(context *gin.Context)  {
+
+	var stepsName, stepsDescription, stepsExpectedResult string
+	helpers.SetLogFormat()
+	log.Debugln("Пришёл запрос в GetStepFromBuffer для получения информации о Шаге из буфера обмена.")
+
+	// Данные из AJAX запроса
+	stepId, err := strconv.Atoi(context.PostForm("StepsId"))
+	log.Debugf("Данные из POST запроса AJAX: StepsId='%d'", stepId)
+
+	// Получить данные о Шаге
+	if err == nil {
+		stepsName, stepsDescription, stepsExpectedResult, err = helpers.GetStepsData(stepBuffer)
+	}
+
+	if err == nil {
+		result := gin.H{
+			"stepsName": stepsName,
+			"stepsDescription": stepsDescription,
+			"stepsExpectedResult": stepsExpectedResult,
+			}
+		context.JSON(http.StatusOK, result)
+	} else {
+		context.HTML(http.StatusOK, "message.html",
+			gin.H{
+				"title": 		"Ошибка",
+				"message1": 	"",
+				"message2": 	fmt.Sprintln("Ошибка в функции 'GetStepFromBuffer' при ответе на AJAX запрос"),
+				"message3": 	fmt.Sprintf("%s: ", err),
+				"Version":		Version,
+				"UserLogin":	helpers.UserLogin,
+			},
+		)
+	}
 }
