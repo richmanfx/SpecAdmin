@@ -34,5 +34,5 @@ func main() {
 	modules.InitRoutes(Router)
 
 	// Запустить приложение
-	Router.Run(":8083")
+	Router.Run(":9094")
 }
