@@ -1,88 +1,88 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"../helpers"
-	"../../models"
+	"SpecAdmin/models"
+	"SpecAdmin/modules/helpers"
 	"fmt"
-	"net/http"
 	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Добавить сюиту в базу
-func AddSuite(context *gin.Context)  {
+func AddSuite(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
-	newSuite := context.PostForm("suite")							// Сюита из формы
-	suitesDescription := context.PostForm("suites_description")		// Описание Сюиты
-	suitesSerialNumber := context.PostForm("suites_serial_number")	// Порядковый номер
-	suitesGroup := context.PostForm("suites_group")					// Группа Сюиты
+	newSuite := context.PostForm("suite")                          // Сюита из формы
+	suitesDescription := context.PostForm("suites_description")    // Описание Сюиты
+	suitesSerialNumber := context.PostForm("suites_serial_number") // Порядковый номер
+	suitesGroup := context.PostForm("suites_group")                // Группа Сюиты
 	err := helpers.AddTestSuite(newSuite, suitesDescription, suitesSerialNumber, suitesGroup)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при добавлении сюиты '%s' в группу '%s'.", newSuite, suitesGroup),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при добавлении сюиты '%s' в группу '%s'.", newSuite, suitesGroup),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сюита '%s' успешно добавлена в группу '%s'.", newSuite, suitesGroup),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
-				"SuitesGroup":	suitesGroup,
+				"title":       "Информация",
+				"message1":    fmt.Sprintf("Сюита '%s' успешно добавлена в группу '%s'.", newSuite, suitesGroup),
+				"message2":    "",
+				"message3":    "",
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
+				"SuitesGroup": suitesGroup,
 			},
 		)
 	}
 }
 
 // Удалить сюиту из БД
-func DelSuite(context *gin.Context)  {
+func DelSuite(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
-	deletedSuite := context.PostForm("suite")							// Сюита из формы
+	deletedSuite := context.PostForm("suite") // Сюита из формы
 	err := helpers.DelTestSuite(deletedSuite)
 
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при удалении сюиты '%s'.", deletedSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при удалении сюиты '%s'.", deletedSuite),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сюита '%s' удалена успешно.", deletedSuite),
-				"message2": 	"",	"message3": "",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":    "Информация",
+				"message1": fmt.Sprintf("Сюита '%s' удалена успешно.", deletedSuite),
+				"message2": "", "message3": "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
 // Редактировать сюиту, данные получить из базы
-func EditSuite(context *gin.Context)  {
+func EditSuite(context *gin.Context) {
 	helpers.SetLogFormat()
 
-	editedSuite := context.PostForm("suite")							// Сюита из формы
+	editedSuite := context.PostForm("suite") // Сюита из формы
 	log.Debugf("Редактируется сюита: %v", editedSuite)
 
 	// Получить данные о сюите из БД
@@ -93,12 +93,12 @@ func EditSuite(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка получения данных о сюите '%s'.", editedSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка получения данных о сюите '%s'.", editedSuite),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
@@ -106,17 +106,17 @@ func EditSuite(context *gin.Context)  {
 		log.Debugf("Сюита из БД: %v", suite)
 		context.HTML(http.StatusOK, "edit-suite.html",
 			gin.H{
-				"title": 		"Редактирование сюиты",
-				"suite": 		suite,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Редактирование сюиты",
+				"suite":     suite,
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
 // Обновить в БД Сюиту после редактирования
-func UpdateAfterEditSuite(context *gin.Context)  {
+func UpdateAfterEditSuite(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	//Данные из формы
@@ -131,31 +131,30 @@ func UpdateAfterEditSuite(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при обновлении сюиты '%s' в группе '%s'.", suitesName, suitesGroup),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintf("Сюита '%s' успешно обновлена.", suitesName),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Переименовать Сюиту
-func RenameSuite(context *gin.Context)  {
+func RenameSuite(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
@@ -167,35 +166,35 @@ func RenameSuite(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при переименовании сюиты тестов '%s'.", oldSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при переименовании сюиты тестов '%s'.", oldSuite),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сюита тестов '%s' успешно переименована на '%s'.", oldSuite, newSuite),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintf("Сюита тестов '%s' успешно переименована на '%s'.", oldSuite, newSuite),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
 // Вывод для печати Сценариев заданной Сюиты
-func CreateScriptsPdf(context *gin.Context)  {
+func CreateScriptsPdf(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	// Данные из AJAX запроса
 	scriptsSuite := context.PostForm("suiteName")
-	log.Debugf("Данные из POST запроса AJAX: '%v'",  scriptsSuite)
+	log.Debugf("Данные из POST запроса AJAX: '%v'", scriptsSuite)
 
 	// В список одну сюиту только
 	suitsNameList := append(make([]string, 0, 0), scriptsSuite)

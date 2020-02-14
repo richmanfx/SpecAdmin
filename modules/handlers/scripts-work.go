@@ -1,17 +1,17 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"../helpers"
+	"SpecAdmin/models"
+	"SpecAdmin/modules/helpers"
 	"fmt"
-	"net/http"
 	log "github.com/Sirupsen/logrus"
-	"../../models"
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"strconv"
 )
 
 // Добавить в БД новый сценарий
-func AddScript(context *gin.Context)  {
+func AddScript(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
@@ -29,32 +29,32 @@ func AddScript(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptsSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":       "Ошибка",
+				"message1":    "",
+				"message2":    fmt.Sprintf("Ошибка при добавлении сценария '%s' в сюиту '%s'.", newScript, scriptsSuite),
+				"message3":    fmt.Sprintf("%s: ", err),
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptsSuite),
-				"message2": 	"",
-				"message3": 	"",
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":       "Информация",
+				"message1":    fmt.Sprintf("Сценарий '%s' успешно добавлен в сюиту '%s'.", newScript, scriptsSuite),
+				"message2":    "",
+				"message3":    "",
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	}
 }
 
 // Удалить сценарий из БД
-func DelScript(context *gin.Context)  {
+func DelScript(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	// Данные из формы
@@ -66,30 +66,29 @@ func DelScript(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при удалении скрипта '%s'.", deletedScript),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
-				"message2": 	"",	"message3": "",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":    "Информация",
+				"message1": fmt.Sprintf("Скрипт '%s' успешно удалён.", deletedScript),
+				"message2": "", "message3": "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Редактировать Сценарий, данные получить из БД
-func EditScript(context *gin.Context)  {
+func EditScript(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	// Данные из формы
@@ -107,23 +106,23 @@ func EditScript(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка получения данных о сценарии '%s'.", editedScript),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка получения данных о сценарии '%s'.", editedScript),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		// Вывести данные для редактирования
 		context.HTML(http.StatusOK, "edit-script.html",
 			gin.H{
-				"title": 		"Редактирование сценария",
-				"script": 		script,
-				"scriptId":		scriptId,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Редактирование сценария",
+				"script":    script,
+				"scriptId":  scriptId,
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
@@ -158,33 +157,32 @@ func UpdateAfterEditScript(context *gin.Context) {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при обновлении сценария '%s' в сюите '%s'.", scriptName, scriptsSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":       "Ошибка",
+				"message1":    "",
+				"message2":    fmt.Sprintf("Ошибка при обновлении сценария '%s' в сюите '%s'.", scriptName, scriptsSuite),
+				"message3":    fmt.Sprintf("%s: ", err),
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Сценарий '%s' успешно обновлён.", scriptName),
-				"message2": 	"",
-				"message3": 	"",
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":       "Информация",
+				"message1":    fmt.Sprintf("Сценарий '%s' успешно обновлён.", scriptName),
+				"message2":    "",
+				"message3":    "",
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Вывод для печати Шагов Сценария по имени Сценария и имени его Сюиты
-func CreateStepsPdf(context *gin.Context)  {
+func CreateStepsPdf(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
@@ -197,7 +195,7 @@ func CreateStepsPdf(context *gin.Context)  {
 	_, scriptId, err := helpers.GetScript(scriptName, scriptsSuite)
 
 	// Получить Шаги из БД только для заданных по ID Сценариев
-	scriptsIdList := append(make([]int, 0, 1), scriptId)		// Слайс только из одного Id
+	scriptsIdList := append(make([]int, 0, 1), scriptId) // Слайс только из одного Id
 	stepsList, err := helpers.GetStepsListForSpecifiedScripts(scriptsIdList)
 	log.Debugf("%v - %v", stepsList, err)
 

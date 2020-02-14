@@ -12,11 +12,15 @@
 
     **create user 'specuser'@'localhost';**
 
-4. Дать права пользователю на работу с базой и задать пароль:
+4. Дать права пользователю на работу с базой:
 
-    **grant select,insert,update,delete,index,alter,create,drop on specadmin.\* to specuser@localhost identified by 'super_password';**
+    **grant select,insert,update,delete,index,alter,create,drop on specadmin.\* to specuser@localhost;**
 
-5. Залить пустую базу из дампа:
+5. Установить пароль новому пользователю:
+
+    **ALTER USER 'specuser'@'localhost' IDENTIFIED BY 'Ghashiz7'; FLUSH PRIVILEGES;**
+
+6. Залить пустую базу из дампа:
 
     **mysql -p -u some_admin specadmin < specadmin-without-data.sql**
     

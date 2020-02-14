@@ -1,14 +1,14 @@
 package helpers
 
 import (
-	"time"
+	"SpecAdmin/models"
+	"database/sql"
+	"errors"
 	"fmt"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
-	"../../models"
-	"database/sql"
 	"golang.org/x/crypto/bcrypt"
-	"errors"
+	"time"
 )
 
 var UserLogin string
@@ -64,10 +64,11 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 		}
 	}
 	defer db.Close()
-	if err != nil { log.Errorf("Ошибка при проверке наличия сессии в БД: %v", err) }
+	if err != nil {
+		log.Errorf("Ошибка при проверке наличия сессии в БД: %v", err)
+	}
 	return sessidExist
 }
-
 
 // Сохранить в БД Сессию
 func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
@@ -92,10 +93,11 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при сохранении Сессии в БД: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при сохранении Сессии в БД: '%v'", err)
+	}
 	return err
 }
-
 
 // Создать пользователя в БД
 func CreateUserInDb(user models.User) error {
@@ -123,10 +125,11 @@ func CreateUserInDb(user models.User) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при создании пользователя в БД: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при создании пользователя в БД: '%v'", err)
+	}
 	return err
 }
-
 
 // Сохранить пользователя в БД после редактирования
 func SaveUserInDb(user models.User) error {
@@ -152,10 +155,11 @@ func SaveUserInDb(user models.User) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)
+	}
 	return err
 }
-
 
 // Удалить пользователя из БД
 func DeleteUserInDb(user models.User) error {
@@ -195,11 +199,11 @@ func DeleteUserInDb(user models.User) error {
 		}
 		defer db.Close()
 	}
-	if err != nil {log.Errorf("Ошибка при удалении пользователя '%s' в БД: '%v'", user.Login, err)}
+	if err != nil {
+		log.Errorf("Ошибка при удалении пользователя '%s' в БД: '%v'", user.Login, err)
+	}
 	return err
 }
-
-
 
 // Считать из БД всех пользователей
 func GetUsers() ([]models.User, error) {
@@ -230,10 +234,11 @@ func GetUsers() ([]models.User, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при считывании из БД всех пользователей: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при считывании из БД всех пользователей: '%v'", err)
+	}
 	return usersList, err
 }
-
 
 // Проверка валидности пароля
 func ValidatePassword(userName, oldPassword string) error {
@@ -266,10 +271,11 @@ func ValidatePassword(userName, oldPassword string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при проверке пароля: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при проверке пароля: '%v'", err)
+	}
 	return err
 }
-
 
 // Записать в БД новый пароль заданного пользователя
 func SavePassword(userName, newPassword string) error {
@@ -294,8 +300,6 @@ func SavePassword(userName, newPassword string) error {
 		// Занести новый хеш пароля и новую соль в БД
 		result, err = db.Exec("UPDATE user Set passwd=?, salt=? WHERE login=?", newHash, salt, userName)
 
-
-
 		if err == nil {
 			affected, err = result.RowsAffected()
 			if err == nil {
@@ -304,10 +308,11 @@ func SavePassword(userName, newPassword string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка записи в БД нового пароля пользователя: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка записи в БД нового пароля пользователя: '%v'", err)
+	}
 	return err
 }
-
 
 // Проверить пароль по Хешу из БД
 func CheckPasswordInDB(login, password string) error {
@@ -332,14 +337,15 @@ func CheckPasswordInDB(login, password string) error {
 		if err == nil {
 			log.Debugln("Хеш пароля совпадает с Хешем из БД.")
 		} else {
-				log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
-				err = errors.New(fmt.Sprintln("Неверный логин/пароль."))
+			log.Errorln("Хеш пароля не совпадает с Хешем из БД.")
+			err = errors.New(fmt.Sprintln("Неверный логин/пароль."))
 		}
 	}
-	if err != nil {log.Errorf("Ошибка при проверке пароля по Хешу из БД: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при проверке пароля по Хешу из БД: '%v'", err)
+	}
 	return err
 }
-
 
 // Проверить наличие пользователя в БД
 func CheckUserInDB(login string) error {
@@ -363,10 +369,11 @@ func CheckUserInDB(login string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)}
+	if err != nil {
+		log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)
+	}
 	return err
 }
-
 
 // Удалить сессию из БД для заданного пользователя
 func DeleteSession(userName string) error {
@@ -398,10 +405,11 @@ func DeleteSession(userName string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка удаления сессии пользователя '%s' из БД: '%v'", userName, err)}
+	if err != nil {
+		log.Errorf("Ошибка удаления сессии пользователя '%s' из БД: '%v'", userName, err)
+	}
 	return err
 }
-
 
 // Проверить заданный пермишен у пользователя
 func CheckOneUserPermission(login string, permission string) error {
@@ -422,7 +430,7 @@ func CheckOneUserPermission(login string, permission string) error {
 			stmt, err = db.Prepare(requestString)
 			requestResult := stmt.QueryRow(login)
 
-			var permissionFromDB string		// Вовсе не bool !
+			var permissionFromDB string // Вовсе не bool !
 			err = requestResult.Scan(&permissionFromDB)
 			log.Debugf("permissionFromDB: '%v'", permissionFromDB)
 
@@ -437,6 +445,8 @@ func CheckOneUserPermission(login string, permission string) error {
 		}
 		defer db.Close()
 	}
-	if err != nil {log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)}
+	if err != nil {
+		log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)
+	}
 	return err
 }

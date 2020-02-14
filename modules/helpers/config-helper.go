@@ -1,13 +1,13 @@
 package helpers
 
 import (
-	"../../models"
+	"SpecAdmin/models"
+	"database/sql"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
-	"fmt"
 	"os"
-	"database/sql"
 )
 
 // Получить из БД конфигурационные данные
@@ -38,10 +38,11 @@ func GetConfig() ([]models.Option, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)
+	}
 	return config, err
 }
-
 
 // Сохранить конфигурацию в БД
 func SaveConfig(screenShotPath string) error {
@@ -64,10 +65,11 @@ func SaveConfig(screenShotPath string) error {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)
+	}
 	return err
 }
-
 
 // Получить Путь к скриншотам
 func GetScreenShotsPath() (string, error) {
@@ -84,10 +86,11 @@ func GetScreenShotsPath() (string, error) {
 			}
 		}
 	}
-	if err != nil {log.Errorf("Ошибка при получении пути к скриншотам: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении пути к скриншотам: '%v'", err)
+	}
 	return screenShotsPath, err
 }
-
 
 // Получить список имён неиспользуемых файлов скриншотов
 func GetUnusedScreenShotsFileName() ([]string, error) {
@@ -116,10 +119,11 @@ func GetUnusedScreenShotsFileName() ([]string, error) {
 			}
 		}
 	}
-	if err != nil {log.Errorf("Ошибка при получении списка имён файлов скриншотов в хранилище: '%v'", err)}
-	return  unusedScreenShotsFileNameList, err
+	if err != nil {
+		log.Errorf("Ошибка при получении списка имён файлов скриншотов в хранилище: '%v'", err)
+	}
+	return unusedScreenShotsFileNameList, err
 }
-
 
 // Получить все используемые имена файлов скриншотов
 func GetScreenShotsFileName() ([]string, error) {
@@ -148,10 +152,11 @@ func GetScreenShotsFileName() ([]string, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)
+	}
 	return usedScreenShotsFileNameList, err
 }
-
 
 // Получить список имён файлов из хранилища
 func GetScreenShotsFileNameInRepositoryList() ([]string, error) {
@@ -175,6 +180,8 @@ func GetScreenShotsFileNameInRepositoryList() ([]string, error) {
 			log.Debugf("Получен из директории '%s' список имен файлов: '%v' ", screenShotsPath, inRepositoryScreenShotsFileNameList)
 		}
 	}
-	if err != nil {log.Errorf("Ошибка при получении списка имён файлов из директории '%s': '%v'", screenShotsPath, err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении списка имён файлов из директории '%s': '%v'", screenShotsPath, err)
+	}
 	return inRepositoryScreenShotsFileNameList, err
 }

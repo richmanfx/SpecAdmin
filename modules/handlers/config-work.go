@@ -1,17 +1,17 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"../helpers"
-	"../../models"
-	log "github.com/Sirupsen/logrus"
-	"fmt"
-	"net/http"
+	"SpecAdmin/models"
+	"SpecAdmin/modules/helpers"
 	"errors"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 // Отобразить страницу конфигурации для редактирования параметров
-func EditConfig(context *gin.Context)  {
+func EditConfig(context *gin.Context) {
 	var err error
 	var config []models.Option
 	var statistic models.Statistic
@@ -38,30 +38,29 @@ func EditConfig(context *gin.Context)  {
 		log.Errorf("Ошибка при получении конфигурационных данных из БД: %v", err)
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при получении конфигурационных данных из БД",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  "Ошибка при получении конфигурационных данных из БД",
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
-		context.HTML(http.StatusOK,	"config.html",
+		context.HTML(http.StatusOK, "config.html",
 			gin.H{
-				"title":        "SpecAdmin",
-				"config":	 	config,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
-				"statistic":	statistic,
+				"title":     "SpecAdmin",
+				"config":    config,
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
+				"statistic": statistic,
 			},
 		)
 	}
 }
 
-
 // Сохранить конфигурацию в БД
-func SaveConfig(context *gin.Context)  {
+func SaveConfig(context *gin.Context) {
 
 	// Параметры из формы
 	screenShotPath := context.PostForm("option_Путь к скриншотам")
@@ -73,31 +72,30 @@ func SaveConfig(context *gin.Context)  {
 		// Ошибка при сохранении конфигурации
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintln("Ошибка при сохранении конфигурации"),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintln("Ошибка при сохранении конфигурации"),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintln("Конфигурация успешно сохранена"),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintln("Конфигурация успешно сохранена"),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Удалить из хранилища неиспользуемые в БД файлы скриншотов
-func DelUnusedScreenShotsFile(context *gin.Context)  {
+func DelUnusedScreenShotsFile(context *gin.Context) {
 
 	var countDeletedFile int
 
@@ -122,31 +120,30 @@ func DelUnusedScreenShotsFile(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintln("Ошибка при удалении неиспользуемых файлов скриншотов"),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
-				"message2": 	"",
-				"message3": 	fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintln("Неиспользуемые файлы скриншотов успешно удалены"),
+				"message2":  "",
+				"message3":  fmt.Sprintf("Удалено %d файла(ов).", countDeletedFile),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Конфигурирование пользователей
-func UsersConfig(context *gin.Context)  {
+func UsersConfig(context *gin.Context) {
 
 	var err error
 	var users []models.User
@@ -171,12 +168,12 @@ func UsersConfig(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintln("Ошибка при получении данных о пользователях из БД"),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
@@ -184,19 +181,18 @@ func UsersConfig(context *gin.Context)  {
 			http.StatusOK,
 			"users-config.html",
 			gin.H{
-				"title":   		"SpecAdmin",
-				"users":		users,
-				"Version": 		Version,
-				"UserLogin":	helpers.UserLogin,
-				"statistic":	statistic,
+				"title":     "SpecAdmin",
+				"users":     users,
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
+				"statistic": statistic,
 			},
 		)
 	}
 }
 
-
 // Создать нового пользователя
-func CreateUser(context *gin.Context)  {
+func CreateUser(context *gin.Context) {
 
 	var err error
 	helpers.SetLogFormat()
@@ -241,7 +237,6 @@ func CreateUser(context *gin.Context)  {
 
 	log.Debugf("user из формы создания = '%v'", user)
 
-
 	// Получить Соль и Хеш пароля
 	user.Salt = helpers.CreateSalt()
 	user.Password = helpers.CreateHash(openPassword, user.Salt)
@@ -252,31 +247,30 @@ func CreateUser(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при создании пользователя в БД.",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  "Ошибка при создании пользователя в БД.",
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Пользователь '%s' успешно добавлен в БД.", user.Login),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintf("Пользователь '%s' успешно добавлен в БД.", user.Login),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Сохранить пользователя после редактирования
-func SaveUser(context *gin.Context)  {
+func SaveUser(context *gin.Context) {
 
 	log.Debugln("Мы в 'SaveUser'!")
 
@@ -328,23 +322,23 @@ func SaveUser(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при сохранении пользователя в БД.",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  "Ошибка при сохранении пользователя в БД.",
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Пользователь '%s' успешно сохранён в БД.", savedUser.Login),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintf("Пользователь '%s' успешно сохранён в БД.", savedUser.Login),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
@@ -352,7 +346,7 @@ func SaveUser(context *gin.Context)  {
 }
 
 // Удалить пользователя
-func DeleteUser(context *gin.Context)  {
+func DeleteUser(context *gin.Context) {
 
 	var err error
 	var deletedUser models.User // Пользователь
@@ -377,23 +371,23 @@ func DeleteUser(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при удалении пользователя из БД.",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  "Ошибка при удалении пользователя из БД.",
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", deletedUser.Login),
-				"message2": 	"",
-				"message3": 	"",
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Информация",
+				"message1":  fmt.Sprintf("Пользователь '%s' успешно удалён из БД.", deletedUser.Login),
+				"message2":  "",
+				"message3":  "",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}

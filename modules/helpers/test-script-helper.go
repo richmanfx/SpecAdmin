@@ -1,14 +1,14 @@
 package helpers
 
 import (
+	"SpecAdmin/models"
+	"database/sql"
+	"fmt"
 	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
-	"runtime"
-	"../../models"
-	"database/sql"
 	"github.com/jung-kurt/gofpdf"
-	"fmt"
 	"os"
+	"runtime"
 	"strconv"
 )
 
@@ -28,7 +28,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 		err = dbConnect()
 		if err == nil {
 			// Добавление Скрипта в БД
-			log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'",newScriptName, scriptSerialNumber, scriptSuite)
+			log.Debugf("Добавление Скрипта: '%s', Порядковый номер '%s', Сюита: '%s'", newScriptName, scriptSerialNumber, scriptSuite)
 
 			result, err = db.Exec("INSERT INTO tests_scripts (name, serial_number, name_suite) VALUES (?,?,?)", newScriptName, scriptSerialNumber, scriptSuite)
 			if err == nil {
@@ -40,10 +40,11 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 		}
 		defer db.Close()
 	}
-	if err != nil {log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)}
+	if err != nil {
+		log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)
+	}
 	return err
 }
-
 
 // Удаляет сценарий из БД
 func DelTestScript(scriptName, scriptsSuiteName string) error {
@@ -79,7 +80,9 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 		}
 		defer db.Close()
 	}
-	if err != nil {log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)}
+	if err != nil {
+		log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)
+	}
 	return err
 }
 
@@ -96,7 +99,7 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 
 		// Получить данные о Сценарии и его ключ 'id'
 		log.Debugf("Получение данных Сценария '%s' из БД.", scriptsName)
-		rows := db.QueryRow("SELECT id,serial_number FROM tests_scripts WHERE name=? AND name_suite=?",	scriptsName, scriptsSuiteName)
+		rows := db.QueryRow("SELECT id,serial_number FROM tests_scripts WHERE name=? AND name_suite=?", scriptsName, scriptsSuiteName)
 
 		// Получить данные из результата запроса
 
@@ -140,10 +143,11 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 		}
 		defer db.Close()
 	}
-	if err != nil {log.Errorf("Ошибка обновления данных Сценария '%s' в БД: %v", scriptName, err)}
+	if err != nil {
+		log.Errorf("Ошибка обновления данных Сценария '%s' в БД: %v", scriptName, err)
+	}
 	return err
 }
-
 
 // Получить список имён Сюит в заданной Группе
 func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
@@ -170,7 +174,9 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении списока имён Сюит в Группе '%s': %v", groupName, err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении списока имён Сюит в Группе '%s': %v", groupName, err)
+	}
 	return suitsNameList, err
 }
 
@@ -195,17 +201,18 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 					err = rows.Scan(&id)
 					if err == nil {
 						log.Debugf("rows.Next из таблицы tests_scripts: %d", id)
-						scriptsIdList = append(scriptsIdList, id)		// Добавить в список имён
+						scriptsIdList = append(scriptsIdList, id) // Добавить в список имён
 					}
 				}
 			}
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении ID Сценариев для Сюит: %v", err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении ID Сценариев для Сюит: %v", err)
+	}
 	return scriptsIdList, err
 }
-
 
 // Получить Сценарии только для заданных Сюит
 func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Script, error) {
@@ -262,10 +269,11 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 			defer db.Close()
 		}
 	}
-	if err != nil {log.Errorf("Ошибка при получении Сценариев для заданных Сюит: %v", err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении Сценариев для заданных Сюит: %v", err)
+	}
 	return scriptsList, err
 }
-
 
 // Вернуть Сценарий и Сюиту Шага по ID Сценария
 func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
@@ -281,17 +289,18 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 		// Данные по Сценарию из БД
 		log.Debugf("Получение данных из БД по Сценарию с Id='%s'.", ScriptId)
 		err = db.QueryRow("SELECT name, name_suite FROM tests_scripts WHERE id=?", ScriptId).
-			  Scan(&stepsScriptName, &scripsSuiteName)
+			Scan(&stepsScriptName, &scripsSuiteName)
 
 		if err == nil {
 			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s': %v", ScriptId, err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s': %v", ScriptId, err)
+	}
 	return stepsScriptName, scripsSuiteName, err
 }
-
 
 // Сгенерировать PDF файл со списком Шагов Сценария
 func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []models.Step) error {
@@ -308,7 +317,6 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	pdf.AddFont("Helvetica-1251", "B", "helvetica_1251.json")
 	pdf.SetFont("Helvetica-1251", "B", fontSize)
 
-
 	ht := pdf.PointConvert(fontSize)
 	tr := pdf.UnicodeTranslatorFromDescriptor("cp1251")
 	pageWidth, pageHeight := pdf.GetPageSize()
@@ -319,7 +327,7 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 
 	write := func(str string) {
 		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
-		pdf.Ln(ht) 	// Переход на новую строку
+		pdf.Ln(ht) // Переход на новую строку
 	}
 	pdf.AddPage()
 
@@ -407,27 +415,8 @@ func GetScriptsIdByStepsId(stepsId int) (int, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil {log.Errorf("Ошибка при получении из БД шдентификатора Сценария по идентификатору Шага'%s': %v", stepsId, err)}
+	if err != nil {
+		log.Errorf("Ошибка при получении из БД шдентификатора Сценария по идентификатору Шага'%s': %v", stepsId, err)
+	}
 	return scriptId, err
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

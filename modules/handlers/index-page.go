@@ -1,17 +1,17 @@
 package handlers
 
 import (
+	"SpecAdmin/models"
+	"SpecAdmin/modules/helpers"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"../helpers"
-	log "github.com/Sirupsen/logrus"
-	"fmt"
-	"../../models"
 )
 
-var Version string = "10.3"
+var Version = "10.3"
 
-func ShowIndexPage(context *gin.Context)  {
+func ShowIndexPage(context *gin.Context) {
 	var err error
 	var statistic models.Statistic
 	helpers.SetLogFormat()
@@ -31,12 +31,12 @@ func ShowIndexPage(context *gin.Context)  {
 		log.Errorf("Ошибка при получении списка групп тестов из БД: '%v'", err)
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при получении списка групп тестов из БД",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  "Ошибка при получении списка групп тестов из БД",
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
@@ -44,22 +44,22 @@ func ShowIndexPage(context *gin.Context)  {
 			http.StatusOK,
 			"index.html",
 			gin.H{
-				"title":        "SpecAdmin",
-				"Version":      Version,
-				"UserLogin":	helpers.UserLogin,
-				"groupList": 	groupList,
-				"statistic":	statistic,
+				"title":     "SpecAdmin",
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
+				"groupList": groupList,
+				"statistic": statistic,
 			},
 		)
 	}
 }
 
-func ShowSuitesIndex(context *gin.Context)  {
+func ShowSuitesIndex(context *gin.Context) {
 
 	var err error
 	var statistic models.Statistic
 	var screenShotsPath string
-	suitesList := make([]models.Suite, 0, 0)		// Слайс из Сюит
+	suitesList := make([]models.Suite, 0, 0) // Слайс из Сюит
 	helpers.SetLogFormat()
 
 	// Данные из формы
@@ -83,12 +83,12 @@ func ShowSuitesIndex(context *gin.Context)  {
 		log.Errorf("Ошибка при получении из БД списка Сюит для Группы тестов: %v", err)
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	"Ошибка при получении из БД списка Сюит для Группы тестов",
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"user":			helpers.UserLogin,
+				"title":    "Ошибка",
+				"message1": "",
+				"message2": "Ошибка при получении из БД списка Сюит для Группы тестов",
+				"message3": fmt.Sprintf("%s: ", err),
+				"Version":  Version,
+				"user":     helpers.UserLogin,
 			},
 		)
 	} else {
@@ -96,13 +96,13 @@ func ShowSuitesIndex(context *gin.Context)  {
 			http.StatusOK,
 			"suites-index.html",
 			gin.H{
-				"title":        	"SpecAdmin",
-				"Version":      	Version,
-				"UserLogin":		helpers.UserLogin,
-				"groupName":		groupName,
-				"suitesList": 		suitesList,
-				"statistic":		statistic,
-				"screenShotsPath":	screenShotsPath,
+				"title":           "SpecAdmin",
+				"Version":         Version,
+				"UserLogin":       helpers.UserLogin,
+				"groupName":       groupName,
+				"suitesList":      suitesList,
+				"statistic":       statistic,
+				"screenShotsPath": screenShotsPath,
 			},
 		)
 	}

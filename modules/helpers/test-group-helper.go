@@ -1,16 +1,16 @@
 package helpers
 
 import (
-	log "github.com/Sirupsen/logrus"
-	_ "github.com/go-sql-driver/mysql"
-	"fmt"
-	"../../models"
+	"SpecAdmin/models"
 	"database/sql"
 	"errors"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Возвращает список Групп из БД
-func GetGroupsList(groupList *[]models.Group) (error) {
+func GetGroupsList(groupList *[]models.Group) error {
 	var err error
 	SetLogFormat()
 
@@ -34,7 +34,9 @@ func GetGroupsList(groupList *[]models.Group) (error) {
 		}
 	}
 	defer db.Close()
-	if err != nil { log.Errorf("Ошибка при получении списка Групп из БД: %v", err) }
+	if err != nil {
+		log.Errorf("Ошибка при получении списка Групп из БД: %v", err)
+	}
 	return err
 }
 
@@ -68,7 +70,9 @@ func AddTestGroup(groupName string) error {
 		}
 		defer db.Close()
 	}
-	if err != nil { log.Errorf("Ошибка при добавлении новой Группы в БД: %v", err) }
+	if err != nil {
+		log.Errorf("Ошибка при добавлении новой Группы в БД: %v", err)
+	}
 	return err
 }
 
@@ -106,7 +110,9 @@ func DelTestGroup(groupName string) error {
 		}
 		defer db.Close()
 	}
-	if err != nil { log.Errorf("Ошибка при удалении Группы из БД: %v", err) }
+	if err != nil {
+		log.Errorf("Ошибка при удалении Группы из БД: %v", err)
+	}
 	return err
 }
 
@@ -147,6 +153,8 @@ func EditTestGroup(oldName string, newName string) error {
 		}
 		defer db.Close()
 	}
-	if err != nil { log.Errorf("Ошибка при изменении имени Группы в БД: %v", err) }
+	if err != nil {
+		log.Errorf("Ошибка при изменении имени Группы в БД: %v", err)
+	}
 	return err
 }

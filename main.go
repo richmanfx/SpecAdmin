@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./modules"
+	"SpecAdmin/modules"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -35,5 +35,5 @@ func main() {
 	modules.InitRoutes(Router)
 
 	// Запустить приложение
-	Router.Run(":9094")
+	Router.Run(":3010")
 }

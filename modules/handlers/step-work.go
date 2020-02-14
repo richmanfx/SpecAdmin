@@ -1,23 +1,23 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"../helpers"
+	"SpecAdmin/models"
+	"SpecAdmin/modules/helpers"
+	"errors"
 	"fmt"
-	"net/http"
 	log "github.com/Sirupsen/logrus"
-	"../../models"
-	"strconv"
-	"os"
+	"github.com/gin-gonic/gin"
 	"io"
 	"mime/multipart"
-	"errors"
+	"net/http"
+	"os"
+	"strconv"
 )
 
 var stepBuffer int
 
 // Добавить новый Шаг
-func AddStep(context *gin.Context)  {
+func AddStep(context *gin.Context) {
 
 	helpers.SetLogFormat()
 
@@ -30,8 +30,8 @@ func AddStep(context *gin.Context)  {
 	scriptsSuite := context.PostForm("scripts_suite")
 	// Скриншот
 	var screenShotFileName string
-	screenShotFile, header, err := context.Request.FormFile("screen_shot")		// TODO: Переделать на простой FormFile !!!
-	if err != nil {		// Если в форме не указан файл скриншота, то пустую строку - без скриншота
+	screenShotFile, header, err := context.Request.FormFile("screen_shot") // TODO: Переделать на простой FormFile !!!
+	if err != nil {                                                        // Если в форме не указан файл скриншота, то пустую строку - без скриншота
 		log.Debugln("Не указан файл скриншота в функции 'AddStep' - передаём пустую строку (\"\").")
 		screenShotFileName = ""
 		err = nil
@@ -53,8 +53,8 @@ func AddStep(context *gin.Context)  {
 			err = errors.New(fmt.Sprintf("Размер скриншота слишком большой - %d байт. Максимальный размер - %d байт.",
 				ScreenShotsSize, maxScreenShotsSize))
 		} else {
-			log.Debugf("Данные из формы: newStepName='%v', stepSerialNumber='%v', stepsDescription='%v', " +
-					   					"stepsExpectedResult='%v', stepsScript='%v', scriptsSuite='%v'",
+			log.Debugf("Данные из формы: newStepName='%v', stepSerialNumber='%v', stepsDescription='%v', "+
+				"stepsExpectedResult='%v', stepsScript='%v', scriptsSuite='%v'",
 				newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScript, scriptsSuite)
 
 			// Получить путь до хранилища скриншотов
@@ -99,34 +99,33 @@ func AddStep(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
-											 newStepName, stepsScript, scriptsSuite),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":    "Ошибка",
+				"message1": "",
+				"message2": fmt.Sprintf("Ошибка при добавлении шага '%s' в сценарий '%s' сюиты '%s'.",
+					newStepName, stepsScript, scriptsSuite),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
 				"title": "Информация",
-				"message1": 	fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
-											 newStepName, stepsScript, scriptsSuite),
-				"message2": 	"",
-				"message3": 	"",
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"message1": fmt.Sprintf("Шаг '%s' успешно добавлен в сценарий '%s' сюиты '%s'.",
+					newStepName, stepsScript, scriptsSuite),
+				"message2":    "",
+				"message3":    "",
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Удалить Шаг
-func DelStep(context *gin.Context)  {
+func DelStep(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	// Данные из HTML-формы
@@ -145,31 +144,30 @@ func DelStep(context *gin.Context)  {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при удалении шага '%s'.", deletedStep),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
-				"message2": "",	"message3": "",
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":    "Информация",
+				"message1": fmt.Sprintf("Шаг '%s' успешно удалён.", deletedStep),
+				"message2": "", "message3": "",
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Редактировать Шаг
-func EditStep(context *gin.Context)  {
+func EditStep(context *gin.Context) {
 	helpers.SetLogFormat()
 
 	// Данные из формы
@@ -184,31 +182,29 @@ func EditStep(context *gin.Context)  {
 	var step models.Step
 	step, err = helpers.GetStep(editedStepName, stepsScript, scriptsSuite)
 
-
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка получения данных о шаге '%s'.", editedStepName),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		// Вывести данные для редактирования
 		context.HTML(http.StatusOK, "edit-step.html",
 			gin.H{
-				"title": 		"Редактирование шага",
-				"step": 		step,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Редактирование шага",
+				"step":      step,
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
-
 
 // Обновить в БД Шаг после редактирования
 func UpdateAfterEditStep(context *gin.Context) {
@@ -231,7 +227,7 @@ func UpdateAfterEditStep(context *gin.Context) {
 
 			// Скриншот
 			screenShotFile, header, err = context.Request.FormFile("screen_shot") // TODO: Переделать на простой FormFile !!!
-			if err != nil { // Если в форме не указан файл скриншота, то оставить прежний файл
+			if err != nil {                                                       // Если в форме не указан файл скриншота, то оставить прежний файл
 				log.Debugln("Не указан файл скриншота.")
 				screenShotFileName = ""
 				err = nil
@@ -280,7 +276,6 @@ func UpdateAfterEditStep(context *gin.Context) {
 		}
 	}
 
-
 	ScriptId, err := helpers.GetScriptsIdByStepsId(stepsId)
 	var suitesGroup string
 	if err == nil {
@@ -288,11 +283,9 @@ func UpdateAfterEditStep(context *gin.Context) {
 		if err == nil {
 
 			var suite models.Suite
-			if err == nil {
-				// Группа Сюиты
-				suite, err = helpers.GetSuite(scriptsSuite)
-				suitesGroup = suite.Group
-			}
+			// Группа Сюиты
+			suite, err = helpers.GetSuite(scriptsSuite)
+			suitesGroup = suite.Group
 
 			if err == nil {
 				// Обновить в БД
@@ -305,31 +298,31 @@ func UpdateAfterEditStep(context *gin.Context) {
 	if err != nil {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintf("Ошибка при обновлении Шага '%s'", stepsName),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Информация",
-				"message1": 	fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
-				"message2": 	"",
-				"message3": 	"",
-				"SuitesGroup":	suitesGroup,
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":       "Информация",
+				"message1":    fmt.Sprintf("Шаг '%s' успешно обновлён.", stepsName),
+				"message2":    "",
+				"message3":    "",
+				"SuitesGroup": suitesGroup,
+				"Version":     Version,
+				"UserLogin":   helpers.UserLogin,
 			},
 		)
 	}
 }
 
 // Вернуть параметры Шага (AJAX)
-func GetStepsOptions(context *gin.Context)  {
+func GetStepsOptions(context *gin.Context) {
 	helpers.SetLogFormat()
 	log.Debugln("Пришёл запрос в GetStepsOptions")
 	var stepsScriptName, scripsSuiteName string
@@ -349,20 +342,19 @@ func GetStepsOptions(context *gin.Context)  {
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintln("Ошибка в функции 'GetStepsOptions' при ответе на AJAX запрос"),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}
 }
 
-
 // Удалить скриншот у Шага по заданному Id Шага (AJAX)
-func DelScreenShotFromStep(context *gin.Context)  {
+func DelScreenShotFromStep(context *gin.Context) {
 	helpers.SetLogFormat()
 	log.Debugln("Пришёл запрос в DelScreenShotFromStep на удаление Скриншота.")
 
@@ -385,7 +377,7 @@ func DelScreenShotFromStep(context *gin.Context)  {
 }
 
 // Поместить Шаг в буфер обмена
-func CopyStepInClipboard(context *gin.Context)  {
+func CopyStepInClipboard(context *gin.Context) {
 	helpers.SetLogFormat()
 	log.Infoln("Пришёл запрос в CopyStepInClipboard для помещения Шага в буфер обмена.")
 
@@ -400,15 +392,15 @@ func CopyStepInClipboard(context *gin.Context)  {
 		result := gin.H{"Status": "OK"}
 		context.JSON(http.StatusOK, result)
 	} else {
-	log.Errorf("Ошибка помещения Шага в буфер обмена: %v", err)
-	result := gin.H{"Status": err}
-	context.JSON(http.StatusOK, result)
+		log.Errorf("Ошибка помещения Шага в буфер обмена: %v", err)
+		result := gin.H{"Status": err}
+		context.JSON(http.StatusOK, result)
 	}
 
 }
 
 // Получить имя, описание и ожидаемый результат Шага
-func GetStepFromBuffer(context *gin.Context)  {
+func GetStepFromBuffer(context *gin.Context) {
 
 	var stepsName, stepsDescription, stepsExpectedResult string
 	helpers.SetLogFormat()
@@ -425,20 +417,20 @@ func GetStepFromBuffer(context *gin.Context)  {
 
 	if err == nil {
 		result := gin.H{
-			"stepsName": stepsName,
-			"stepsDescription": stepsDescription,
+			"stepsName":           stepsName,
+			"stepsDescription":    stepsDescription,
 			"stepsExpectedResult": stepsExpectedResult,
-			}
+		}
 		context.JSON(http.StatusOK, result)
 	} else {
 		context.HTML(http.StatusOK, "message.html",
 			gin.H{
-				"title": 		"Ошибка",
-				"message1": 	"",
-				"message2": 	fmt.Sprintln("Ошибка в функции 'GetStepFromBuffer' при ответе на AJAX запрос"),
-				"message3": 	fmt.Sprintf("%s: ", err),
-				"Version":		Version,
-				"UserLogin":	helpers.UserLogin,
+				"title":     "Ошибка",
+				"message1":  "",
+				"message2":  fmt.Sprintln("Ошибка в функции 'GetStepFromBuffer' при ответе на AJAX запрос"),
+				"message3":  fmt.Sprintf("%s: ", err),
+				"Version":   Version,
+				"UserLogin": helpers.UserLogin,
 			},
 		)
 	}

@@ -1,17 +1,17 @@
 package helpers
 
 import (
-	"database/sql"
-	log "github.com/Sirupsen/logrus"
-	_ "github.com/go-sql-driver/mysql"
-	"../../models"
-	"fmt"
+	"SpecAdmin/models"
 	"crypto/md5"
 	"crypto/sha512"
-	"io"
-	"time"
+	"database/sql"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
+	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/crypto/bcrypt"
+	"io"
 	"strconv"
+	"time"
 )
 
 var db *sql.DB
@@ -32,10 +32,11 @@ func dbConnect() error {
 		log.Debugf("Проверка соединения с БД после ")
 		err = db.Ping()
 	}
-	if err != nil { log.Errorf("Ошибка подключения к БД: '%v'", err) }
+	if err != nil {
+		log.Errorf("Ошибка подключения к БД: '%v'", err)
+	}
 	return err
 }
-
 
 // Установить формат логов и уровень логирования
 func SetLogFormat() {
@@ -44,9 +45,8 @@ func SetLogFormat() {
 	//customFormatter.Format()
 	log.SetFormatter(customFormatter)
 	customFormatter.FullTimestamp = true
-	log.SetLevel(log.InfoLevel)			// Уровень логирования
+	log.SetLevel(log.InfoLevel) // Уровень логирования
 }
-
 
 // Получить статистику
 func GetStatistic() (models.Statistic, error) {
@@ -101,10 +101,11 @@ func GetStatistic() (models.Statistic, error) {
 		}
 	}
 	defer db.Close()
-	if err != nil { log.Errorf("Ошибка при получении статистики: '%v'", err) }
+	if err != nil {
+		log.Errorf("Ошибка при получении статистики: '%v'", err)
+	}
 	return statistic, err
 }
-
 
 // Сгенерировать уникальную строку в 32 hex-символа
 func GetUnique32SymbolsString() string {
@@ -141,20 +142,19 @@ func GetSaltFromDb(userName string) (string, error) {
 		err = db.QueryRow("SELECT salt FROM user WHERE login=?", userName).Scan(&salt)
 	}
 	defer db.Close()
-	if err != nil { log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err) }
+	if err != nil {
+		log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err)
+	}
 	return salt, err
 }
-
 
 func ConnectToDB() error {
 	return dbConnect()
 }
 
-
 func CloseConnectToDB() error {
 	return db.Close()
 }
-
 
 // Получить хеш из БД для заданного пользователя
 func GetHashFromDb(userName string) (string, error) {
@@ -171,6 +171,8 @@ func GetHashFromDb(userName string) (string, error) {
 		err = requestResult.Scan(&hash)
 	}
 	defer db.Close()
-	if err != nil { log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err) }
+	if err != nil {
+		log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err)
+	}
 	return hash, err
 }
