@@ -37,7 +37,7 @@ func GetConfig() ([]models.Option, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении конфигурационных данных из БД: '%v'", err)
 	}
@@ -55,16 +55,19 @@ func SaveConfig(screenShotPath string) error {
 
 		// Записать в БД
 		log.Debugln("Запись в БД пути к директории со скриншотами.")
-		_, err = db.Exec("UPDATE configuration SET property_value=? WHERE property_name=? LIMIT 1", screenShotPath, "Путь к скриншотам")
+		_, err = db.Exec(
+			"UPDATE configuration SET property_value=? WHERE property_name=?",
+			screenShotPath,
+			"Путь к скриншотам")
 
-		// Здесь будет запись других параметров
-		// ************************************
+		// TODO: Здесь будет запись других параметров
+		// ************************************ //
 
 		if err == nil {
 			log.Debugln("Конфигурационные параметры успешно сохранены в БД.")
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при сохранении конфигурационных параметров в БД: '%v'", err)
 	}
@@ -106,7 +109,7 @@ func GetUnusedScreenShotsFileName() ([]string, error) {
 		if err == nil {
 			// Скрыжить имена файлов из хранилища и из БД
 			for _, inRepoFileName := range screenShotsFileNameInRepositoryList {
-				var matchesFlag bool = false
+				var matchesFlag = false
 				for _, usedFileName := range usedScreenShotsFileNameList {
 					if inRepoFileName == usedFileName {
 						matchesFlag = true
@@ -151,7 +154,7 @@ func GetScreenShotsFileName() ([]string, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении всех используемыех имён файлов скриншотов: '%v'", err)
 	}

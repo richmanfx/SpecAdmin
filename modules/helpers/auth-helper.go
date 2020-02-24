@@ -63,7 +63,7 @@ func SessionIdExistInBD(sessidFromBrowser string) bool {
 			sessidExist = false
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при проверке наличия сессии в БД: %v", err)
 	}
@@ -92,7 +92,7 @@ func SaveSessionInDB(sessid string, expires time.Time, userName string) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при сохранении Сессии в БД: '%v'", err)
 	}
@@ -124,7 +124,7 @@ func CreateUserInDb(user models.User) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при создании пользователя в БД: '%v'", err)
 	}
@@ -144,7 +144,8 @@ func SaveUserInDb(user models.User) error {
 	if err == nil {
 
 		// Занести пользователя в БД
-		result, err = db.Exec("UPDATE user SET full_name=?, create_permission=?, edit_permission=?, delete_permission=?, config_permission=?, users_permission=? WHERE login=? LIMIT 1",
+		result, err = db.Exec(
+			"UPDATE user SET full_name=?, create_permission=?, edit_permission=?, delete_permission=?, config_permission=?, users_permission=? WHERE login=?",
 			user.FullName, user.Permissions.Create, user.Permissions.Edit, user.Permissions.Delete, user.Permissions.Config, user.Permissions.Users, user.Login)
 
 		if err == nil {
@@ -154,7 +155,7 @@ func SaveUserInDb(user models.User) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при сохранении пользователя в БД после редактирования: '%v'", err)
 	}
@@ -197,7 +198,7 @@ func DeleteUserInDb(user models.User) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при удалении пользователя '%s' в БД: '%v'", user.Login, err)
@@ -233,7 +234,7 @@ func GetUsers() ([]models.User, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при считывании из БД всех пользователей: '%v'", err)
 	}
@@ -270,7 +271,7 @@ func ValidatePassword(userName, oldPassword string) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при проверке пароля: '%v'", err)
 	}
@@ -307,7 +308,7 @@ func SavePassword(userName, newPassword string) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка записи в БД нового пароля пользователя: '%v'", err)
 	}
@@ -368,7 +369,7 @@ func CheckUserInDB(login string) error {
 			err = errors.New(fmt.Sprintf("Пользователь '%s' в БД не существует", login))
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при проверке наличия пользователя '%s' в БД: '%v'", login, err)
 	}
@@ -404,7 +405,7 @@ func DeleteSession(userName string) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка удаления сессии пользователя '%s' из БД: '%v'", userName, err)
 	}
@@ -428,6 +429,10 @@ func CheckOneUserPermission(login string, permission string) error {
 			// Считать из БД
 			requestString := fmt.Sprintf("SELECT %s FROM user WHERE login=?", permission)
 			stmt, err = db.Prepare(requestString)
+			if err != nil {
+				log.Errorf("")
+			}
+
 			requestResult := stmt.QueryRow(login)
 
 			var permissionFromDB string // Вовсе не bool !
@@ -443,7 +448,7 @@ func CheckOneUserPermission(login string, permission string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка проверки прав у пользователя '%s': '%v'", login, err)

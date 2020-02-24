@@ -33,7 +33,7 @@ func GetGroupsList(groupList *[]models.Group) error {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении списка Групп из БД: %v", err)
 	}
@@ -60,7 +60,7 @@ func AddTestGroup(groupName string) error {
 		if err == nil {
 
 			// Добавление Группы в базу, используем плейсхолдер
-			result, err = db.Exec("INSERT INTO tests_groups (name) VALUE (?)", groupName)
+			result, err = db.Exec("INSERT INTO tests_groups (name) VALUES (?)", groupName)
 			if err == nil {
 				affected, err = result.RowsAffected()
 				if err == nil {
@@ -68,7 +68,7 @@ func AddTestGroup(groupName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при добавлении новой Группы в БД: %v", err)
@@ -108,7 +108,7 @@ func DelTestGroup(groupName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при удалении Группы из БД: %v", err)
@@ -151,7 +151,7 @@ func EditTestGroup(oldName string, newName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при изменении имени Группы в БД: %v", err)

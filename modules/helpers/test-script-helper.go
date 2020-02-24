@@ -38,7 +38,7 @@ func AddTestScript(newScriptName string, scriptSerialNumber string, scriptSuite 
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при добавлении сценария '%s' в БД: '%v'", newScriptName, err)
@@ -78,7 +78,7 @@ func DelTestScript(scriptName, scriptsSuiteName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при удалении сценария '%s': %v", scriptName, err)
@@ -112,7 +112,7 @@ func GetScript(scriptsName, scriptsSuiteName string) (models.Script, int, error)
 			script.Suite = scriptsSuiteName
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении данных Сценария '%s' Сюиты '%s' из БД: %v", scriptsName, scriptsSuiteName, err)
 	}
@@ -135,13 +135,13 @@ func UpdateTestScript(scriptId int, scriptName string, scriptSerialNumber string
 		if err == nil {
 			// Обновить данные о Сценарии в БД
 			log.Debugf("Обновление данных о Сценарии '%s' в БД", scriptName)
-			_, err = db.Exec("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=? LIMIT 1",
+			_, err = db.Exec("UPDATE tests_scripts SET name=?, serial_number=?, name_suite=? WHERE id=?",
 				scriptName, scriptSerialNumber, scriptsSuite, scriptId)
 			if err == nil {
 				log.Debugf("Успешно обновлены данные Сценария '%s' в БД.", scriptName)
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка обновления данных Сценария '%s' в БД: %v", scriptName, err)
@@ -173,7 +173,7 @@ func GetSuitsNameFromSpecifiedGroup(groupName string) ([]string, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении списока имён Сюит в Группе '%s': %v", groupName, err)
 	}
@@ -207,7 +207,7 @@ func GetScriptIdList(suitsNameFromGroup []string) ([]int, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении ID Сценариев для Сюит: %v", err)
 	}
@@ -266,7 +266,7 @@ func GetScriptListForSpecifiedSuits(suitsNameFromGroup []string) ([]models.Scrip
 					}
 				}
 			}
-			defer db.Close()
+			defer CloseConnectToDB()
 		}
 	}
 	if err != nil {
@@ -295,7 +295,7 @@ func GetScriptAndSuiteByScriptId(ScriptId int) (string, string, error) {
 			log.Debugf("rows.Next из таблицы tests_scripts: %s, %s", stepsScriptName, scripsSuiteName)
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении данных из БД по Сценарию с Id='%s': %v", ScriptId, err)
 	}
@@ -323,7 +323,7 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 	leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
 	columnWidths := []float64{10, 100, 100, pageWidth - leftMargin - rightMargin - (10 + 100 + 100)}
 	marginCell := 2. // margin of top/bottom of cell
-	rows := [][]string{}
+	var rows [][]string
 
 	write := func(str string) {
 		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
@@ -363,8 +363,8 @@ func GetScripsStepsPdf(scriptsSuite string, scriptName string, stepsList []model
 // Разбивает текст для ячейки PDF-таблицы на слова, переносит слова и оборачивает в рамку ячейки.
 func splitAndWrapTextInCell(rows [][]string, pdf *gofpdf.Fpdf, columnWidths []float64, marginCell float64, pageHeight float64, bottomMargin float64) {
 	for _, row := range rows {
-		curx, y := pdf.GetXY()
-		x := curx
+		currentX, y := pdf.GetXY()
+		x := currentX
 
 		height := 0.
 		_, lineHt := pdf.GetFontSize()
@@ -392,7 +392,7 @@ func splitAndWrapTextInCell(rows [][]string, pdf *gofpdf.Fpdf, columnWidths []fl
 			x += width
 			pdf.SetXY(x, y)
 		}
-		pdf.SetXY(curx, y+height)
+		pdf.SetXY(currentX, y+height)
 	}
 }
 
@@ -414,7 +414,7 @@ func GetScriptsIdByStepsId(stepsId int) (int, error) {
 			log.Debugf("rows.Next из таблицы tests_steps: %s", scriptId)
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении из БД шдентификатора Сценария по идентификатору Шага'%s': %v", stepsId, err)
 	}

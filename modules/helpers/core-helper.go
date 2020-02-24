@@ -100,7 +100,7 @@ func GetStatistic() (models.Statistic, error) {
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении статистики: '%v'", err)
 	}
@@ -110,14 +110,20 @@ func GetStatistic() (models.Statistic, error) {
 // Сгенерировать уникальную строку в 32 hex-символа
 func GetUnique32SymbolsString() string {
 	h := md5.New()
-	io.WriteString(h, time.Now().String())
+	_, err := io.WriteString(h, time.Now().String())
+	if err != nil {
+		log.Errorf("Ошибка при генерации уникальной строки в 32 hex-символа: '%v'", err)
+	}
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
 
 // Сгенерировать "соль"
 func CreateSalt() string {
 	hash := sha512.New()
-	io.WriteString(hash, time.Now().String())
+	_, err := io.WriteString(hash, time.Now().String())
+	if err != nil {
+		log.Errorf("Ошибка при генерации соли: '%v'", err)
+	}
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
@@ -141,19 +147,19 @@ func GetSaltFromDb(userName string) (string, error) {
 		// Получить "соль"
 		err = db.QueryRow("SELECT salt FROM user WHERE login=?", userName).Scan(&salt)
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка получения 'соли' для пользователя с логином '%s': %v", userName, err)
 	}
 	return salt, err
 }
 
-func ConnectToDB() error {
-	return dbConnect()
-}
-
-func CloseConnectToDB() error {
-	return db.Close()
+// Закрыть соединени с ДБ
+func CloseConnectToDB() {
+	err := db.Close()
+	if err != nil {
+		log.Printf("Ошибка при закрытии соединения с БД: '%v'", err)
+	}
 }
 
 // Получить хеш из БД для заданного пользователя
@@ -170,7 +176,7 @@ func GetHashFromDb(userName string) (string, error) {
 		requestResult := db.QueryRow("SELECT passwd FROM user WHERE login=?", userName)
 		err = requestResult.Scan(&hash)
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка получения из базы Хеша пароля для пользователя с логином '%s': %v", userName, err)
 	}

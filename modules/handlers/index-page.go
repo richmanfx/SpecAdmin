@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-var Version = "10.3"
+var Version = "10.4"
 
 func ShowIndexPage(context *gin.Context) {
 	var err error

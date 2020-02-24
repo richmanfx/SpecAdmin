@@ -51,7 +51,7 @@ func AddTestStep(newStepName string, stepSerialNumber string, stepsDescription s
 					newStepName, stepSerialNumber, stepsDescription, stepsExpectedResult, stepsScreenShotFileName, id)
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при добавлении Шага '%s' в табицу 'tests_steps': '%v'", newStepName, err)
@@ -121,7 +121,7 @@ func DelTestStep(deletedStepName, stepsScriptName, scriptsSuiteName string) erro
 						stepsScriptName, scriptsSuiteName))
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 
 		// Удаление файла скриншота из хранилища
 		if err == nil && screenShotsFileName != "" { // Если из базы удалили без ошибок
@@ -155,7 +155,7 @@ func GetStepsScreenShotsFileName(deletedStepName string, scriptId int) (string, 
 }
 
 // Сформировать список ВСЕХ Шагов из БД
-func GetStepsList(stepsList []models.Step) ([]models.Step, error) {
+func GetStepsList(stepsList []models.Step) ([]models.Step, error) { // TODO: Почему уже не используется?
 
 	// Запрос всех Шагов из БД
 	rows, err := db.Query("SELECT id,name,serial_number,description,expected_result FROM tests_steps ORDER BY serial_number")
@@ -208,7 +208,7 @@ func GetStepsListForSpecifiedScripts(scriptsIdList []int) ([]models.Step, error)
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении Шагов из БД только для заданных по ID Сценариев: '%v'", err)
 	}
@@ -258,7 +258,7 @@ func GetStep(editedStepName, stepsScriptName, scriptsSuiteName string) (models.S
 			}
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении данных шага '%s' из БД: '%v'", editedStepName, err)
 	}
@@ -284,17 +284,19 @@ func UpdateTestStep(stepsId int, stepsName string, stepsSerialNumber int, stepsD
 			log.Debugf("Обновление данных о Шаге '%s' в БД", stepsName)
 
 			if screenShotsFileName == "" {
-				_, err = db.Exec("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=? LIMIT 1",
+				_, err = db.Exec(
+					"UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=? WHERE id=?",
 					stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, stepsId)
 			} else {
-				_, err = db.Exec("UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=? LIMIT 1",
+				_, err = db.Exec(
+					"UPDATE tests_steps SET name=?, serial_number=?, description=?, expected_result=?, screen_shot_file_name=? WHERE id=?",
 					stepsName, stepsSerialNumber, stepsDescription, stepsExpectedResult, screenShotsFileName, stepsId)
 			}
 			if err == nil {
 				log.Debugf("Успешно обновлены данные Шага '%s' в БД.", stepsName)
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка обновления данных Шага '%s' в БД.", stepsName)
@@ -322,7 +324,7 @@ func DeleteStepsScreenShot(stepsId int) error {
 			// Получить имя файла скриншота
 			requestResult = db.QueryRow("SELECT screen_shot_file_name FROM tests_steps WHERE id=?", stepsId)
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 
 		// Получить результаты запроса
 		var screenShotFileName string
@@ -345,9 +347,9 @@ func DeleteStepsScreenShot(stepsId int) error {
 
 				// Удалить данные о скриншоте в БД
 				log.Debugf("Удаление данные о скриншоте в БД, Id Шага: '%d'.", stepsId)
-				_, err = db.Exec("UPDATE tests_steps SET screen_shot_file_name=? WHERE id=? LIMIT 1", "", stepsId)
+				_, err = db.Exec("UPDATE tests_steps SET screen_shot_file_name=? WHERE id=?", "", stepsId)
 			}
-			defer db.Close()
+			defer CloseConnectToDB()
 		}
 		if err == nil {
 			log.Debugf("Скриншот успешно удалён из БД в Шаге с Id='%d'", stepsId)
@@ -400,7 +402,7 @@ func GetStepsData(stepsId int) (string, string, string, error) {
 		// Получить данные
 		requestResult = db.QueryRow("SELECT name, description, expected_result FROM tests_steps WHERE id=?", stepsId)
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 
 	// Получить результаты запроса
 	var stepsName string

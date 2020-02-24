@@ -13,11 +13,11 @@ import (
 )
 
 // Мидлеваря - проверяет авторизацию
-func AuthRequired() gin.HandlerFunc {
+func AuthorizationRequired() gin.HandlerFunc {
 
 	return func(context *gin.Context) {
 
-		log.Debugln("Мы в Мидлеваре 'AuthRequired'.")
+		log.Debugln("Мы в Мидлеваре 'AuthorizationRequired'.")
 
 		session := sessions.Default(context) // Получить сессию контекста
 		cookies := session.Get("Cookie")     // Получить из сессии все Куки
@@ -111,7 +111,7 @@ func Authorization(context *gin.Context) {
 		//context.JSON(http.StatusOK, gin.H{"Cookie": cookies})
 
 		// Сохранить сессию в БД
-		var expire time.Time = time.Now().Add(12 * time.Hour) // Кука устаревает через 12 часов
+		var expire = time.Now().Add(12 * time.Hour) // Кука устаревает через 12 часов
 		err = helpers.SaveSessionInDB(sessid, expire, userName)
 		if err != nil {
 			log.Errorf("Ошибка сохранения сессии в БД: %v", err)
@@ -129,7 +129,10 @@ func Authorization(context *gin.Context) {
 
 		// Выставить в браузере Куки
 		session.Set("Cookie", newCookie)
-		session.Save()
+		err = session.Save()
+		if err != nil {
+			log.Errorf("Ошибка сохранения сессии")
+		}
 		log.Debugf("Новая Кука '%s' отправлена в браузер", newCookie)
 
 		// Направить на индексную страницу

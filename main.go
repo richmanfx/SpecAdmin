@@ -2,6 +2,8 @@ package main
 
 import (
 	"SpecAdmin/modules"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -35,5 +37,9 @@ func main() {
 	modules.InitRoutes(Router)
 
 	// Запустить приложение
-	Router.Run(":3010")
+	tcpPort := "3010"
+	err := Router.Run(fmt.Sprintf(":%s", tcpPort))
+	if err != nil {
+		log.Errorf("Ошибка запуска приложение на порту '%s'", tcpPort)
+	}
 }

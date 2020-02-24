@@ -69,7 +69,7 @@ func GetSuitesListInGroup(groupName string) ([]models.Suite, error) {
 					}
 				}
 			}
-			defer db.Close()
+			defer CloseConnectToDB()
 		}
 	}
 	log.Debugf("Список Сюит: '%v'", suitesList)
@@ -109,7 +109,7 @@ func AddTestSuite(suitesName string, suitesDescription string, suitesSerialNumbe
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при добавлении новой Сюиты: '%v'", err)
@@ -150,7 +150,7 @@ func DelTestSuite(suitesName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка при удалении из базы сюиты '%s': '%v'", suitesName, err)
@@ -172,17 +172,15 @@ func GetSuite(suitesName string) (models.Suite, error) {
 		log.Debugf("Получение данных Сюиты '%s' из БД.", suitesName)
 		rows := db.QueryRow("SELECT serial_number, description, name_group FROM tests_suits WHERE name=?", suitesName)
 
+		// Данные получить из результата запроса
+		err = rows.Scan(&suite.SerialNumber, &suite.Description, &suite.Group)
 		if err == nil {
-			// Данные получить из результата запроса
-			err = rows.Scan(&suite.SerialNumber, &suite.Description, &suite.Group)
-			if err == nil {
-				log.Debugf("rows.Next из таблицы tests_suits: %s, %s, %s",
-					suite.Description, suite.SerialNumber, suite.Group)
-				suite.Name = suitesName
-			}
+			log.Debugf(
+				"rows.Next из таблицы tests_suits: %s, %s, %s", suite.Description, suite.SerialNumber, suite.Group)
+			suite.Name = suitesName
 		}
 	}
-	defer db.Close()
+	defer CloseConnectToDB()
 	if err != nil {
 		log.Errorf("Ошибка при получении данных Сюиты '%s' из БД: '%v'", suitesName, err)
 	}
@@ -209,7 +207,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 
 			// Обновить данные о Сюите в БД
 			log.Debugf("Обновление данных о Сюите '%s' в БД", suitesName)
-			result, err = db.Exec("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=? LIMIT 1",
+			result, err = db.Exec("UPDATE tests_suits SET description=?, serial_number=?, name_group=? WHERE name=?",
 				suitesDescription, suitesSerialNumber, suitesGroup, suitesName)
 
 			if err == nil {
@@ -227,7 +225,7 @@ func UpdateTestSuite(suitesName string, suitesDescription string,
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка обновления данных Сюиты '%s' в БД: '%м'", suitesName, err)
@@ -254,7 +252,7 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 
 			// Обновить данные о Сюите в БД
 			log.Debugf("Переименование Сюиты '%s' в '%s'", oldSuiteName, newSuiteName)
-			result, err = db.Exec("UPDATE tests_suits SET name=? WHERE name=? LIMIT 1", newSuiteName, oldSuiteName)
+			result, err = db.Exec("UPDATE tests_suits SET name=? WHERE name=?", newSuiteName, oldSuiteName)
 
 			if err == nil {
 
@@ -272,7 +270,7 @@ func RenameTestSuite(oldSuiteName, newSuiteName string) error {
 				}
 			}
 		}
-		defer db.Close()
+		defer CloseConnectToDB()
 	}
 	if err != nil {
 		log.Errorf("Ошибка переименования Сюиты '%s' в '%s': %v", oldSuiteName, newSuiteName, err)
@@ -301,7 +299,7 @@ func GetSuitesScriptsPdf(scriptsSuite string, scriptsList []models.Script) error
 	leftMargin, rightMargin, _, bottomMargin := pdf.GetMargins()
 	columnWidths := []float64{10, pageWidth - leftMargin - rightMargin - 10}
 	marginCell := 2. // margin of top/bottom of cell
-	rows := [][]string{}
+	var rows [][]string
 
 	write := func(str string) {
 		pdf.MultiCell(pageWidth, ht, tr(str), "", "L", false)
